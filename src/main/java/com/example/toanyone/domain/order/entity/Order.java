@@ -29,9 +29,9 @@ public class Order {
     @JoinColumn(name = "user_id")
     private User user;
 
-    private int totalPrice;
+    private Integer totalPrice;
 
-    private int defaultDeliveryFee;
+    private Integer defaultDeliveryFee;
 
     @Enumerated(EnumType.STRING)
     private OrderStatus status;
