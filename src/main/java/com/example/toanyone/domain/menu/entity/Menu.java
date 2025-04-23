@@ -3,7 +3,7 @@ package com.example.toanyone.domain.menu.entity;
 import com.example.toanyone.domain.menu.enums.MainCategory;
 import com.example.toanyone.domain.menu.enums.SubCategory;
 import com.example.toanyone.domain.store.entity.Store;
-import com.example.toanyone.global.common.BaseEntity;
+import com.example.toanyone.global.common.entity.BaseEntity;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -36,8 +36,6 @@ public class Menu extends BaseEntity {
 
     @Enumerated(EnumType.STRING)
     private SubCategory subCategory;
-
-
 
     public Menu(Store store, String name, String description, Integer price ,MainCategory mainCategory, SubCategory subCategory) {
         this.store = store;
