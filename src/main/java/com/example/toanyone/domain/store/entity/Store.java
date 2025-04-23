@@ -16,19 +16,34 @@ public class Store {
     private Long id;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "user_id", nullable = false)
+    @JoinColumn(name = "owner_id", nullable = false)
     private User user;
+
+    @Column(nullable = false, unique = true)
     private String name;
+
+    @Column(nullable = false)
     private String address;
+
+    @Column(nullable = false)
     private LocalDateTime openTime;
+
+    @Column(nullable = false)
     private LocalDateTime closeTime;
+
+    @Column(nullable = false)
     private Integer deliveryFee;
+
     private String notice;
+
+    @Column(nullable = false)
     private String phone;
 
     @Enumerated(EnumType.STRING)
     private Status status;
-    private Boolean deleted;
+
+    @Column(nullable = false)
+    private Boolean deleted = false;
     private LocalDateTime deletedAt;
 
     //Todo BaseEntity 확인하기
