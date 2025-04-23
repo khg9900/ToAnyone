@@ -3,6 +3,7 @@ package com.example.toanyone.domain.menu.controller;
 import com.example.toanyone.domain.menu.dto.MenuDto;
 import com.example.toanyone.domain.menu.service.MenuService;
 import com.example.toanyone.domain.store.repository.StoreRepository;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -18,7 +19,7 @@ public class MenuController {
     @PostMapping("/{storeId}/menus")
     public ResponseEntity<String> createMenu(
             @PathVariable Integer storeId,
-            @RequestBody MenuDto.Request requestDto) {
+            @Valid @RequestBody MenuDto.Request requestDto) {
 
         MenuDto.Response responseDto = menuService.createMenu(
                 storeId,
