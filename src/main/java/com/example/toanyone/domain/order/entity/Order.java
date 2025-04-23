@@ -1,6 +1,7 @@
 package com.example.toanyone.domain.order.entity;
 
 import com.example.toanyone.domain.order.enums.OrderStatus;
+import com.example.toanyone.domain.review.entity.Review;
 import com.example.toanyone.domain.store.entity.Store;
 import com.example.toanyone.domain.user.entity.User;
 import jakarta.persistence.*;
@@ -36,6 +37,12 @@ public class Order {
     @Enumerated(EnumType.STRING)
     private OrderStatus status;
 
+    /**
+     * @이윤승
+     * 리뷰와 오더 1:1 연관관계 매핑
+     * */
+    @OneToOne(mappedBy = "order", fetch = FetchType.LAZY)
+    private Review review;
 
 
     @OneToMany(mappedBy = "order", cascade = CascadeType.ALL, orphanRemoval = true)

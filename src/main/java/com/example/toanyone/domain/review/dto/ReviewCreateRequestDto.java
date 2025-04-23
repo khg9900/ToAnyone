@@ -1,5 +1,8 @@
 package com.example.toanyone.domain.review.dto;
 
+import com.example.toanyone.domain.order.entity.Order;
+import com.example.toanyone.domain.review.entity.Review;
+import com.example.toanyone.domain.user.entity.User;
 import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
@@ -21,4 +24,8 @@ public class ReviewCreateRequestDto {
     private String content;
 
     private Boolean visible = true;
+
+    public Review toEntity(Order order, User user){
+        return new Review(order, user, this.rating, this.content, this.visible);
+    }
 }

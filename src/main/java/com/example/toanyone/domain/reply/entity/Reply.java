@@ -2,6 +2,7 @@ package com.example.toanyone.domain.reply.entity;
 
 import com.example.toanyone.domain.review.entity.Review;
 import com.example.toanyone.domain.user.entity.User;
+import com.example.toanyone.global.common.BaseEntity;
 import jakarta.persistence.*;
 import lombok.Getter;
 
@@ -11,7 +12,7 @@ import java.time.LocalDateTime;
 @Entity
 @Getter
 @Table(name = "review_reply")
-public class Reply {
+public class Reply extends BaseEntity {
 
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;

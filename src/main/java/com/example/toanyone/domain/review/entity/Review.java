@@ -3,10 +3,12 @@ package com.example.toanyone.domain.review.entity;
 import com.example.toanyone.domain.order.entity.Order;
 import com.example.toanyone.domain.reply.entity.Reply;
 import com.example.toanyone.domain.user.entity.User;
+import com.example.toanyone.global.common.BaseEntity;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 import javax.annotation.processing.Generated;
 import java.time.LocalDateTime;
@@ -14,6 +16,7 @@ import java.time.LocalDateTime;
 @Getter
 @Entity
 @Table(name = "reviews")
+@NoArgsConstructor
 public class Review {
 
     @Id
@@ -40,7 +43,6 @@ public class Review {
     @Column(nullable = false)
     private Boolean visible = true;
 
-
     /**
      * @mappedBy = "review": 리뷰가 주인이 아니고 댓글이 외래키를 가짐
      * @cascade = ALL: 리뷰를 저장/삭제하면 댓글도 자동으로 함께 저장/삭제
@@ -48,4 +50,16 @@ public class Review {
      * **/
     @OneToOne(mappedBy = "review", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
     private Reply reply;
+
+    /**
+     * 생성자 - DTO로부터 엔티티 변환 시 사용
+     */
+    public Review(Order order, User user,Integer rating, String content , Boolean visible) {
+        this.order = order;
+        this.user = user;
+        this.rating = rating;
+        this.content = content;
+        this.visible = visible;
+    }
+
 }
