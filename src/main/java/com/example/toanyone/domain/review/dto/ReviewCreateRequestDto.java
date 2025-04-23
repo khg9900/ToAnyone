@@ -24,8 +24,4 @@ public class ReviewCreateRequestDto {
     private String content;
 
     private Boolean visible = true;
-
-    public Review toEntity(Order order, User user){
-        return new Review(order, user, this.rating, this.content, this.visible);
-    }
 }

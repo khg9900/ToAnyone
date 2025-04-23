@@ -2,8 +2,9 @@ package com.example.toanyone.domain.review.entity;
 
 import com.example.toanyone.domain.order.entity.Order;
 import com.example.toanyone.domain.reply.entity.Reply;
+import com.example.toanyone.domain.store.entity.Store;
 import com.example.toanyone.domain.user.entity.User;
-import com.example.toanyone.global.common.BaseEntity;
+import com.example.toanyone.global.common.entity.BaseEntity;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
@@ -17,7 +18,7 @@ import java.time.LocalDateTime;
 @Entity
 @Table(name = "reviews")
 @NoArgsConstructor
-public class Review {
+public class Review extends BaseEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -31,6 +32,10 @@ public class Review {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id")
     private User user;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "storeId")
+    private Store store;
 
     @Column(columnDefinition = "TEXT")
     private String content;
@@ -61,5 +66,4 @@ public class Review {
         this.content = content;
         this.visible = visible;
     }
-
 }
