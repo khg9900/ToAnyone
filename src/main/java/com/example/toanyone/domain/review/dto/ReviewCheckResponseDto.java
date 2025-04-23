@@ -11,9 +11,9 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 public class ReviewCheckResponseDto {
     private Long id;
-    private int rating;
+    private Integer rating;
     private String content;
-    private boolean visible;
+    private Boolean visible;
     private LocalDateTime updateAt;
     private ReplyDto reply; // 사장님 댓글
 }

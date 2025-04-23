@@ -43,6 +43,6 @@ public class User {
 
     private LocalDate birth;
 
-    private int age;
+    private Integer age;
 
 }

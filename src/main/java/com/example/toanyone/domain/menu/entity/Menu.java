@@ -29,7 +29,7 @@ public class Menu extends BaseEntity {
     private String description;
 
     @Column(nullable = false)
-    private int price;
+    private Integer price;
 
     @Enumerated(EnumType.STRING)
     private MainCategory mainCategory;
@@ -39,7 +39,7 @@ public class Menu extends BaseEntity {
 
 
 
-    public Menu(Store store, String name, String description, int price ,MainCategory mainCategory, SubCategory subCategory) {
+    public Menu(Store store, String name, String description, Integer price ,MainCategory mainCategory, SubCategory subCategory) {
         this.store = store;
         this.name = name;
         this.description = description;

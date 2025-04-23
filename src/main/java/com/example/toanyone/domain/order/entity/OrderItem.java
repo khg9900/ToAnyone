@@ -23,9 +23,9 @@ public class OrderItem {
     @JoinColumn(name = "menu_id")
     private Menu menu;
 
-    private int quantity;
+    private Integer quantity;
 
-    private int menuPrice;
+    private Integer menuPrice;
 
     public void setOrder(Order order) {
         this.order = order;

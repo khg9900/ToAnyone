@@ -80,9 +80,9 @@ public class OrderDto {
         private Long orderId;
         private String storeName;
         private String status;
-        private int orderPrice;
-        private int deliveryFee;
-        private int totalPrice;
+        private Integer orderPrice;
+        private Integer deliveryFee;
+        private Integer totalPrice;
         private LocalDateTime createdAt;
         private List<OrderItemDetail> items;
     }
@@ -95,7 +95,7 @@ public class OrderDto {
     @NoArgsConstructor
     public static class OrderItemDetail {
         private String menuName;
-        private int price;
-        private int count;
+        private Integer price;
+        private Integer count;
     }
 }
