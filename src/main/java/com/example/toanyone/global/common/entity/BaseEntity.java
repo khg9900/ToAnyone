@@ -1,4 +1,4 @@
-package com.example.toanyone.global.common;
+package com.example.toanyone.global.common.entity;
 
 import jakarta.persistence.*;
 import lombok.Getter;
