@@ -17,9 +17,9 @@ public class AuthRequestDto {
     public static class Signup {
 
         @NotBlank
-        private UserRole role;
+        private String role;
         @NotBlank
-        private String name;
+        private String username;
         @NotBlank
         private String nickname;
         @NotBlank
@@ -41,13 +41,13 @@ public class AuthRequestDto {
         @NotBlank
         private String address;
         @NotBlank
-        private Gender gender;
+        private String gender;
         @NotBlank
         @Pattern(
             regexp = "^\\d{4}-\\d{2}-\\d{2}$",
             message = "생년월일은 yyyy-MM-dd 형식으로 입력해주세요. (예: 2000-04-19)"
         )
-        private LocalDate birthdate;
+        private LocalDate birth;
 
     }
 
