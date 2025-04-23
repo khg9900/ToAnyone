@@ -2,7 +2,7 @@ package com.example.toanyone.domain.store.entity;
 
 import com.example.toanyone.domain.user.entity.User;
 import com.example.toanyone.domain.store.enums.Status;
-import com.example.toanyone.global.common.BaseEntity;
+import com.example.toanyone.global.common.entity.BaseEntity;
 import jakarta.persistence.*;
 import lombok.Getter;
 
