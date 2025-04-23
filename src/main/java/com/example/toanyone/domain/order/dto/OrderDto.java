@@ -1,6 +1,8 @@
 package com.example.toanyone.domain.order.dto;
 
+import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Size;
 import lombok.*;
 
 import java.time.LocalDateTime;
@@ -8,21 +10,23 @@ import java.util.List;
 
 public class OrderDto {
 
-    // =======================
-    // 주문 생성 요청
-    // =======================
+    //
+    // 주문 생성 요청 DTO
+    //
     @Getter
     @Setter
     @NoArgsConstructor
     @AllArgsConstructor
     public static class CreateRequest {
+
         @NotNull(message = "cartId는 필수입니다.")
+        @Min(value = 1, message = "cartId는 1 이상이어야 합니다.")
         private Long cartId;
     }
 
-    // =======================
-    // 주문 생성 응답
-    // =======================
+    //
+    // 주문 생성 응답 DTO
+    //
     @Getter
     @Setter
     @Builder
@@ -34,21 +38,23 @@ public class OrderDto {
         private String status;
     }
 
-    // =======================
-    // 주문 상태 변경 요청 (사장님)
-    // =======================
+    //
+    // 주문 상태 변경 요청 DTO (사장님)
+    //
     @Getter
     @Setter
     @NoArgsConstructor
     @AllArgsConstructor
     public static class StatusUpdateRequest {
-        @NotNull(message = "상태는 필수입니다.")
+
+        @NotNull(message = "주문 상태는 필수입니다.")
+        @Size(min = 3, max = 30, message = "주문 상태 문자열 길이가 유효하지 않습니다.")
         private String status;
     }
 
-    // =======================
-    // 주문 상태 변경 응답 (사장님)
-    // =======================
+    //
+    // 주문 상태 변경 응답 DTO (사장님)
+    //
     @Getter
     @Setter
     @Builder
@@ -58,9 +64,9 @@ public class OrderDto {
         private String message;
     }
 
-    // =======================
+    //
     // 사장님 - 가게 주문 목록 조회 응답
-    // =======================
+    //
     @Getter
     @Setter
     @Builder
@@ -73,9 +79,9 @@ public class OrderDto {
         private LocalDateTime createdAt;
     }
 
-    // =======================
+    //
     // 고객 - 내 주문 내역 목록 조회 응답
-    // =======================
+    //
     @Getter
     @Setter
     @Builder
@@ -92,9 +98,9 @@ public class OrderDto {
         private List<OrderItemDetail> items;
     }
 
-    // =======================
-    // 고객 - 내 주문 내역 중 각 메뉴 항목
-    // =======================
+    //
+    // 고객 - 주문 내역 메뉴 항목
+    //
     @Getter
     @Setter
     @Builder
