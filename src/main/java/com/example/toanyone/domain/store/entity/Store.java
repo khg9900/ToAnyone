@@ -1,7 +1,7 @@
 package com.example.toanyone.domain.store.entity;
 
 import com.example.toanyone.domain.user.entity.User;
-import com.example.toanyone.domain.user.enums.Status;
+import com.example.toanyone.domain.store.enums.Status;
 import jakarta.persistence.*;
 import lombok.Getter;
 
