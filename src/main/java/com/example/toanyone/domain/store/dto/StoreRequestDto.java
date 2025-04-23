@@ -31,7 +31,7 @@ public class StoreRequestDto {
         @NotBlank(message = "가게 상태 입력은 필수입니다.")
         private Status status;
         @NotBlank(message = "가게 번호 입력은 필수입니다.")
-        @Pattern(regexp = "^\\d{3}-\\d{4}-\\d{4}$", message = "전화번호는 000-0000-0000 형식이어야 합니다.")
+        @Pattern(regexp = "^\\d{2,3}-\\d{3,4}-\\d{4}$", message = "전화번호는 000-0000-0000 형식이어야 합니다.")
         private String phone;
     }
 
