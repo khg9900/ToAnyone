@@ -1,5 +1,12 @@
 package com.example.toanyone.domain.reply.dto;
 
-public class ReplyResponseDto {
+import lombok.AllArgsConstructor;
+import lombok.Getter;
 
+
+
+@Getter
+@AllArgsConstructor
+public class ReplyResponseDto {
+    private String message;
 }
