@@ -1,5 +1,32 @@
 package com.example.toanyone.domain.reply.entity;
 
+import com.example.toanyone.domain.review.entity.Review;
+import com.example.toanyone.domain.user.entity.User;
+import jakarta.persistence.*;
+import lombok.Getter;
+
+import java.time.LocalDateTime;
+
+
+@Entity
+@Getter
+@Table(name = "review_reply")
 public class Reply {
+
+    @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+
+    // 리뷰와 1:1 관계, 하나의 리뷰에 댓글 하나만 가능
+    @OneToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "review_id", unique = true)
+    private Review review;
+
+    // 댓글 작성자는 사장님
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "owner_id")
+    private User owner;
+
+    @Column(columnDefinition = "TEXT")
+    private String content;
 
 }
