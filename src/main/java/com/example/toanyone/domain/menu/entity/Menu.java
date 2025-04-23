@@ -37,8 +37,6 @@ public class Menu extends BaseEntity {
     @Enumerated(EnumType.STRING)
     private SubCategory subCategory;
 
-
-
     public Menu(Store store, String name, String description, Integer price ,MainCategory mainCategory, SubCategory subCategory) {
         this.store = store;
         this.name = name;
