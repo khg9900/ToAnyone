@@ -1,5 +1,6 @@
 package com.example.toanyone.domain.store.dto;
 
+import com.example.toanyone.domain.menu.dto.MenuDto;
 import com.example.toanyone.domain.menu.entity.Menu;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -29,7 +30,7 @@ public class StoreResponseDto {
         private final Integer minOrderPrice;
         private final String notice;
         private final String state;
-        private final List<Menu> menus;
+        private final List<MenuDto.ResponseDetail> menus;
     }
 
     @Getter
