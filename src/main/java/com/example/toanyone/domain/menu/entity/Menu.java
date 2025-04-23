@@ -3,6 +3,7 @@ package com.example.toanyone.domain.menu.entity;
 import com.example.toanyone.domain.menu.enums.MainCategory;
 import com.example.toanyone.domain.menu.enums.SubCategory;
 import com.example.toanyone.domain.store.entity.Store;
+import com.example.toanyone.global.common.BaseEntity;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -11,7 +12,7 @@ import lombok.NoArgsConstructor;
 @Entity
 @NoArgsConstructor
 @Table(name = "menu")
-public class Menu extends BaseMenuEntity{
+public class Menu extends BaseEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
