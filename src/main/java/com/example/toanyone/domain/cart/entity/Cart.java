@@ -28,6 +28,7 @@ public class Cart {
 
     private Integer totalPrice;
 
+    @Column(updatable = false)
     private LocalDateTime createdAt = LocalDateTime.now();
 
 }

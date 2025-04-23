@@ -25,5 +25,7 @@ public class CartItem {
 
     private Integer quantity;
 
+    @Column(nullable = false)
+    private Integer menu_price;
 
 }
