@@ -8,6 +8,7 @@ import com.example.toanyone.global.auth.dto.AuthRequestDto;
 import com.example.toanyone.global.auth.dto.AuthResponseDto;
 import com.example.toanyone.global.auth.jwt.JwtUtil;
 import com.example.toanyone.global.config.PasswordEncoder;
+import java.time.LocalDate;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -32,6 +33,7 @@ public class AuthServiceImpl implements AuthService {
 
         UserRole userRole = UserRole.of(signupRequest.getRole());
         Gender gender = Gender.of(signupRequest.getGender());
+        LocalDate birth = LocalDate.parse(signupRequest.getBirth());
 
         int age = 25;
 
@@ -44,7 +46,7 @@ public class AuthServiceImpl implements AuthService {
             signupRequest.getPhone(),
             signupRequest.getAddress(),
             gender,
-            signupRequest.getBirth(),
+            birth,
             age
         );
 
