@@ -4,6 +4,13 @@ import com.example.toanyone.domain.store.entity.Store;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
+import java.util.Optional;
+
 @Repository
 public interface StoreRepository extends JpaRepository<Store, Integer> {
+    Optional<Store> findById(Integer storeId);
+
+    default Store findByIdOrElseThrow(Integer storeId) {
+        return findById(storeId).orElseThrow(()-> new RuntimeException()); //ErrorCode 적용 후 변경
+    }
 }

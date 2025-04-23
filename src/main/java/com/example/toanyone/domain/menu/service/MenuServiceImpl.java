@@ -7,14 +7,14 @@ import com.example.toanyone.domain.menu.enums.SubCategory;
 import com.example.toanyone.domain.menu.repository.MenuRepository;
 import com.example.toanyone.domain.store.entity.Store;
 import com.example.toanyone.domain.store.repository.StoreRepository;
-import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 
 @Slf4j
 @Service
-@AllArgsConstructor
+@RequiredArgsConstructor
 public class MenuServiceImpl implements MenuService {
 
     private final MenuRepository menuRepository;
@@ -25,9 +25,12 @@ public class MenuServiceImpl implements MenuService {
             Integer storeId, String name, String description, Integer price,
             MainCategory mainCategory, SubCategory subCategory) {
 
+        Store store = storeRepository.findByIdOrElseThrow(storeId);
 
-        Menu menu = new Menu();
+        Menu createdMenu = new Menu(store, name, description, price ,mainCategory, subCategory);
+        menuRepository.save(createdMenu);
+        log.info("Menu created: {}", createdMenu);
 
-        return null;
+        return new MenuDto.Response(createdMenu.getName(), createdMenu.getDescription(), createdMenu.getPrice());
     }
 }
