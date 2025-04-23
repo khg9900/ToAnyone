@@ -2,6 +2,7 @@ package com.example.toanyone.domain.store.entity;
 
 import com.example.toanyone.domain.user.entity.User;
 import com.example.toanyone.domain.store.enums.Status;
+import com.example.toanyone.global.common.BaseEntity;
 import jakarta.persistence.*;
 import lombok.Getter;
 
@@ -10,7 +11,7 @@ import java.time.LocalDateTime;
 @Getter
 @Entity
 @Table(name= "stores")
-public class Store {
+public class Store extends BaseEntity {
 
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -42,8 +43,5 @@ public class Store {
 
     @Enumerated(EnumType.STRING)
     private Status status;
-
-
-    //Todo BaseEntity 상속받기
 
 }

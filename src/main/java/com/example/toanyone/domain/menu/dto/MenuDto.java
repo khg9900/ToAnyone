@@ -40,6 +40,16 @@ public class MenuDto {
         private Integer price;
     }
 
+    @Getter
+    @AllArgsConstructor
+    public static class ResponseDetail {
+        private Long menuId;
+        private String menuName;
+        private Integer price;
+        private String description;
+        private MainCategory mainCategory;
+        private SubCategory subCategory;
+    }
 
 
 

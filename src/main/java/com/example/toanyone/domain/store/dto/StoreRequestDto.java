@@ -1,5 +1,6 @@
 package com.example.toanyone.domain.store.dto;
 
+import com.example.toanyone.domain.store.enums.Status;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Pattern;
 import lombok.AllArgsConstructor;
@@ -28,7 +29,7 @@ public class StoreRequestDto {
         private Integer minOrderPrice;
         private String notice;
         @NotBlank(message = "가게 상태 입력은 필수입니다.")
-        private String state;
+        private Status status;
         @NotBlank(message = "가게 번호 입력은 필수입니다.")
         @Pattern(regexp = "^\\d{3}-\\d{4}-\\d{4}$", message = "전화번호는 000-0000-0000 형식이어야 합니다.")
         private String phone;
@@ -43,7 +44,7 @@ public class StoreRequestDto {
         private Integer deliveryFee;
         private Integer minOrderPrice;
         private String notice;
-        private String state;
+        private String status;
     }
 
     @Getter
