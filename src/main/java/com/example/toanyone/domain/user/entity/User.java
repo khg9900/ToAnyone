@@ -46,7 +46,7 @@ public class User {
 
     private LocalDate birth;
 
-    private int age;
+    private Integer age;
 
     public User(String email, String password, String name, UserRole role, String nickname,
         String phone, String address, Gender gender, LocalDate birth, int age) {

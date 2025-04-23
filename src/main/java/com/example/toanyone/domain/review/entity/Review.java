@@ -35,10 +35,10 @@ public class Review {
     // Validation 검증
     @Min(1)
     @Max(5)
-    private int rating;
+    private Integer rating;
 
     @Column(nullable = false)
-    private boolean visible = true;
+    private Boolean visible = true;
 
 
     /**

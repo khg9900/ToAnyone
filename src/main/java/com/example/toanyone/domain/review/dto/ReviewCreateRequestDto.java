@@ -14,11 +14,11 @@ public class ReviewCreateRequestDto {
 
     @Min(1)
     @Max(5)
-    private int rating;
+    private Integer rating;
 
     @NotBlank
     @Size(min = 10, message = "최소 10자 이상 입력해주세요.")
     private String content;
 
-    private boolean visible = true;
+    private Boolean visible = true;
 }

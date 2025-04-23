@@ -21,7 +21,7 @@ public class MenuDto {
         private String description;
 
         @NotBlank(message = "메뉴 가격 입력은 필수입니다")
-        private int price;
+        private Integer price;
 
         @NotBlank(message = "메뉴 메인 카테고리 입력은 필수입니다")
         private MainCategory mainCategory;
@@ -37,9 +37,19 @@ public class MenuDto {
     public static class Response {
         private String name;
         private String description;
-        private int price;
+        private Integer price;
     }
 
+    @Getter
+    @AllArgsConstructor
+    public static class ResponseDetail {
+        private Long menuId;
+        private String menuName;
+        private Integer price;
+        private String description;
+        private MainCategory mainCategory;
+        private SubCategory subCategory;
+    }
 
 
 

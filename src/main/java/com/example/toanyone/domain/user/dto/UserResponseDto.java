@@ -18,7 +18,7 @@ public class UserResponseDto {
         private String phone;
         private String address;
         private Gender gender;
-        private int age;
+        private Integer age;
 
     }
 
