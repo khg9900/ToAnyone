@@ -9,7 +9,7 @@ import java.time.LocalDateTime;
 
 @Getter
 @Entity
-@Table(name= "store")
+@Table(name= "stores")
 public class Store {
 
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -34,6 +34,7 @@ public class Store {
     @Column(nullable = false)
     private Integer deliveryFee;
 
+    @Column(columnDefinition = "TEXT")
     private String notice;
 
     @Column(nullable = false)
@@ -42,9 +43,6 @@ public class Store {
     @Enumerated(EnumType.STRING)
     private Status status;
 
-    @Column(nullable = false)
-    private Boolean deleted = false;
-    private LocalDateTime deletedAt;
 
     //Todo BaseEntity 상속받기
 
