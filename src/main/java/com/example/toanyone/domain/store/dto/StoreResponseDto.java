@@ -31,7 +31,6 @@ public class StoreResponseDto {
 
     @Getter
     public static class Complete {
-
         private String message;
 
         public Complete(String message) {
