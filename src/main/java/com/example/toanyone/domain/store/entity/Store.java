@@ -3,7 +3,7 @@ package com.example.toanyone.domain.store.entity;
 import com.example.toanyone.domain.store.dto.StoreRequestDto;
 import com.example.toanyone.domain.user.entity.User;
 import com.example.toanyone.domain.store.enums.Status;
-import com.example.toanyone.global.common.BaseEntity;
+import com.example.toanyone.global.common.entity.BaseEntity;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -49,8 +49,8 @@ public class Store extends BaseEntity {
     @Column(nullable = false)
     private String phone;
 
-    public Store(StoreRequestDto.Create dto) {
-        this.user = user; //todo 어떻게 받아오지?, 이때 owner의 가게수 확인?
+    public Store(User user, StoreRequestDto.Create dto) {
+        this.user = user;
         this.name = dto.getName();
         this.address = dto.getAddress();
         this.openTime = dto.getOpenTime();

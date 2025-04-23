@@ -5,5 +5,5 @@ import com.example.toanyone.domain.store.dto.StoreResponseDto;
 
 public interface StoreService {
 
-    StoreResponseDto.Complete createStore(StoreRequestDto.Create dto);
+    StoreResponseDto.Complete createStore(Long ownerId, StoreRequestDto.Create dto);
 }
