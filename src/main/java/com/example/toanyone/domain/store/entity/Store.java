@@ -46,6 +46,6 @@ public class Store {
     private Boolean deleted = false;
     private LocalDateTime deletedAt;
 
-    //Todo BaseEntity 확인하기
+    //Todo BaseEntity 상속받기
 
 }
