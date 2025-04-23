@@ -16,9 +16,11 @@ public class OrderItem {
     private Long id;
 
     @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "order_id")
     private Order order;
 
     @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "menu_id")
     private Menu menu;
 
     private int quantity;

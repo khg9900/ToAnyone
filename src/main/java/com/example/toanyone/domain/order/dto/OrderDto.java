@@ -14,7 +14,6 @@ public class OrderDto {
     // 주문 생성 요청 DTO
     //
     @Getter
-    @Setter
     @NoArgsConstructor
     @AllArgsConstructor
     public static class CreateRequest {
@@ -28,8 +27,6 @@ public class OrderDto {
     // 주문 생성 응답 DTO
     //
     @Getter
-    @Setter
-    @Builder
     @AllArgsConstructor
     @NoArgsConstructor
     public static class CreateResponse {
@@ -42,7 +39,6 @@ public class OrderDto {
     // 주문 상태 변경 요청 DTO (사장님)
     //
     @Getter
-    @Setter
     @NoArgsConstructor
     @AllArgsConstructor
     public static class StatusUpdateRequest {
@@ -55,8 +51,6 @@ public class OrderDto {
     // 주문 상태 변경 응답 DTO (사장님)
     //
     @Getter
-    @Setter
-    @Builder
     @NoArgsConstructor
     @AllArgsConstructor
     public static class StatusUpdateResponse {
@@ -67,8 +61,6 @@ public class OrderDto {
     // 사장님 - 가게 주문 목록 조회 응답
     //
     @Getter
-    @Setter
-    @Builder
     @AllArgsConstructor
     @NoArgsConstructor
     public static class OwnerOrderSummary {
@@ -82,8 +74,6 @@ public class OrderDto {
     // 고객 - 내 주문 내역 목록 조회 응답
     //
     @Getter
-    @Setter
-    @Builder
     @AllArgsConstructor
     @NoArgsConstructor
     public static class UserOrderDetail {
@@ -101,8 +91,6 @@ public class OrderDto {
     // 고객 - 주문 내역 메뉴 항목
     //
     @Getter
-    @Setter
-    @Builder
     @AllArgsConstructor
     @NoArgsConstructor
     public static class OrderItemDetail {
