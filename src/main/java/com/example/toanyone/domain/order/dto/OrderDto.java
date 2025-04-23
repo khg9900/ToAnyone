@@ -1,8 +1,8 @@
 package com.example.toanyone.domain.order.dto;
+import com.example.toanyone.domain.order.enums.OrderStatus;
 
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.Size;
 import lombok.*;
 
 import java.time.LocalDateTime;
@@ -48,8 +48,7 @@ public class OrderDto {
     public static class StatusUpdateRequest {
 
         @NotNull(message = "주문 상태는 필수입니다.")
-        @Size(min = 3, max = 30, message = "주문 상태 문자열 길이가 유효하지 않습니다.")
-        private String status;
+        private OrderStatus status;
     }
 
     //
