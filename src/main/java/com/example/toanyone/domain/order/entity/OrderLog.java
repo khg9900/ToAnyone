@@ -34,4 +34,5 @@ public class OrderLog {
     public void setLogTime() {
         this.logTime = LocalDateTime.now();
     }
+
 }

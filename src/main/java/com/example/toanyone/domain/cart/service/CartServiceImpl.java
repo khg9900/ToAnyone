@@ -1,5 +1,6 @@
 package com.example.toanyone.domain.cart.service;
 
+import com.example.toanyone.domain.cart.dto.CartItemDto;
 import com.example.toanyone.domain.cart.dto.CartResponseDto;
 import com.example.toanyone.domain.cart.entity.Cart;
 import com.example.toanyone.domain.cart.entity.CartItem;
@@ -16,6 +17,9 @@ import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Slf4j
 @Service
@@ -48,5 +52,33 @@ public class CartServiceImpl implements CartService {
         cartItemRepository.save(cartItem);
 
         return new CartResponseDto("장바구니에 추가되었습니다");
+    }
+
+    @Override
+    @Transactional
+    public CartItemDto.Response getCartItems(AuthUser authUser) {
+
+        User user = userRepository.findById(authUser.getId()).get();
+        Cart cart = cartRepository.findByUser(user);
+
+        Long storeId = cart.getStore().getId();
+        Store store = storeRepository.findByIdOrElseThrow(storeId);
+
+        Integer orderPrice = cart.getTotalPrice(); //장바구니에 담긴 품목들의 총액
+
+        Integer totalPrice = cart.getTotalPrice()+store.getDeliveryFee(); //배달비까지 더한 찐 결제 금액
+
+        List<CartItemDto.CartItems> cartItems = cart.getCartItems().stream()
+                .map(item -> new CartItemDto.CartItems(
+                        item.getMenu().getId(),
+                        item.getMenu().getName(),
+                        item.getMenu().getPrice(),
+                        item.getQuantity(),
+                        item.getMenu_price() * item.getQuantity() //품목별 총액
+                        )).collect(Collectors.toList());
+
+        return new CartItemDto.Response(
+                store.getName(), cartItems, orderPrice, store.getDeliveryFee(),totalPrice
+        );
     }
 }

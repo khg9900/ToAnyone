@@ -45,7 +45,6 @@ public class Order {
     @OneToOne(mappedBy = "order", fetch = FetchType.LAZY)
     private Review review;
 
-
     @OneToMany(mappedBy = "order", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<OrderItem> orderItems = new ArrayList<>();
 
@@ -53,6 +52,7 @@ public class Order {
         orderItems.add(item);
         item.setOrder(this);
     }
+
 
     public void changeStatus(OrderStatus status) {
         this.status = status;

@@ -18,7 +18,7 @@ public interface OrderRepository extends JpaRepository<Order, Long> {
 
 
 
-    @Query("SELECT o FROM Order o "+"WHERE o.id = :orderId "+"AND o.store.id = :storeId "+"AND o.user.id = :userId "+"AND o.status = :status "+"AND o.review IS NULL")
-    Optional<Order> findValidOrderReview(@Param("orderId") Long orderId, @Param("storeId") Long storeId, @Param("userId") Long userId, @Param("status") OrderStatus status);
+    @Query("SELECT o FROM Order o "+"WHERE o.id = :orderId "+"AND o.user.id = :userId "+"AND o.status = 'DELIVERED' "+"AND o.review IS NULL")
+    Optional<Order> findReviewableOrder(@Param("orderId") Long orderId, @Param("userId") Long userId);
 
 }
