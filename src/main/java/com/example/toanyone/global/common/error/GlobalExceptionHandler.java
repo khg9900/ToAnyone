@@ -1,4 +1,4 @@
-package com.example.toanyone.global.error;
+package com.example.toanyone.global.common.error;
 
 import com.example.toanyone.global.common.dto.ErrorReasonDto;
 import com.example.toanyone.global.common.response.ApiResponse;

@@ -1,4 +1,4 @@
-package com.example.toanyone.global.error;
+package com.example.toanyone.global.common.error;
 
 import com.example.toanyone.global.common.code.BaseErrorCode;
 import lombok.Getter;
