@@ -14,4 +14,5 @@ public interface MenuService {
     MenuDto.Response updateMenu(Long storeId, Long menuId, String name,
                                 String description, Integer price, MainCategory mainCategory, SubCategory subCategory);
 
+    MenuDto.Response deleteMenu(Long storeId, Long menuId);
 }

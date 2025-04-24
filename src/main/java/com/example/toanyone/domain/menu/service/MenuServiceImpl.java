@@ -47,4 +47,16 @@ public class MenuServiceImpl implements MenuService {
 
         return new MenuDto.Response("메뉴 수정되었습니다");
     }
+
+    @Override
+    @Transactional
+    public MenuDto.Response deleteMenu(Long storeId, Long menuId) {
+        storeRepository.findByIdOrElseThrow(storeId);
+        Menu menu = menuRepository.findByIdOrElseThrow(menuId);
+        if (menu.getDeleted()){
+            throw new RuntimeException("이미 삭제된 메뉴입니다"); //글로벌 익셉션 만든 후 수정
+        }
+        menu.softDelete();
+        return new MenuDto.Response("메뉴 삭제되었습니다");
+    }
 }
