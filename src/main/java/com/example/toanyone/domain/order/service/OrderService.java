@@ -2,6 +2,8 @@ package com.example.toanyone.domain.order.service;
 
 import com.example.toanyone.domain.order.dto.OrderDto;
 import com.example.toanyone.domain.user.entity.User;
+import java.util.List;
+
 
 public interface OrderService {
 
@@ -13,4 +15,6 @@ public interface OrderService {
       @return 주문 생성 응답 DTO
     */
     OrderDto.CreateResponse createOrder(User user, Long cartId);
+    List<OrderDto.OwnerOrderListResponse> getOrdersByStore(Long storeId);
+    List<OrderDto.UserOrderHistoryResponse> getOrdersByUser();
 }

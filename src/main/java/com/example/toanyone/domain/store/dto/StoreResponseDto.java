@@ -14,6 +14,7 @@ public class StoreResponseDto {
     public static class GetAll {
         private final Long storeId;
         private final String name;
+
     }
 
     @Getter

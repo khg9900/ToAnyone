@@ -10,9 +10,9 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
@@ -22,7 +22,7 @@ public class StoreController {
 
     /**
      * 가게 생성
-     * @param authUser 로그인된 유저
+     * @param authUser 로그인된 유저(OWNER)
      * @param dto 가게생성시 필요한 정보
      * @return 생성 완료 메세지
      */
@@ -30,6 +30,26 @@ public class StoreController {
     public ResponseEntity<StoreResponseDto.Complete> createStore(@Auth AuthUser authUser,
                                                                  @Valid @RequestBody StoreRequestDto.Create dto) {
         return ResponseEntity.status(HttpStatus.CREATED).body(storeService.createStore(authUser.getId(), dto));
+    }
+
+    /**
+     * 본인(OWNER) 가게 조회
+     * @param authUser 로그인 된 유저(OWNER)
+     * @return Store List
+     */
+    @GetMapping("/owner/stores")
+    public ResponseEntity<List<StoreResponseDto.GetAll>> getStoresByOwner(@Auth AuthUser authUser) {
+        return ResponseEntity.status(HttpStatus.OK).body(storeService.getStoresByOwner(authUser.getId()));
+    }
+
+    /**
+     * 가게명 키워드 검색 조회
+     * @param keyword 검색단어
+     * @return Store List
+     */
+    @GetMapping("/stores")
+    public ResponseEntity<List<StoreResponseDto.GetAll>> getStoresByKeyword(@RequestParam("keyword") String keyword) {
+        return ResponseEntity.status(HttpStatus.OK).body(storeService.getStoresByName(keyword));
     }
 
 }
