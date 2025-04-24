@@ -28,7 +28,7 @@ public class StoreServiceImpl implements StoreService {
         if (storeCount >= 3) {
             throw new RuntimeException("가게는 최대 3개까지 등록 가능합니다.");}
 
-        if (storeRepository.existByName(dto.getName())) {
+        if (storeRepository.existsByName(dto.getName())) {
             throw new RuntimeException("이미 존재하는 가게이름입니다.");}
 
         Store newStore = new Store(user, dto);

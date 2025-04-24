@@ -13,7 +13,7 @@ public interface StoreRepository extends JpaRepository<Store, Long> {
 
     int countByUserId(Long ownerId);
 
-    boolean existByName(String name);
+    boolean existsByName(String name);
   
     default Store findByIdOrElseThrow(Long storeId) {
         return findById(storeId).orElseThrow(()-> new RuntimeException()); //ErrorCode 적용 후 변경

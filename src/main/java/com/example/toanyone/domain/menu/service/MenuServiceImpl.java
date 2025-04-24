@@ -30,10 +30,21 @@ public class MenuServiceImpl implements MenuService {
         Store store = storeRepository.findByIdOrElseThrow(storeId);
         Menu createdMenu = new Menu(store, name, description, price ,mainCategory, subCategory);
         menuRepository.save(createdMenu);
-        Menu createdMenu = new Menu(store, name, description, price ,mainCategory, subCategory);
-        menuRepository.save(createdMenu);
         log.info("Menu created: {}", createdMenu);
 
         return new MenuDto.Response("메뉴 생성되었습니다");
+    }
+
+    @Override
+    @Transactional
+    public MenuDto.Response updateMenu(Long storeId, Long menuId, String name, String description,
+                                       Integer price, MainCategory mainCategory, SubCategory subCategory) {
+        storeRepository.findByIdOrElseThrow(storeId);
+        Menu menu = menuRepository.findByIdOrElseThrow(menuId);
+
+        menu.setMenu(name, description, price, mainCategory, subCategory);
+        log.info("Menu updated {}", menu);
+
+        return new MenuDto.Response("메뉴 수정되었습니다");
     }
 }
