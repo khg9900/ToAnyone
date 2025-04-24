@@ -20,6 +20,9 @@ public class StoreServiceImpl implements StoreService {
     public final StoreRepository storeRepository;
     public final UserRepository userRepository;
 
+    /**
+     * 가게 생성(Service)
+     */
     @Override
     public StoreResponseDto.Complete createStore(Long ownerId, StoreRequestDto.Create dto) {
 
@@ -42,6 +45,9 @@ public class StoreServiceImpl implements StoreService {
         return new StoreResponseDto.Complete("가게가 생성되었습니다.");
     }
 
+    /**
+     * 본인(OWNER) 가게 조회
+     */
     @Override
     public List<StoreResponseDto.GetAll> getStoresByOwner(Long ownerId) {
 
