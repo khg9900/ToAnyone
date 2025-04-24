@@ -1,12 +1,16 @@
 package com.example.toanyone.domain.cart.dto;
 
 import jakarta.validation.constraints.NotBlank;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 @Getter
 @NoArgsConstructor
 public class CartRequestDto {
+
+    @NotBlank(message = "가게 ID 입력은 필수입니다")
+    private Long storeId;
 
     @NotBlank(message = "메뉴 ID 입력은 필수입니다")
     private Long menuId;
