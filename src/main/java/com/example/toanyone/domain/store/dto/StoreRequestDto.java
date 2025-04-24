@@ -7,8 +7,10 @@ import jakarta.validation.constraints.Pattern;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
+import org.springframework.format.annotation.DateTimeFormat;
 
 import java.time.LocalDateTime;
+import java.time.LocalTime;
 
 public class StoreRequestDto {
 
@@ -20,10 +22,15 @@ public class StoreRequestDto {
         private String name;
         @NotBlank(message = "가게 주소 입력은 필수입니다.")
         private String address;
+
         @NotNull(message = "가게 오픈시간 입력은 필수입니다.")
-        private LocalDateTime openTime;
+        @DateTimeFormat(pattern = "HH:mm")
+        private LocalTime openTime;
+
         @NotNull(message = "가게 마감시간 입력은 필수입니다.")
-        private LocalDateTime closeTime;
+        @DateTimeFormat(pattern = "HH:mm")
+        private LocalTime closeTime;
+
         @NotNull(message = "배달비 입력은 필수입니다.")
         private Integer deliveryFee;
         @NotNull(message = "최소 주문 금액 입력은 필수입니다.")
@@ -40,8 +47,8 @@ public class StoreRequestDto {
     @Builder
     @AllArgsConstructor
     public static class Update {
-        private LocalDateTime openTime;
-        private LocalDateTime closeTime;
+        private LocalTime openTime;
+        private LocalTime closeTime;
         private Integer deliveryFee;
         private Integer minOrderPrice;
         private String notice;
