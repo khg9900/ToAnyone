@@ -7,6 +7,8 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 @Getter
 @Entity
@@ -18,7 +20,7 @@ public class Cart {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id", nullable = false)
     private User user;
 
@@ -30,5 +32,19 @@ public class Cart {
 
     @Column(updatable = false)
     private LocalDateTime createdAt = LocalDateTime.now();
+
+    @OneToMany(mappedBy = "cart", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<CartItem> cartItems = new ArrayList<>();
+
+
+    public Cart(User user, Store store, Integer totalPrice){
+        this.user = user;
+        this.store = store;
+        this.totalPrice = totalPrice;
+    }
+
+    public void setTotalPrice(Integer price, Integer quantity) {
+        this.totalPrice += price * quantity;
+    }
 
 }

@@ -13,9 +13,12 @@ public enum ErrorStatus implements BaseErrorCode {
     TOKEN_INVALID(HttpStatus.UNAUTHORIZED, "2001", "잘못된 토큰입니다."),
 
     // 3000: user 에러 코드
-    USER_NOT_FOUND(HttpStatus.NOT_FOUND, "3001","고객 정보가 없습니다.")
+    USER_NOT_FOUND(HttpStatus.NOT_FOUND, "3001","고객 정보가 없습니다."),
 
-    // 4000:
+    // 4000: menu 에러코드
+    MENU_ALREADY_EXISTS(HttpStatus.CONFLICT,"4001","이미 존재하는 메뉴입니다."),
+    MENU_ALREADY_DELETED(HttpStatus.BAD_REQUEST, "4002", "이미 삭제된 메뉴입니다."),
+    MENU_NOT_FOUND(HttpStatus.NOT_FOUND, "4003","존재하지 않는 메뉴입니다.");
 
     // 5000:
 
