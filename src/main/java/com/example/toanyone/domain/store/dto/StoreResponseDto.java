@@ -1,11 +1,10 @@
 package com.example.toanyone.domain.store.dto;
 
 import com.example.toanyone.domain.menu.dto.MenuDto;
-import com.example.toanyone.domain.menu.entity.Menu;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 
-import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.util.List;
 
 public class StoreResponseDto {
@@ -24,8 +23,8 @@ public class StoreResponseDto {
         private final Long ownerId;
         private final String name;
         private final String address;
-        private final LocalDateTime openTime;
-        private final LocalDateTime closeTime;
+        private final LocalTime openTime;
+        private final LocalTime closeTime;
         private final Integer deliveryFee;
         private final Integer minOrderPrice;
         private final String notice;
