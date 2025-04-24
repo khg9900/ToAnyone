@@ -28,6 +28,11 @@ public class MenuServiceImpl implements MenuService {
             MainCategory mainCategory, SubCategory subCategory) {
 
         Store store = storeRepository.findByIdOrElseThrow(storeId);
+
+        if (menuRepository.existsByStoreAndName(store, name)) {
+            throw new RuntimeException("이 가게에는 이미 같은 이름의 메뉴가 존재합니다");
+        }
+
         Menu createdMenu = new Menu(store, name, description, price ,mainCategory, subCategory);
         menuRepository.save(createdMenu);
         log.info("Menu created: {}", createdMenu);
