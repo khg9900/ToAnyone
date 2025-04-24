@@ -1,4 +1,4 @@
-package com.example.toanyone.global.common.dto;
+package com.example.toanyone.global.auth.dto;
 
 import com.example.toanyone.domain.user.enums.UserRole;
 import lombok.Getter;
