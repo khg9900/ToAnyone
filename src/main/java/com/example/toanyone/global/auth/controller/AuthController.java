@@ -1,9 +1,7 @@
 package com.example.toanyone.global.auth.controller;
 
-import com.example.toanyone.domain.user.dto.UserResponseDto;
 import com.example.toanyone.global.auth.dto.AuthRequestDto;
 import com.example.toanyone.global.auth.dto.AuthResponseDto;
-import com.example.toanyone.global.auth.dto.AuthResponseDto.CreateToken;
 import com.example.toanyone.global.auth.service.AuthService;
 import com.example.toanyone.global.common.code.SuccessStatus;
 import com.example.toanyone.global.common.response.ApiResponse;
@@ -22,11 +20,12 @@ public class AuthController {
 
     @PostMapping("/auth/signup")
     public ResponseEntity<ApiResponse<AuthResponseDto.CreateToken>>  signup(@Valid @RequestBody AuthRequestDto.Signup signupRequest) {
-        return ApiResponse.onSuccess(SuccessStatus._OK, authService.signup(signupRequest));
+        return ApiResponse.onSuccess(SuccessStatus.CREATED, authService.signup(signupRequest));
     }
 
     @PostMapping("/auth/signin")
     public ResponseEntity<ApiResponse<AuthResponseDto.CreateToken>> signin(@Valid @RequestBody AuthRequestDto.Signin signin) {
-        return ApiResponse.onSuccess(SuccessStatus._OK, authService.signin(signin));
+        return ApiResponse.onSuccess(SuccessStatus.OK, authService.signin(signin));
     }
+
 }
