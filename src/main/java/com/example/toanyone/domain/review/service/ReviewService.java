@@ -3,7 +3,7 @@ package com.example.toanyone.domain.review.service;
 import com.example.toanyone.domain.review.dto.ReviewCheckResponseDto;
 import com.example.toanyone.domain.review.dto.ReviewCreateRequestDto;
 import com.example.toanyone.domain.review.dto.ReviewResponseDto;
-import com.example.toanyone.global.common.dto.AuthUser;
+import com.example.toanyone.global.auth.dto.AuthUser;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 

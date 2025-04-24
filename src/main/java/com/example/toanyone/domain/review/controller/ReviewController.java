@@ -6,8 +6,8 @@ import com.example.toanyone.domain.review.dto.ReviewCreateRequestDto;
 import com.example.toanyone.domain.review.dto.ReviewResponseDto;
 import com.example.toanyone.domain.review.entity.Review;
 import com.example.toanyone.domain.review.service.ReviewService;
-import com.example.toanyone.global.common.annotation.Auth;
-import com.example.toanyone.global.common.dto.AuthUser;
+import com.example.toanyone.global.auth.annotation.Auth;
+import com.example.toanyone.global.auth.dto.AuthUser;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -25,7 +25,7 @@ import java.util.List;
 public class ReviewController {
     private final ReviewService reviewService;
 
-    @PostMapping("/{storeId}/orders/{orderId}/reviews}")
+    @PostMapping("/{storeId}/orders/{orderId}/{reviews}")
     public ResponseEntity<ReviewResponseDto> review(@PathVariable Long storeId,
                                                     @PathVariable Long orderId,
                                                     @Auth AuthUser authUser,

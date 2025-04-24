@@ -13,7 +13,7 @@ import com.example.toanyone.domain.review.entity.Review;
 import com.example.toanyone.domain.review.repository.ReviewRepository;
 import com.example.toanyone.domain.user.entity.User;
 import com.example.toanyone.domain.user.repository.UserRepository;
-import com.example.toanyone.global.common.dto.AuthUser;
+import com.example.toanyone.global.auth.dto.AuthUser;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
