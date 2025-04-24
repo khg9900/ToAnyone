@@ -43,9 +43,8 @@ public class StoreController {
      */
     @GetMapping("/owner/stores")
     public ResponseEntity<ApiResponse<List<StoreResponseDto.GetAll>>> getStoresByOwner(@Auth AuthUser authUser) {
-        List<StoreResponseDto.GetAll> response = storeService.getStoresByOwner(authUser.getId());
 
-        return ApiResponse.onSuccess(SuccessStatus.OK, response);
+        return ApiResponse.onSuccess(SuccessStatus.OK,storeService.getStoresByOwner(authUser.getId()));
     }
 
     /**
@@ -55,9 +54,8 @@ public class StoreController {
      */
     @GetMapping("/stores")
     public ResponseEntity<ApiResponse<List<StoreResponseDto.GetAll>>> getStoresByKeyword(@RequestParam("keyword") String keyword) {
-        List<StoreResponseDto.GetAll> response = storeService.getStoresByName(keyword);
 
-        return ApiResponse.onSuccess(SuccessStatus.OK, response);
+        return ApiResponse.onSuccess(SuccessStatus.OK, storeService.getStoresByName(keyword));
     }
 
     /**
@@ -67,9 +65,8 @@ public class StoreController {
      */
     @GetMapping("/stores/{storeId}")
     public ResponseEntity<ApiResponse<StoreResponseDto.GetById>> getStoreById(@PathVariable Long storeId) {
-        StoreResponseDto.GetById dto = storeService.getStoreById(storeId);
 
-        return ApiResponse.onSuccess(SuccessStatus.OK, dto);
+        return ApiResponse.onSuccess(SuccessStatus.OK, storeService.getStoreById(storeId));
     }
 
 }
