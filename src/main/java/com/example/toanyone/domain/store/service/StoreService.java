@@ -10,4 +10,6 @@ public interface StoreService {
     StoreResponseDto.Complete createStore(Long ownerId, StoreRequestDto.Create dto);
 
     List<StoreResponseDto.GetAll> getStoresByOwner(Long id);
+
+    List<StoreResponseDto.GetAll> getStoresByName(String keyword);
 }

@@ -10,10 +10,7 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -43,6 +40,16 @@ public class StoreController {
     @GetMapping("/owner/stores")
     public ResponseEntity<List<StoreResponseDto.GetAll>> getStoresByOwner(@Auth AuthUser authUser) {
         return ResponseEntity.status(HttpStatus.OK).body(storeService.getStoresByOwner(authUser.getId()));
+    }
+
+    /**
+     * 가게명 키워드 검색 조회
+     * @param keyword 검색단어
+     * @return Store List
+     */
+    @GetMapping("/stores")
+    public ResponseEntity<List<StoreResponseDto.GetAll>> getStoresByKeyword(@RequestParam("keyword") String keyword) {
+        return ResponseEntity.status(HttpStatus.OK).body(storeService.getStoresByName(keyword));
     }
 
 }

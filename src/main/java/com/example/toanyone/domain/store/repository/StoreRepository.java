@@ -22,4 +22,6 @@ public interface StoreRepository extends JpaRepository<Store, Long> {
 
     List<Store> findByUserIdAndDeletedFalse(Long ownerId);
 
+    List<Store> findByNameContaining(String keyword);
+
 }

@@ -10,6 +10,7 @@ import com.example.toanyone.domain.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -57,9 +58,33 @@ public class StoreServiceImpl implements StoreService {
         }
 
         List<Store> stores = storeRepository.findByUserIdAndDeletedFalse(ownerId);
+        List<StoreResponseDto.GetAll> result = new ArrayList<>();
 
-        return stores.stream()
-                     .map(store -> new StoreResponseDto.GetAll(store.getId(), store.getName()))
-                     .collect(Collectors.toList());
+        for (Store store : stores) {
+            result.add(new StoreResponseDto.GetAll(store.getId(), store.getName()));
+        }
+
+        return result;
     }
+
+    /**
+     * 가게명 키워드 검색 조회
+     */
+    @Override
+    public List<StoreResponseDto.GetAll> getStoresByName(String keyword) {
+
+        List<Store> stores = storeRepository.findByNameContaining(keyword);
+
+        if(stores.isEmpty()) {
+            throw new RuntimeException("검색한 단어가 포함된 가게명이 존재하지 않습니다.");}
+
+        List<StoreResponseDto.GetAll> result = new ArrayList<>();
+        for (Store store : stores) {
+            result.add(new StoreResponseDto.GetAll(store.getId(), store.getName()));
+        }
+
+        return result;
+    }
+
+
 }
