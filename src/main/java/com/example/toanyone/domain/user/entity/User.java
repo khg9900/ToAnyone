@@ -9,11 +9,16 @@ import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.Table;
 import java.time.LocalDate;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 @Getter
 @Entity
+@NoArgsConstructor
+@Table(name = "users")
 public class User {
 
     @Id
@@ -25,10 +30,10 @@ public class User {
 
     private String password;
 
-    private String name;
+    private String username;
 
     @Enumerated(EnumType.STRING)
-    private UserRole role;
+    private UserRole userRole;
 
     @Column(unique = true)
     private String nickname;
@@ -45,4 +50,17 @@ public class User {
 
     private Integer age;
 
+    public User(String email, String password, String name, UserRole role, String nickname,
+        String phone, String address, Gender gender, LocalDate birth, int age) {
+        this.email = email;
+        this.password = password;
+        this.username = name;
+        this.userRole = role;
+        this.nickname = nickname;
+        this.phone = phone;
+        this.address = address;
+        this.gender = gender;
+        this.birth = birth;
+        this.age = age;
+    }
 }
