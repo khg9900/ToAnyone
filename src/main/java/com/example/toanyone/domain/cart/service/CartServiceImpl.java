@@ -29,7 +29,7 @@ public class CartServiceImpl implements CartService {
 
     @Override
     @Transactional
-    public CartResponseDto createCart(AuthUser authUser, Long storeId ,Long menuId, Integer quantity) {
+    public CartResponseDto createCart(AuthUser authUser, Long storeId , Long menuId, Integer quantity) {
 
         User user = userRepository.findById(authUser.getId()).get();
         Store store = storeRepository.findByIdOrElseThrow(storeId);
