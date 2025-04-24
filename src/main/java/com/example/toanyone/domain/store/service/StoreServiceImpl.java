@@ -7,15 +7,16 @@ import com.example.toanyone.domain.store.repository.StoreRepository;
 import com.example.toanyone.domain.user.entity.User;
 import com.example.toanyone.domain.user.enums.UserRole;
 import com.example.toanyone.domain.user.repository.UserRepository;
+import com.example.toanyone.global.auth.dto.AuthUser;
 import com.example.toanyone.global.common.code.ErrorStatus;
 import com.example.toanyone.global.common.error.ApiException;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -86,6 +87,24 @@ public class StoreServiceImpl implements StoreService {
         }
 
         return result;
+    }
+
+    // 가게 정보 업데이트
+    @Override
+    @Transactional
+    public StoreResponseDto.Complete updateStore(AuthUser authUser, Long storeId, StoreRequestDto.@Valid Update dto) {
+
+        Store store = storeRepository.findByIdOrElseThrow(storeId);
+
+        if(!authUser.getId().equals(store.getUser().getId())) {
+            throw new ApiException(ErrorStatus.STORE_FORBIDDEN);}
+
+        if(store.getDeleted()) {
+            throw new ApiException(ErrorStatus.STORE_SHUT_DOWN);}
+
+        store.update(dto);
+
+        return new StoreResponseDto.Complete("정보가 수정되었습니다.");
     }
 
 

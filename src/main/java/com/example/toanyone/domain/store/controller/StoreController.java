@@ -60,5 +60,15 @@ public class StoreController {
         return ApiResponse.onSuccess(SuccessStatus.OK, response);
     }
 
+    // 가게 정보 수정
+    @PatchMapping("/owner/stores/{storeId}")
+    public ResponseEntity<ApiResponse<StoreResponseDto.Complete>> updateStore(@Auth AuthUser authUser,
+                                                                              @PathVariable Long storeId,
+                                                                              @Valid @RequestBody StoreRequestDto.Update dto) {
+        StoreResponseDto.Complete responseDto = storeService.updateStore(authUser, storeId, dto);
+
+        return ApiResponse.onSuccess(SuccessStatus.OK, responseDto);
+    }
+
 }
 
