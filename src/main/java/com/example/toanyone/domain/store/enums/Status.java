@@ -1,5 +1,7 @@
 package com.example.toanyone.domain.store.enums;
 
+import com.example.toanyone.global.common.code.ErrorStatus;
+import com.example.toanyone.global.common.error.ApiException;
 import lombok.Getter;
 
 import java.util.Arrays;
@@ -12,6 +14,6 @@ public enum Status {
         return Arrays.stream(Status.values())
                 .filter(r -> r.name().equalsIgnoreCase(status))
                 .findFirst()
-                .orElseThrow(() -> new RuntimeException("유효하지 않은 상태입니다."));
+                .orElseThrow(() -> new ApiException(ErrorStatus.STORE_INVALID_STATUS));
     }
 }
