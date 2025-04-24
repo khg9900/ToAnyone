@@ -38,6 +38,12 @@ public class Order {
     @Enumerated(EnumType.STRING)
     private OrderStatus status;
 
+    /**
+     * @이윤승
+     * 리뷰와 오더 1:1 연관관계 매핑
+     * */
+    @OneToOne(mappedBy = "order", fetch = FetchType.LAZY)
+    private Review review;
 
     /**
      * @이윤승
