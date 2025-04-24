@@ -5,6 +5,7 @@ import com.example.toanyone.global.common.dto.ErrorReasonDto;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
+import org.springframework.web.client.HttpClientErrorException.Unauthorized;
 
 @Getter
 @RequiredArgsConstructor
@@ -15,6 +16,8 @@ public enum ErrorStatus implements BaseErrorCode {
 
     // 3000: user 에러 코드
     USER_NOT_FOUND(HttpStatus.NOT_FOUND, "3001","고객 정보가 없습니다."),
+    INVALID_PASSWORD(HttpStatus.UNAUTHORIZED, "3002", "비밀번호가 올바르지 않습니다"),
+    OWNER_HAS_ACTIVE_STORE(HttpStatus.CONFLICT, "3003", "운영 중인 가게가 존재하여 회원 탈퇴가 불가합니다."),
 
     // 4000: menu 에러코드
     MENU_ALREADY_EXISTS(HttpStatus.CONFLICT,"4001","이미 존재하는 메뉴입니다."),
@@ -31,8 +34,7 @@ public enum ErrorStatus implements BaseErrorCode {
     STORE_SHUT_DOWN(HttpStatus.BAD_REQUEST, "5006", "폐업된 가게입니다."),
     STORE_CLOSED(HttpStatus.BAD_REQUEST, "5007", "영업 종료된 가게입니다."),
     STORE_FORBIDDEN(HttpStatus.FORBIDDEN, "5008", "가게 접근 권한이 없습니다."),
-    STORE_INVALID_STATUS(HttpStatus.BAD_REQUEST, "4008", "OPEN, SOLD_OUT, TEMP_CLOSED, CLOSE 중 하나를 선택해주세요.");
-
+    STORE_INVALID_STATUS(HttpStatus.BAD_REQUEST, "5009", "OPEN, SOLD_OUT, TEMP_CLOSED, CLOSE 중 하나를 선택해주세요.");
 
 
 

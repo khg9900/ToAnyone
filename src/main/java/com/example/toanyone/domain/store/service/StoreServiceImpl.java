@@ -89,6 +89,20 @@ public class StoreServiceImpl implements StoreService {
         return result;
     }
 
+    /**
+     * 가게 단건 조회
+     */
+    @Override
+    public StoreResponseDto.GetById getStoreById(Long storeId) {
+        Store store = storeRepository.findByIdOrElseThrow(storeId);
+
+        if(store.getDeleted()) {
+            throw new ApiException(ErrorStatus.STORE_SHUT_DOWN);
+        }
+
+        return new StoreResponseDto.GetById(store);
+    }
+
     // 가게 정보 업데이트
     @Override
     @Transactional

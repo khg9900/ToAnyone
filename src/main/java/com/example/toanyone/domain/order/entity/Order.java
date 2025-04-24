@@ -53,7 +53,6 @@ public class Order {
         item.setOrder(this);
     }
 
-
     public void changeStatus(OrderStatus status) {
         this.status = status;
     }

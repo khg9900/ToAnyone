@@ -15,5 +15,7 @@ public interface StoreService {
 
     List<StoreResponseDto.GetAll> getStoresByName(String keyword);
 
+    StoreResponseDto.GetById getStoreById(Long storeId);
+
     StoreResponseDto.Complete updateStore(AuthUser authUser, Long storeId, StoreRequestDto.@Valid Update dto);
 }
