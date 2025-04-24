@@ -7,6 +7,8 @@ import com.example.toanyone.domain.menu.enums.SubCategory;
 import com.example.toanyone.domain.menu.repository.MenuRepository;
 import com.example.toanyone.domain.store.entity.Store;
 import com.example.toanyone.domain.store.repository.StoreRepository;
+import com.example.toanyone.global.common.code.ErrorStatus;
+import com.example.toanyone.global.common.error.ApiException;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -30,7 +32,7 @@ public class MenuServiceImpl implements MenuService {
         Store store = storeRepository.findByIdOrElseThrow(storeId);
 
         if (menuRepository.existsByStoreAndName(store, name)) {
-            throw new RuntimeException("이 가게에는 이미 같은 이름의 메뉴가 존재합니다");
+            throw new ApiException(ErrorStatus.MENU_ALREADY_EXISTS);
         }
 
         Menu createdMenu = new Menu(store, name, description, price ,mainCategory, subCategory);
@@ -59,7 +61,7 @@ public class MenuServiceImpl implements MenuService {
         storeRepository.findByIdOrElseThrow(storeId);
         Menu menu = menuRepository.findByIdOrElseThrow(menuId);
         if (menu.getDeleted()){
-            throw new RuntimeException("이미 삭제된 메뉴입니다"); //글로벌 익셉션 만든 후 수정
+            throw new ApiException(ErrorStatus.MENU_ALREADY_DELETED); //글로벌 익셉션 만든 후 수정
         }
         menu.softDelete();
         return new MenuDto.Response("메뉴 삭제되었습니다");
