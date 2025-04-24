@@ -7,10 +7,16 @@ import org.springframework.stereotype.Repository;
 import java.util.Optional;
 
 @Repository
-public interface StoreRepository extends JpaRepository<Store, Integer> {
-    Optional<Store> findById(Long storeId);
+public interface StoreRepository extends JpaRepository<Store, Long> {
+
+    int countByUserId(Long ownerId);
+
+    boolean existByName(String name);
+  
+      Optional<Store> findById(Long storeId);
 
     default Store findByIdOrElseThrow(Long storeId) {
         return findById(storeId).orElseThrow(()-> new RuntimeException()); //ErrorCode 적용 후 변경
     }
+
 }
