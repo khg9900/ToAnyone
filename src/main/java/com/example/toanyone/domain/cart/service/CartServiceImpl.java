@@ -11,7 +11,7 @@ import com.example.toanyone.domain.store.entity.Store;
 import com.example.toanyone.domain.store.repository.StoreRepository;
 import com.example.toanyone.domain.user.entity.User;
 import com.example.toanyone.domain.user.repository.UserRepository;
-import com.example.toanyone.global.common.dto.AuthUser;
+import com.example.toanyone.global.auth.dto.AuthUser;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -29,7 +29,7 @@ public class CartServiceImpl implements CartService {
 
     @Override
     @Transactional
-    public CartResponseDto createCart(AuthUser authUser, Long storeId ,Long menuId, Integer quantity) {
+    public CartResponseDto createCart(AuthUser authUser, Long storeId , Long menuId, Integer quantity) {
 
         User user = userRepository.findById(authUser.getId()).get();
         Store store = storeRepository.findByIdOrElseThrow(storeId);
