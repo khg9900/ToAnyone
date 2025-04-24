@@ -71,44 +71,68 @@ public class ReviewServiceImpl implements ReviewService {
      * */
     @Override
     public Page<ReviewCheckResponseDto> checkReview(Long storeId, AuthUser authUser, List<Integer> rating, int page, int size) {
-        Pageable pageable = PageRequest.of(page-1, size); // 페이지 사이즈 설정 
-        
-        //로그인한 유저인지 확인
-        userRepository.findById(authUser.getId()).orElseThrow(()-> new IllegalArgumentException("해당 유저가 존재하지 않습니다."));
-        
-        Page<Review> review; 
 
-        if(rating != null && rating.isEmpty()){
-            for(Integer r : rating) {
-                if (r < 1 || r > 5) {
-                    throw new IllegalArgumentException("별점은 1점에서 5점 사이만 조회 가능합니다.");
+        Pageable pageable = PageRequest.of(page - 1, size);
+        Page<Review> reviewPage;
+
+        // 별점이 null이거나 빈 리스트이면 전체 리뷰 조회
+        if (rating == null || rating.isEmpty()) {
+            reviewPage = reviewRepository.findAllByStoreId(storeId, pageable);
+
+            List<ReviewCheckResponseDto> response = new ArrayList<>();
+            for (Review review : reviewPage.getContent()) {
+                Reply reply = review.getReply();
+
+                ReplyDto replyDto;
+                if (reply != null) {
+                    replyDto = new ReplyDto(reply.getId(), reply.getContent(), reply.getUpdatedAt());
+                } else {
+                    replyDto = null;
                 }
+
+                response.add(new ReviewCheckResponseDto(
+                        review.getId(),
+                        review.getRating(),
+                        review.getContent(),
+                        review.getVisible(),
+                        review.getUpdatedAt(),
+                        replyDto
+                ));
             }
-            review = reviewRepository.findAllStoreIdAndRating(storeId,rating,pageable); // 별점 기준 리뷰 조회 
-        } else {
-            review = reviewRepository.findAllByStoreId(storeId, pageable); // 별점 상관 없이 리뷰 다 뜨는거
+            return new PageImpl<>(response, pageable, reviewPage.getTotalElements());
         }
 
-        /**
-         * response: 실제로 결과값을 저장할 dto
-         * review1: ReviewCheckResponseDto 에 담아줄 Reivew 객체
-         * review.getContent(): 페이징에서 리스트로
-         * responseDto: review1 을 담아서 실제로 결과값을 저장할 dto 에 add
-         * */
+        // 별점 유효성 검사
+        for (Integer r : rating) {
+            if (r == null || r < 1 || r > 5) {
+                throw new IllegalArgumentException("별점은 1점에서 5점 사이만 조회 가능합니다.");
+            }
+        }
+
+        // 별점 조건으로 리뷰 조회
+        reviewPage = reviewRepository.findReviewByRating(storeId, rating, pageable);
         List<ReviewCheckResponseDto> response = new ArrayList<>();
-        for(Review review1 : review.getContent()) {
-            Reply reply = review1.getReply();
-            ReviewCheckResponseDto responseDto = new ReviewCheckResponseDto(review1.getId(),
-                    review1.getRating(),
-                    review1.getContent(),
-                    review1.getVisible(),
-                    review1.getUpdatedAt(),
-                    new ReplyDto(reply.getId(), reply.getContent(), reply.getUpdatedAt()));
-            response.add(responseDto);
-    }
-        return new PageImpl<>(response, pageable, review.getTotalElements());
-        }
+        for (Review review : reviewPage.getContent()) {
+            Reply reply = review.getReply();
 
+            ReplyDto replyDto;
+            if (reply != null) {
+                replyDto = new ReplyDto(reply.getId(), reply.getContent(), reply.getUpdatedAt());
+            } else {
+                replyDto = null;
+            }
+
+            response.add(new ReviewCheckResponseDto(
+                    review.getId(),
+                    review.getRating(),
+                    review.getContent(),
+                    review.getVisible(),
+                    review.getUpdatedAt(),
+                    replyDto
+            ));
+        }
+        return new PageImpl<>(response, pageable, reviewPage.getTotalElements());
+    }
 
     /**
      * 리뷰 수정
@@ -130,7 +154,7 @@ public class ReviewServiceImpl implements ReviewService {
 
         review.update(requestDto.getRating(),requestDto.getContent(),requestDto.getVisible());
 
-        return new ReviewResponseDto("리뷰가 성공적으로 수정되었습니다..");
+        return new ReviewResponseDto("리뷰가 성공적으로 수정되었습니다.");
 
     }
 
