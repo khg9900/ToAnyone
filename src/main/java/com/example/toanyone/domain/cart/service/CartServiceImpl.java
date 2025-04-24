@@ -13,6 +13,8 @@ import com.example.toanyone.domain.store.repository.StoreRepository;
 import com.example.toanyone.domain.user.entity.User;
 import com.example.toanyone.domain.user.repository.UserRepository;
 import com.example.toanyone.global.auth.dto.AuthUser;
+import com.example.toanyone.global.common.code.ErrorStatus;
+import com.example.toanyone.global.common.error.ApiException;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -80,5 +82,18 @@ public class CartServiceImpl implements CartService {
         return new CartItemDto.Response(
                 store.getName(), cartItems, orderPrice, store.getDeliveryFee(),totalPrice
         );
+    }
+
+    @Override
+    @Transactional
+    public CartResponseDto clearCartItems(AuthUser authUser) {
+        User user = userRepository.findById(authUser.getId())
+                .orElseThrow(() -> new ApiException(ErrorStatus.USER_NOT_FOUND));
+
+        Cart cart = cartRepository.findByUser(user);
+
+        cartRepository.delete(cart);
+
+        return new CartResponseDto("장바구니가 비워졌습니다");
     }
 }

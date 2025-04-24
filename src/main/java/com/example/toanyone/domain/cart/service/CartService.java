@@ -13,4 +13,6 @@ public interface CartService {
     );
 
     CartItemDto.Response getCartItems(AuthUser authUser);
+
+    CartResponseDto clearCartItems(AuthUser authUser);
 }
