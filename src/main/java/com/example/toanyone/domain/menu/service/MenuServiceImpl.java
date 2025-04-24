@@ -24,7 +24,7 @@ public class MenuServiceImpl implements MenuService {
     @Override
     @Transactional
     public MenuDto.Response createMenu(
-            Integer storeId, String name, String description, Integer price,
+            Long storeId, String name, String description, Integer price,
             MainCategory mainCategory, SubCategory subCategory) {
 
         Store store = storeRepository.findByIdOrElseThrow(storeId);

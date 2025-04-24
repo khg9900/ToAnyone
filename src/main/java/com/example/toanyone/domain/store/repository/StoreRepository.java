@@ -8,9 +8,9 @@ import java.util.Optional;
 
 @Repository
 public interface StoreRepository extends JpaRepository<Store, Integer> {
-    Optional<Store> findById(Integer storeId);
+    Optional<Store> findById(Long storeId);
 
-    default Store findByIdOrElseThrow(Integer storeId) {
+    default Store findByIdOrElseThrow(Long storeId) {
         return findById(storeId).orElseThrow(()-> new RuntimeException()); //ErrorCode 적용 후 변경
     }
 }

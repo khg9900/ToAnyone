@@ -18,7 +18,7 @@ public class MenuController {
 
     @PostMapping("/{storeId}/menus")
     public ResponseEntity<MenuDto.Response> createMenu(
-            @PathVariable Integer storeId,
+            @PathVariable Long storeId,
             @Valid @RequestBody MenuDto.Request requestDto) {
 
         MenuDto.Response response = menuService.createMenu(
