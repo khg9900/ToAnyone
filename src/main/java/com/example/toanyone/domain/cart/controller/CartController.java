@@ -1,6 +1,7 @@
 package com.example.toanyone.domain.cart.controller;
 
 
+import com.example.toanyone.domain.cart.dto.CartItemDto;
 import com.example.toanyone.domain.cart.dto.CartRequestDto;
 import com.example.toanyone.domain.cart.dto.CartResponseDto;
 import com.example.toanyone.domain.cart.service.CartService;
@@ -13,10 +14,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 
 @Slf4j
@@ -36,7 +34,15 @@ public class CartController {
         );
 
         return ApiResponse.onSuccess(SuccessStatus.CREATED, cartResponseDto);
+    }
 
+    @GetMapping
+    public ResponseEntity<ApiResponse<CartItemDto.Response>> getCart(
+            @Auth AuthUser authUser){
+
+        CartItemDto.Response response = cartService.getCartItems(authUser);
+
+        return ApiResponse.onSuccess(SuccessStatus.OK, response);
     }
 
 }
