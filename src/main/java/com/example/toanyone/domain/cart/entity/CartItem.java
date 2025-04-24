@@ -28,4 +28,10 @@ public class CartItem {
     @Column(nullable = false)
     private Integer menu_price;
 
+    public CartItem(Cart cart, Menu menu, Integer quantity, Integer menu_price) {
+        this.cart = cart;
+        this.menu = menu;
+        this.quantity = quantity;
+        this.menu_price = menu_price;
+    }
 }
