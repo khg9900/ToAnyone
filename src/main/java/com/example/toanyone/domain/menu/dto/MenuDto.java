@@ -20,14 +20,14 @@ public class MenuDto {
         @NotBlank(message = "메뉴 설명 입력은 필수입니다")
         private String description;
 
-        @NotBlank(message = "메뉴 가격 입력은 필수입니다")
+        @NotNull(message = "메뉴 가격 입력은 필수입니다")
         private Integer price;
 
         @NotBlank(message = "메뉴 메인 카테고리 입력은 필수입니다")
-        private MainCategory mainCategory;
+        private String mainCategory;
 
         @NotBlank(message = "메뉴 세부 카테고리 입력은 필수입니다")
-        private SubCategory subCategory;
+        private String subCategory;
     }
 
 
@@ -35,9 +35,7 @@ public class MenuDto {
     @NoArgsConstructor
     @AllArgsConstructor
     public static class Response {
-        private String name;
-        private String description;
-        private Integer price;
+        private String message;
     }
 
     @Getter
