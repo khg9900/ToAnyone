@@ -57,7 +57,7 @@ public class StoreServiceImpl implements StoreService {
 
         int storeCount = storeRepository.countByUserIdAndDeletedFalse(ownerId);
         if(storeCount == 0) {
-            throw new RuntimeException("생성된 가게가 없습니다.");}
+            throw new ApiException(ErrorStatus.STORE_NOT_FOUND);}
 
         List<Store> stores = storeRepository.findByUserIdAndDeletedFalse(ownerId);
         List<StoreResponseDto.GetAll> result = new ArrayList<>();

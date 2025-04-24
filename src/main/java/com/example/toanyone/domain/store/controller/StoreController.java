@@ -42,8 +42,10 @@ public class StoreController {
      * @return Store List
      */
     @GetMapping("/owner/stores")
-    public ResponseEntity<List<StoreResponseDto.GetAll>> getStoresByOwner(@Auth AuthUser authUser) {
-        return ResponseEntity.status(HttpStatus.OK).body(storeService.getStoresByOwner(authUser.getId()));
+    public ResponseEntity<ApiResponse<List<StoreResponseDto.GetAll>>> getStoresByOwner(@Auth AuthUser authUser) {
+        List<StoreResponseDto.GetAll> response = storeService.getStoresByOwner(authUser.getId());
+
+        return ApiResponse.onSuccess(SuccessStatus.OK, response);
     }
 
     /**
