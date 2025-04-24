@@ -19,17 +19,13 @@ public class AuthController {
     private final AuthService authService;
 
     @PostMapping("/auth/signup")
-    public ResponseEntity<ApiResponse<AuthResponseDto.CreateToken>> signup(
-        @Valid @RequestBody AuthRequestDto.Signup signupRequest) {
+    public ResponseEntity<ApiResponse<AuthResponseDto.CreateToken>>  signup(@Valid @RequestBody AuthRequestDto.Signup signupRequest) {
         return ApiResponse.onSuccess(SuccessStatus.CREATED, authService.signup(signupRequest));
     }
 
     @PostMapping("/auth/signin")
-    public ResponseEntity<ApiResponse<AuthResponseDto.CreateToken>> signin(
-        @Valid @RequestBody AuthRequestDto.Signin signin) {
+    public ResponseEntity<ApiResponse<AuthResponseDto.CreateToken>> signin(@Valid @RequestBody AuthRequestDto.Signin signin) {
         return ApiResponse.onSuccess(SuccessStatus.OK, authService.signin(signin));
     }
 
 }
-
-
