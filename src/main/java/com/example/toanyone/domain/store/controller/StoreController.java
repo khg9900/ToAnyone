@@ -6,6 +6,8 @@ import com.example.toanyone.domain.store.dto.StoreResponseDto;
 import com.example.toanyone.domain.store.service.StoreService;
 import com.example.toanyone.global.auth.annotation.Auth;
 import com.example.toanyone.global.auth.dto.AuthUser;
+import com.example.toanyone.global.common.code.SuccessStatus;
+import com.example.toanyone.global.common.response.ApiResponse;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -27,9 +29,11 @@ public class StoreController {
      * @return 생성 완료 메세지
      */
     @PostMapping("/owner/stores")
-    public ResponseEntity<StoreResponseDto.Complete> createStore(@Auth AuthUser authUser,
-                                                                 @Valid @RequestBody StoreRequestDto.Create dto) {
-        return ResponseEntity.status(HttpStatus.CREATED).body(storeService.createStore(authUser.getId(), dto));
+    public ResponseEntity<ApiResponse<StoreResponseDto.Complete>> createStore(@Auth AuthUser authUser,
+                                                                             @Valid @RequestBody StoreRequestDto.Create dto) {
+        StoreResponseDto.Complete responseDto = storeService.createStore(authUser.getId(), dto);
+
+        return ApiResponse.onSuccess(SuccessStatus.CREATED, responseDto);
     }
 
 }
