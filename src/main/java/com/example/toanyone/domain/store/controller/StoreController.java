@@ -69,7 +69,13 @@ public class StoreController {
         return ApiResponse.onSuccess(SuccessStatus.OK, storeService.getStoreById(storeId));
     }
 
-    // 가게 정보 수정
+    /**
+     * 가게 정보 수정
+     * @param authUser 로그인 유저 정보
+     * @param storeId 수정할 가게 Id
+     * @param dto 수정 필드 내용
+     * @return
+     */
     @PatchMapping("/owner/stores/{storeId}")
     public ResponseEntity<ApiResponse<StoreResponseDto.Complete>> updateStore(@Auth AuthUser authUser,
                                                                               @PathVariable Long storeId,

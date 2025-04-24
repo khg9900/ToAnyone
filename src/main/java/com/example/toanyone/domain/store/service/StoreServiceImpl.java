@@ -103,7 +103,9 @@ public class StoreServiceImpl implements StoreService {
         return new StoreResponseDto.GetById(store);
     }
 
-    // 가게 정보 업데이트
+    /**
+     * 가게 정보 수정
+     */
     @Override
     @Transactional
     public StoreResponseDto.Complete updateStore(AuthUser authUser, Long storeId, StoreRequestDto.@Valid Update dto) {
