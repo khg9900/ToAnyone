@@ -1,5 +1,8 @@
 package com.example.toanyone.domain.review.dto;
 
+import com.example.toanyone.domain.order.entity.Order;
+import com.example.toanyone.domain.review.entity.Review;
+import com.example.toanyone.domain.user.entity.User;
 import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
