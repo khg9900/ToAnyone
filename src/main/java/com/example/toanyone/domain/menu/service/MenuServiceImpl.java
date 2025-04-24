@@ -28,10 +28,11 @@ public class MenuServiceImpl implements MenuService {
             MainCategory mainCategory, SubCategory subCategory) {
 
         Store store = storeRepository.findByIdOrElseThrow(storeId);
+        log.info("가게 찾음 : "  + store.getName());
 
         Menu createdMenu = new Menu(store, name, description, price ,mainCategory, subCategory);
         menuRepository.save(createdMenu);
-        log.info("Menu created: {}", createdMenu);
+        log.info("Menu created: {}", createdMenu.getName());
 
         return new MenuDto.Response("메뉴 생성되었습니다");
     }

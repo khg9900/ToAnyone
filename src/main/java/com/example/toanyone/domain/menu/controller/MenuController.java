@@ -1,6 +1,8 @@
 package com.example.toanyone.domain.menu.controller;
 
 import com.example.toanyone.domain.menu.dto.MenuDto;
+import com.example.toanyone.domain.menu.enums.MainCategory;
+import com.example.toanyone.domain.menu.enums.SubCategory;
 import com.example.toanyone.domain.menu.service.MenuService;
 import com.example.toanyone.domain.store.repository.StoreRepository;
 import jakarta.validation.Valid;
@@ -21,13 +23,17 @@ public class MenuController {
             @PathVariable Long storeId,
             @Valid @RequestBody MenuDto.Request requestDto) {
 
+        MainCategory mainCategory = MainCategory.of(requestDto.getMainCategory());
+        SubCategory subCategory = SubCategory.of(requestDto.getSubCategory());
+
+
         MenuDto.Response response = menuService.createMenu(
                 storeId,
                 requestDto.getName(),
                 requestDto.getDescription(),
                 requestDto.getPrice(),
-                requestDto.getMainCategory(),
-                requestDto.getSubCategory());
+                mainCategory,
+                subCategory);
 
         return ResponseEntity.status(HttpStatus.CREATED).body(response);
 
