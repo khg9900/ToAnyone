@@ -9,7 +9,7 @@ import java.util.Optional;
 @Repository
 public interface StoreRepository extends JpaRepository<Store, Long> {
 
-    int countByUserId(Long ownerId);
+    int countByUserIdAndDeletedFalse(Long ownerId);
 
     boolean existsByName(String name);
   
