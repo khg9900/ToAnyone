@@ -10,6 +10,9 @@ import com.example.toanyone.domain.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+import java.util.stream.Collectors;
+
 @Service
 @RequiredArgsConstructor
 public class StoreServiceImpl implements StoreService {
@@ -37,5 +40,15 @@ public class StoreServiceImpl implements StoreService {
         storeRepository.save(newStore);
 
         return new StoreResponseDto.Complete("가게가 생성되었습니다.");
+    }
+
+    @Override
+    public List<StoreResponseDto.GetAll> getStoresByOwner(Long ownerId) {
+
+        List<Store> stores = storeRepository.findByUserIdAndDeletedFalse(ownerId);
+
+        return stores.stream()
+                     .map(store -> new StoreResponseDto.GetAll(store.getId(), store.getName()))
+                     .collect(Collectors.toList());
     }
 }
