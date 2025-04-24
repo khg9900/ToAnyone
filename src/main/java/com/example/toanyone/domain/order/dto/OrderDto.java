@@ -117,9 +117,9 @@ public class OrderDto {
         private Long orderId;
         private String storeName;
         private String orderStatus;
-        private int orderPrice;
-        private int deliveryFee;
-        private int totalPrice;
+        private Integer orderPrice;
+        private Integer deliveryFee;
+        private Integer totalPrice;
         private LocalDateTime createdAt;
 
         public UserOrderHistoryResponse(Long orderId, String storeName, String orderStatus, int orderPrice, int deliveryFee, int totalPrice, LocalDateTime createdAt) {
