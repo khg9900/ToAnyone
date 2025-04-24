@@ -1,6 +1,8 @@
 package com.example.toanyone.domain.store.repository;
 
 import com.example.toanyone.domain.store.entity.Store;
+import com.example.toanyone.global.common.code.ErrorStatus;
+import com.example.toanyone.global.common.error.ApiException;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
@@ -17,7 +19,7 @@ public interface StoreRepository extends JpaRepository<Store, Long> {
     Optional<Store> findById(Long storeId);
 
     default Store findByIdOrElseThrow(Long storeId) {
-        return findById(storeId).orElseThrow(()-> new RuntimeException()); //ErrorCode 적용 후 변경
+        return findById(storeId).orElseThrow(()-> new ApiException(ErrorStatus.STORE_NOT_FOUND));
     }
 
     List<Store> findByUserIdAndDeletedFalse(Long ownerId);
