@@ -8,7 +8,7 @@ import org.springframework.stereotype.Service;
 @Service
 public interface MenuService {
 
-    MenuDto.Response createMenu(Integer storeId, String name, String description,
+    MenuDto.Response createMenu(Long storeId, String name, String description,
                                 Integer price, MainCategory mainCategory, SubCategory subCategory);
 
 }
