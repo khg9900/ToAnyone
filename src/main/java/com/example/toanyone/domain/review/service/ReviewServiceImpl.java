@@ -14,6 +14,8 @@ import com.example.toanyone.domain.review.repository.ReviewRepository;
 import com.example.toanyone.domain.user.entity.User;
 import com.example.toanyone.domain.user.repository.UserRepository;
 import com.example.toanyone.global.auth.dto.AuthUser;
+import com.example.toanyone.global.common.code.ErrorStatus;
+import com.example.toanyone.global.common.error.ApiException;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -44,13 +46,13 @@ public class ReviewServiceImpl implements ReviewService {
     public ReviewResponseDto createReview(Long storeId, Long orderId, AuthUser authUser, ReviewCreateRequestDto request){
 
         User user = userRepository.findById(authUser.getId())
-                .orElseThrow(()-> new IllegalArgumentException("not found user"));
+                .orElseThrow(()-> new ApiException(ErrorStatus.USER_NOT_FOUND));
 
         Order order = orderRepository.findReviewableOrder(orderId, user.getId())
-                .orElseThrow(() -> new IllegalArgumentException("리뷰 작성 조건을 만족하지 않는 주문입니다."));
+                .orElseThrow(() -> new ApiException(ErrorStatus.REVIEW_CREATE_FORBIDDEN));
 
         if (!storeId.equals(order.getStore().getId())) {
-            throw new IllegalArgumentException("해당 가게의 주문이 아닙니다.");
+            throw new ApiException(ErrorStatus.ORDER_STORE_MISMATCH);
         }
 
         Review review = new Review(
@@ -105,7 +107,7 @@ public class ReviewServiceImpl implements ReviewService {
         // 별점 유효성 검사
         for (Integer r : rating) {
             if (r == null || r < 1 || r > 5) {
-                throw new IllegalArgumentException("별점은 1점에서 5점 사이만 조회 가능합니다.");
+                throw new ApiException(ErrorStatus.REVIEW_INVALID_RATING);
             }
         }
 
@@ -142,14 +144,14 @@ public class ReviewServiceImpl implements ReviewService {
     public ReviewResponseDto updateReview(Long storeId, Long reviewId, AuthUser authUser, ReviewCreateRequestDto requestDto) {
 
         Review review = reviewRepository.findById(reviewId)
-                .orElseThrow(() -> new IllegalArgumentException("해당 리뷰가 존재하지 않습니다."));
+                .orElseThrow(() -> new ApiException(ErrorStatus.REVIEW_NOT_FOUND));
         // 리뷰가 작성자가 맞는지 검증
         if (!review.getUser().getId().equals(authUser.getId())) {
-            throw new IllegalArgumentException("리뷰 작성자가 아닙니다.");
+            throw new ApiException(ErrorStatus.REVIEW_ACCESS_DENIED);
         }
         // 가게 일치하는지 검증
         if (!review.getStore().getId().equals(storeId)) {
-            throw new IllegalArgumentException("해당 가게 리뷰가 아닙니다.");
+            throw new ApiException(ErrorStatus.REVIEW_STORE_MISMATCH);
         }
 
         review.update(requestDto.getRating(),requestDto.getContent(),requestDto.getVisible());
@@ -158,6 +160,30 @@ public class ReviewServiceImpl implements ReviewService {
 
     }
 
+    /**
+     * 리뷰 삭제
+     * */
+    @Override
+    @Transactional
+    public ReviewResponseDto deleteReview(Long storeId, Long reviewId, AuthUser authUser) {
+
+        Review review = reviewRepository.findById(reviewId)
+                .orElseThrow(() -> new ApiException(ErrorStatus.REVIEW_NOT_FOUND));
+        // 리뷰 작성자가 로그인한 유저인지 확인
+        if (!review.getUser().getId().equals(authUser.getId())){
+            throw new ApiException(ErrorStatus.REVIEW_ACCESS_DENIED);
+        }
+
+        // 가게 일치 확인
+        if (!review.getStore().getId().equals(storeId)){
+            throw new ApiException(ErrorStatus.REVIEW_STORE_MISMATCH);
+        }
+
+        review.softDelete();
+
+        return new ReviewResponseDto("리뷰가 성공적으로 삭제되었습니다.");
+
+    }
 
 
 //        hardDelete
