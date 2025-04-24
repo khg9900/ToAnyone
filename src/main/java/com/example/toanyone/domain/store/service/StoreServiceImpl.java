@@ -20,11 +20,9 @@ public class StoreServiceImpl implements StoreService {
 
         User user = userRepository.findById(ownerId).orElseThrow(
                 () -> new RuntimeException("존재하지 않는 유저입니다."));
-        // 로그인 후 토큰으로 관리하는 거니까 필요없는 예외일까요?
 
         if (user.getUserRole() != UserRole.OWNER) {
             throw new RuntimeException("가게 생성 권한이 없습니다.");}
-        // 이것도 사장님 인증이 필터에서 처리됐으니까 필요 없을까요??
 
         int storeCount = storeRepository.countByUserId(ownerId);
         if (storeCount >= 3) {
@@ -32,7 +30,6 @@ public class StoreServiceImpl implements StoreService {
 
         if (storeRepository.existByName(dto.getName())) {
             throw new RuntimeException("이미 존재하는 가게이름입니다.");}
-
 
         Store newStore = new Store(user, dto);
         storeRepository.save(newStore);

@@ -2,6 +2,7 @@ package com.example.toanyone.global.auth.dto;
 
 import com.example.toanyone.domain.user.enums.Gender;
 import com.example.toanyone.domain.user.enums.UserRole;
+import com.fasterxml.jackson.annotation.JsonFormat;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Pattern;
@@ -10,7 +11,7 @@ import java.time.LocalDate;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 
-public class AuthRequestDto {
+public class  AuthRequestDto {
 
     @Getter
     @AllArgsConstructor
@@ -43,11 +44,8 @@ public class AuthRequestDto {
         @NotBlank
         private String gender;
         @NotBlank
-        @Pattern(
-            regexp = "^\\d{4}-\\d{2}-\\d{2}$",
-            message = "생년월일은 yyyy-MM-dd 형식으로 입력해주세요. (예: 2000-04-19)"
-        )
-        private LocalDate birth;
+        @Pattern(regexp = "^\\d{4}-\\d{2}-\\d{2}$", message = "날짜 형식은 yyyy-MM-dd 여야 합니다.")
+        private String birth;
 
     }
 
