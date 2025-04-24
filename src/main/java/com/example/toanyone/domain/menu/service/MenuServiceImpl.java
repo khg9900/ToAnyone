@@ -28,7 +28,8 @@ public class MenuServiceImpl implements MenuService {
             MainCategory mainCategory, SubCategory subCategory) {
 
         Store store = storeRepository.findByIdOrElseThrow(storeId);
-
+        Menu createdMenu = new Menu(store, name, description, price ,mainCategory, subCategory);
+        menuRepository.save(createdMenu);
         Menu createdMenu = new Menu(store, name, description, price ,mainCategory, subCategory);
         menuRepository.save(createdMenu);
         log.info("Menu created: {}", createdMenu);
