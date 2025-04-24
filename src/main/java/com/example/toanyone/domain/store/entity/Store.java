@@ -1,5 +1,6 @@
 package com.example.toanyone.domain.store.entity;
 
+import com.example.toanyone.domain.menu.entity.Menu;
 import com.example.toanyone.domain.store.dto.StoreRequestDto;
 import com.example.toanyone.domain.user.entity.User;
 import com.example.toanyone.domain.store.enums.Status;
@@ -10,6 +11,8 @@ import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
 import java.time.LocalTime;
+import java.util.ArrayList;
+import java.util.List;
 
 @Getter
 @Entity
@@ -50,6 +53,9 @@ public class Store extends BaseEntity {
 
     @Column(nullable = false)
     private String phone;
+
+    @OneToMany(mappedBy = "store")
+    private List<Menu> menus = new ArrayList<>();
 
     public Store(User user, StoreRequestDto.Create dto) {
         this.user = user;
