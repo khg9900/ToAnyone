@@ -35,7 +35,27 @@ public class MenuController {
                 subCategory);
 
         return ResponseEntity.status(HttpStatus.CREATED).body(response);
+    }
 
+    @PatchMapping("/{storeId}/menus/{menuId}")
+    public ResponseEntity<MenuDto.Response> updateMenu(
+            @PathVariable Long storeId,
+            @PathVariable Long menuId,
+            @RequestBody MenuDto.Request requestDto) {
+        MainCategory mainCategory = MainCategory.of(requestDto.getMainCategory());
+        SubCategory subCategory = SubCategory.of(requestDto.getSubCategory());
+
+        MenuDto.Response response = menuService.updateMenu(
+                storeId,
+                menuId,
+                requestDto.getName(),
+                requestDto.getDescription(),
+                requestDto.getPrice(),
+                mainCategory,
+                subCategory
+        );
+
+        return ResponseEntity.status(HttpStatus.OK).body(response);
     }
 
 }
