@@ -1,6 +1,8 @@
 package com.example.toanyone.domain.order.service;
 
 import com.example.toanyone.domain.cart.entity.Cart;
+import com.example.toanyone.domain.cart.entity.CartItem;
+import com.example.toanyone.domain.cart.repository.CartRepository;
 import com.example.toanyone.domain.cart.service.CartService;
 import com.example.toanyone.domain.order.dto.OrderDto;
 import com.example.toanyone.domain.order.entity.Order;
@@ -9,7 +11,10 @@ import com.example.toanyone.domain.order.enums.OrderStatus;
 import com.example.toanyone.domain.order.repository.OrderItemRepository;
 import com.example.toanyone.domain.order.repository.OrderRepository;
 import com.example.toanyone.domain.store.entity.Store;
+import com.example.toanyone.domain.store.repository.StoreRepository;
 import com.example.toanyone.domain.user.entity.User;
+import com.example.toanyone.global.common.code.ErrorStatus;
+import com.example.toanyone.global.common.error.ApiException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -30,6 +35,8 @@ public class OrderServiceImpl implements OrderService {
     private final OrderRepository orderRepository;
     private final OrderItemRepository orderItemRepository;
     private final CartService cartService;
+    private final CartRepository cartRepository;
+    private final StoreRepository storeRepository;
 
 
      주문 생성 메서드
@@ -46,21 +53,23 @@ public class OrderServiceImpl implements OrderService {
     @Override
     public OrderDto.CreateResponse createOrder(User user, Long cartId) {
         // 1. 장바구니 조회
-        Cart cart = cartService.getCartById(cartId);
+        Cart cart = cartRepository.findByUserOrElseThrow(user);
         if (cart == null) {
             throw new IllegalArgumentException("장바구니를 찾을 수 없습니다.");
         }
 
         // 2. 장바구니와 연결된 가게 정보 가져오기
-        Store store = cart.getStore();
+        Long storeId = cart.getStore().getId();
+        Store store = storeRepository.findById(storeId).get();
+//                .orElseThrow(()->new ApiException(ErrorStatus.)); //store 없을때 에러 추가 필요
 
         // 3. 가게가 영업 중인지 확인 (CLOSED, TEMP_CLOSED이면 주문 불가)
         if (!store.isOpen()) {
             throw new IllegalStateException("[" + store.getName() + "] 가게는 현재 영업 중이 아닙니다.");
         }
 
-        // 4. 메뉴 총 금액 계산 (배달비는 제외)
-        int orderPrice = cart.calculateTotalPrice();
+        // 4. 메비뉴 총 금액 계산 (배달는 제외)
+        int orderPrice = cart.getTotalPrice();
 
         // 5. 최소 주문 금액을 충족하는지 확인
         if (orderPrice < store.getMinOrderPrice()) {
@@ -72,7 +81,7 @@ public class OrderServiceImpl implements OrderService {
                 .store(store) // 어떤 가게의 주문인지
                 .user(user) // 누가 주문했는지
                 .status(OrderStatus.WAITING) // 접수 대기 상태
-                .totalPrice(orderPrice + store.getDefaultDeliveryFee()) // 총 금액 = 메뉴 + 배달비
+                .totalPrice(orderPrice + store.getDeliveryFee()) // 총 금액 = 메뉴 + 배달비
                 .defaultDeliveryFee(store.getDefaultDeliveryFee()) // 배달비 저장
                 .build();
 
@@ -85,7 +94,7 @@ public class OrderServiceImpl implements OrderService {
         }
 
         // 8. 장바구니 비우기 (주문 완료 시 초기화)
-        cartService.clearCart(cart);
+        cartService.clearCartItems(user);
 
         // 9. 생성된 주문 정보를 응답 DTO로 변환해서 반환
         return new OrderDto.CreateResponse(

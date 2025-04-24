@@ -46,7 +46,7 @@ public class CartServiceImpl implements CartService {
             cartRepository.save(cart);
         }
 
-        Cart cart = cartRepository.findByUser(user);
+        Cart cart = cartRepository.findByUserOrElseThrow(user);
 
         cart.setTotalPrice(menu.getPrice(), quantity);
 
@@ -61,7 +61,7 @@ public class CartServiceImpl implements CartService {
     public CartItemDto.Response getCartItems(AuthUser authUser) {
 
         User user = userRepository.findById(authUser.getId()).get();
-        Cart cart = cartRepository.findByUser(user);
+        Cart cart = cartRepository.findByUserOrElseThrow(user);
 
         Long storeId = cart.getStore().getId();
         Store store = storeRepository.findByIdOrElseThrow(storeId);
@@ -86,11 +86,10 @@ public class CartServiceImpl implements CartService {
 
     @Override
     @Transactional
-    public CartResponseDto clearCartItems(AuthUser authUser) {
-        User user = userRepository.findById(authUser.getId())
-                .orElseThrow(() -> new ApiException(ErrorStatus.USER_NOT_FOUND));
+    public CartResponseDto clearCartItems(User user) {
 
-        Cart cart = cartRepository.findByUser(user);
+
+        Cart cart = cartRepository.findByUserOrElseThrow(user);
 
         cartRepository.delete(cart);
 
