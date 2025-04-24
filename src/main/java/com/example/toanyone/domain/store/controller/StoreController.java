@@ -29,9 +29,11 @@ public class StoreController {
      * @return 생성 완료 메세지
      */
     @PostMapping("/owner/stores")
-    public ResponseEntity<StoreResponseDto.Complete> createStore(@Auth AuthUser authUser,
-                                                                 @Valid @RequestBody StoreRequestDto.Create dto) {
-        return ResponseEntity.status(HttpStatus.CREATED).body(storeService.createStore(authUser.getId(), dto));
+    public ResponseEntity<ApiResponse<StoreResponseDto.Complete>> createStore(@Auth AuthUser authUser,
+                                                                             @Valid @RequestBody StoreRequestDto.Create dto) {
+        StoreResponseDto.Complete responseDto = storeService.createStore(authUser.getId(), dto);
+
+        return ApiResponse.onSuccess(SuccessStatus.CREATED, responseDto);
     }
 
     /**
@@ -40,8 +42,10 @@ public class StoreController {
      * @return Store List
      */
     @GetMapping("/owner/stores")
-    public ResponseEntity<List<StoreResponseDto.GetAll>> getStoresByOwner(@Auth AuthUser authUser) {
-        return ResponseEntity.status(HttpStatus.OK).body(storeService.getStoresByOwner(authUser.getId()));
+    public ResponseEntity<ApiResponse<List<StoreResponseDto.GetAll>>> getStoresByOwner(@Auth AuthUser authUser) {
+        List<StoreResponseDto.GetAll> response = storeService.getStoresByOwner(authUser.getId());
+
+        return ApiResponse.onSuccess(SuccessStatus.OK, response);
     }
 
     /**
@@ -50,8 +54,10 @@ public class StoreController {
      * @return Store List
      */
     @GetMapping("/stores")
-    public ResponseEntity<List<StoreResponseDto.GetAll>> getStoresByKeyword(@RequestParam("keyword") String keyword) {
-        return ResponseEntity.status(HttpStatus.OK).body(storeService.getStoresByName(keyword));
+    public ResponseEntity<ApiResponse<List<StoreResponseDto.GetAll>>> getStoresByKeyword(@RequestParam("keyword") String keyword) {
+        List<StoreResponseDto.GetAll> response = storeService.getStoresByName(keyword);
+
+        return ApiResponse.onSuccess(SuccessStatus.OK, response);
     }
 
     /**
