@@ -79,7 +79,4 @@ public class Store extends BaseEntity {
         if (dto.getStatus() != null) this.status = dto.getStatus();
     }
 
-
-
-
 }
