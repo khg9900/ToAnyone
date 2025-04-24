@@ -1,14 +1,16 @@
 package com.example.toanyone.domain.user.dto;
 
+import com.example.toanyone.domain.user.entity.User;
 import com.example.toanyone.domain.user.enums.Gender;
 import com.example.toanyone.domain.user.enums.UserRole;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 public class UserResponseDto {
 
     @Getter
-    @AllArgsConstructor
+    @NoArgsConstructor
     public static class Get {
 
         private UserRole role;
@@ -20,6 +22,16 @@ public class UserResponseDto {
         private Gender gender;
         private Integer age;
 
+        public Get(User user) {
+            this.role = user.getUserRole();
+            this.name = user.getUsername();
+            this.nickname = user.getNickname();
+            this.email = user.getEmail();
+            this.phone = user.getPhone();
+            this.address = user.getAddress();
+            this.gender = user.getGender();
+            this.age = user.getAge();
+        }
     }
 
     @Getter
