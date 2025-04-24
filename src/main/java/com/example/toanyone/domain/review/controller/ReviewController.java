@@ -25,12 +25,13 @@ import java.util.List;
 public class ReviewController {
     private final ReviewService reviewService;
 
-    @PostMapping("/{storeId}/reviews")
+    @PostMapping("/{storeId}/orders/{orderId}/reviews}")
     public ResponseEntity<ReviewResponseDto> review(@PathVariable Long storeId,
+                                                    @PathVariable Long orderId,
                                                     @Auth AuthUser authUser,
                                                     @Valid @RequestBody ReviewCreateRequestDto requestDto) {
 
-        ReviewResponseDto response = reviewService.createReview(storeId, authUser, requestDto);
+        ReviewResponseDto response = reviewService.createReview(storeId, orderId, authUser, requestDto);
         return ResponseEntity.status(HttpStatus.OK).body(response);
     }
 

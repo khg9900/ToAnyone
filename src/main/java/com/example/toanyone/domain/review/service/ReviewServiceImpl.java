@@ -26,6 +26,7 @@ import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -35,14 +36,19 @@ public class ReviewServiceImpl implements ReviewService {
     private final OrderRepository orderRepository;
     private final UserRepository userRepository;
 
+    /**
+     * 리뷰 생성
+     * */
     @Override
     @Transactional
-    public ReviewResponseDto createReview(Long storeId, AuthUser authUser, ReviewCreateRequestDto request){
+    public ReviewResponseDto createReview(Long storeId, Long orderId, AuthUser authUser, ReviewCreateRequestDto request){
 
-        User user = userRepository.findById(authUser.getId()).orElseThrow(()-> new IllegalArgumentException("not found user"));
+        User user = userRepository.findById(authUser.getId())
+                .orElseThrow(()-> new IllegalArgumentException("not found user"));
 
-        Order order = orderRepository.findByStoreIdAndUserIdAndStatusAndReviewIsNull(storeId, user.getId(), OrderStatus.DELIVERED)
-                .orElseThrow(() -> new IllegalArgumentException("배달 완료된 주문만 리뷰를 작성할 수 있습니다."));
+        Order order = orderRepository.findValidOrderReview(orderId, storeId, user.getId(), OrderStatus.DELIVERED)
+                .orElseThrow(() -> new IllegalArgumentException("리뷰 작성 조건을 만족하지 않는 주문입니다."));
+
 
         Review review = new Review(
                 order,
@@ -80,18 +86,18 @@ public class ReviewServiceImpl implements ReviewService {
 
         /**
          * response: 실제로 결과값을 저장할 dto
-         * a18: ReviewCheckResponseDto 에 담아줄 Reivew 객체
+         * review1: ReviewCheckResponseDto 에 담아줄 Reivew 객체
          * review.getContent(): 페이징에서 리스트로
-         * responseDto: a18 을 담아서 실제로 결과값을 저장할 dto 에 add
+         * responseDto: review1 을 담아서 실제로 결과값을 저장할 dto 에 add
          * */
         List<ReviewCheckResponseDto> response = new ArrayList<>();
-        for(Review a18 : review.getContent()) {
-            Reply reply = a18.getReply();
-            ReviewCheckResponseDto responseDto = new ReviewCheckResponseDto(a18.getId(),
-                    a18.getRating(),
-                    a18.getContent(),
-                    a18.getVisible(),
-                    a18.getUpdatedAt(),
+        for(Review review1 : review.getContent()) {
+            Reply reply = review1.getReply();
+            ReviewCheckResponseDto responseDto = new ReviewCheckResponseDto(review1.getId(),
+                    review1.getRating(),
+                    review1.getContent(),
+                    review1.getVisible(),
+                    review1.getUpdatedAt(),
                     new ReplyDto(reply.getId(), reply.getContent(), reply.getUpdatedAt()));
             response.add(responseDto);
     }
