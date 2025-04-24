@@ -51,12 +51,14 @@ public class CartController {
 
 
     @DeleteMapping
-    public ResponseEntity<ApiResponse<CartResponseDto>> emptyCart(@Auth AuthUser authUser){
+    public ResponseEntity<ApiResponse<CartResponseDto>> clearCart(@Auth AuthUser authUser){
         User user = userRepository.findById(authUser.getId())
                 .orElseThrow(() -> new ApiException(ErrorStatus.USER_NOT_FOUND));
         CartResponseDto response = cartService.clearCartItems(user);
 
         return ApiResponse.onSuccess(SuccessStatus.OK, response);
     }
+
+    public ResponseEntity<ApiResponse<CartResponseDto>> updateCart()
 
 }
