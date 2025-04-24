@@ -9,12 +9,12 @@ import java.util.Optional;
 @Repository
 public interface StoreRepository extends JpaRepository<Store, Long> {
 
-    Optional<Store> findById(Long storeId);
-
-    int countByUserId(Long ownerId);
+    int countByUserIdAndDeletedFalse(Long ownerId);
 
     boolean existsByName(String name);
   
+      Optional<Store> findById(Long storeId);
+
     default Store findByIdOrElseThrow(Long storeId) {
         return findById(storeId).orElseThrow(()-> new RuntimeException()); //ErrorCode 적용 후 변경
     }

@@ -7,13 +7,15 @@ import com.example.toanyone.domain.store.repository.StoreRepository;
 import com.example.toanyone.domain.user.entity.User;
 import com.example.toanyone.domain.user.enums.UserRole;
 import com.example.toanyone.domain.user.repository.UserRepository;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 @Service
+@RequiredArgsConstructor
 public class StoreServiceImpl implements StoreService {
 
-    public StoreRepository storeRepository;
-    public UserRepository userRepository;
+    public final StoreRepository storeRepository;
+    public final UserRepository userRepository;
 
     @Override
     public StoreResponseDto.Complete createStore(Long ownerId, StoreRequestDto.Create dto) {
@@ -24,7 +26,7 @@ public class StoreServiceImpl implements StoreService {
         if (user.getUserRole() != UserRole.OWNER) {
             throw new RuntimeException("가게 생성 권한이 없습니다.");}
 
-        int storeCount = storeRepository.countByUserId(ownerId);
+        int storeCount = storeRepository.countByUserIdAndDeletedFalse(ownerId);
         if (storeCount >= 3) {
             throw new RuntimeException("가게는 최대 3개까지 등록 가능합니다.");}
 
