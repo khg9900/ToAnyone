@@ -61,7 +61,7 @@ public class MenuServiceImpl implements MenuService {
         storeRepository.findByIdOrElseThrow(storeId);
         Menu menu = menuRepository.findByIdOrElseThrow(menuId);
         if (menu.getDeleted()){
-            throw new ApiException(ErrorStatus.MENU_ALREADY_DELETED); //글로벌 익셉션 만든 후 수정
+            throw new ApiException(ErrorStatus.MENU_ALREADY_DELETED);
         }
         menu.softDelete();
         return new MenuDto.Response("메뉴 삭제되었습니다");

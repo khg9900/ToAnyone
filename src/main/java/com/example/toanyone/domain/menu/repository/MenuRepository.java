@@ -16,7 +16,7 @@ public interface MenuRepository extends JpaRepository<Menu, Long> {
     Optional<Menu> findById(Long id);
     default Menu findByIdOrElseThrow(Long id) {
         return findById(id).orElseThrow(
-                ()-> new ApiException(ErrorStatus.MENU_ALREADY_DELETED));
+                ()-> new ApiException(ErrorStatus.MENU_NOT_FOUND));
     }
 
     boolean existsByStoreAndName(Store store, String name);
