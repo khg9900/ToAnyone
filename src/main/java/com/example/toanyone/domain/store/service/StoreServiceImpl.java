@@ -73,7 +73,7 @@ public class StoreServiceImpl implements StoreService {
     @Override
     public List<StoreResponseDto.GetAll> getStoresByName(String keyword) {
 
-        List<Store> stores = storeRepository.findByNameContaining(keyword);
+        List<Store> stores = storeRepository.findByNameContainingAndDeletedFalse(keyword);
 
         if(stores.isEmpty()) {
             throw new RuntimeException("검색한 단어가 포함된 가게명이 존재하지 않습니다.");}
