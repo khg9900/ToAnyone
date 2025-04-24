@@ -22,7 +22,7 @@ public class Menu extends BaseEntity {
     @JoinColumn(name = "store_id", nullable = false)
     private Store store;
 
-    @Column(nullable = false, length = 10)
+    @Column(nullable = false,unique = true, length = 10)
     private String name;
 
     @Column(nullable = false)
