@@ -1,15 +1,18 @@
 package com.example.toanyone.domain.store.entity;
 
+import com.example.toanyone.domain.store.dto.StoreRequestDto;
 import com.example.toanyone.domain.user.entity.User;
 import com.example.toanyone.domain.store.enums.Status;
 import com.example.toanyone.global.common.entity.BaseEntity;
 import jakarta.persistence.*;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
 
 @Getter
 @Entity
+@NoArgsConstructor
 @Table(name= "stores")
 public class Store extends BaseEntity {
 
@@ -35,13 +38,31 @@ public class Store extends BaseEntity {
     @Column(nullable = false)
     private Integer deliveryFee;
 
+    private Integer minOrderPrice;
+
     @Column(columnDefinition = "TEXT")
     private String notice;
+
+    @Enumerated(EnumType.STRING)
+    private Status status;
 
     @Column(nullable = false)
     private String phone;
 
-    @Enumerated(EnumType.STRING)
-    private Status status;
+    public Store(User user, StoreRequestDto.Create dto) {
+        this.user = user;
+        this.name = dto.getName();
+        this.address = dto.getAddress();
+        this.openTime = dto.getOpenTime();
+        this.closeTime = dto.getCloseTime();
+        this.deliveryFee = dto.getDeliveryFee();
+        this.minOrderPrice = dto.getMinOrderPrice();
+        this.notice = dto.getNotice();
+        this.status = dto.getStatus();
+        this.phone = dto.getPhone();
+
+    }
+
+
 
 }
