@@ -7,6 +7,10 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
+/*
+  주문 엔티티에 대한 기본 CRUD 기능을 제공하는 JPA 리포지토리
+  - 주문 저장, 조회 등에 사용됨
+*/
 import java.util.Optional;
 
 @Repository

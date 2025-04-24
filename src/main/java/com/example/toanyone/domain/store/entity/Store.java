@@ -9,6 +9,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
+import java.time.LocalTime;
 
 @Getter
 @Entity
@@ -30,14 +31,15 @@ public class Store extends BaseEntity {
     private String address;
 
     @Column(nullable = false)
-    private LocalDateTime openTime;
+    private LocalTime openTime;
 
     @Column(nullable = false)
-    private LocalDateTime closeTime;
+    private LocalTime closeTime;
 
     @Column(nullable = false)
     private Integer deliveryFee;
 
+    @Column(nullable = false)
     private Integer minOrderPrice;
 
     @Column(columnDefinition = "TEXT")
