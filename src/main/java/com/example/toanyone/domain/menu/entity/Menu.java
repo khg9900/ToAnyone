@@ -11,7 +11,7 @@ import lombok.NoArgsConstructor;
 @Getter
 @Entity
 @NoArgsConstructor
-@Table(name = "menus")
+@Table(name = "menu")
 public class Menu extends BaseEntity {
 
     @Id
@@ -22,7 +22,7 @@ public class Menu extends BaseEntity {
     @JoinColumn(name = "store_id", nullable = false)
     private Store store;
 
-    @Column(nullable = false, length = 10)
+    @Column(nullable = false,unique = true, length = 10)
     private String name;
 
     @Column(nullable = false)
@@ -39,6 +39,15 @@ public class Menu extends BaseEntity {
 
     public Menu(Store store, String name, String description, Integer price ,MainCategory mainCategory, SubCategory subCategory) {
         this.store = store;
+        this.name = name;
+        this.description = description;
+        this.price = price;
+        this.mainCategory = mainCategory;
+        this.subCategory = subCategory;
+    }
+
+    public void setMenu(String name, String description, Integer price,
+                           MainCategory mainCategory, SubCategory subCategory) {
         this.name = name;
         this.description = description;
         this.price = price;
