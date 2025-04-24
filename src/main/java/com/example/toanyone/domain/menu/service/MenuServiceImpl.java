@@ -33,6 +33,6 @@ public class MenuServiceImpl implements MenuService {
         menuRepository.save(createdMenu);
         log.info("Menu created: {}", createdMenu);
 
-        return new MenuDto.Response(createdMenu.getName(), createdMenu.getDescription(), createdMenu.getPrice());
+        return new MenuDto.Response("메뉴 생성되었습니다");
     }
 }

@@ -17,11 +17,11 @@ public class MenuController {
     private final StoreRepository storeRepository;
 
     @PostMapping("/{storeId}/menus")
-    public ResponseEntity<String> createMenu(
+    public ResponseEntity<MenuDto.Response> createMenu(
             @PathVariable Integer storeId,
             @Valid @RequestBody MenuDto.Request requestDto) {
 
-        menuService.createMenu(
+        MenuDto.Response response = menuService.createMenu(
                 storeId,
                 requestDto.getName(),
                 requestDto.getDescription(),
@@ -29,7 +29,7 @@ public class MenuController {
                 requestDto.getMainCategory(),
                 requestDto.getSubCategory());
 
-        return ResponseEntity.status(HttpStatus.CREATED).body("메뉴가 추가되었습니다");
+        return ResponseEntity.status(HttpStatus.CREATED).body(response);
 
     }
 

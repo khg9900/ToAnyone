@@ -35,9 +35,7 @@ public class MenuDto {
     @NoArgsConstructor
     @AllArgsConstructor
     public static class Response {
-        private String name;
-        private String description;
-        private Integer price;
+        private String message;
     }
 
     @Getter
