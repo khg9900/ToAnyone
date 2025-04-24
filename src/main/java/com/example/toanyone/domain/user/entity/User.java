@@ -1,7 +1,9 @@
 package com.example.toanyone.domain.user.entity;
 
+import com.example.toanyone.domain.user.dto.UserRequestDto;
 import com.example.toanyone.domain.user.enums.Gender;
 import com.example.toanyone.domain.user.enums.UserRole;
+import com.example.toanyone.global.common.entity.BaseEntity;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
@@ -18,7 +20,7 @@ import lombok.NoArgsConstructor;
 @Entity
 @Table(name="users")
 @NoArgsConstructor
-public class User {
+public class User extends BaseEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -61,6 +63,18 @@ public class User {
         this.gender = gender;
         this.birth = birth;
         this.age = age;
+    }
+
+    public void updateInfo(UserRequestDto.Update updateInfo) {
+
+        if (updateInfo.getNickname() != null) {
+            this.nickname = updateInfo.getNickname();
+        }
+
+        if (updateInfo.getAddress() != null) {
+            this.address = updateInfo.getAddress();
+        }
+
     }
 
 }
