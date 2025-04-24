@@ -78,7 +78,7 @@ public class StoreServiceImpl implements StoreService {
         List<Store> stores = storeRepository.findByNameContainingAndDeletedFalse(keyword);
 
         if(stores.isEmpty()) {
-            throw new RuntimeException("검색한 단어가 포함된 가게명이 존재하지 않습니다.");}
+            throw new ApiException(ErrorStatus.STORE_SEARCH_NO_MATCH);}
 
         List<StoreResponseDto.GetAll> result = new ArrayList<>();
         for (Store store : stores) {

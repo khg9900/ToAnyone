@@ -54,8 +54,10 @@ public class StoreController {
      * @return Store List
      */
     @GetMapping("/stores")
-    public ResponseEntity<List<StoreResponseDto.GetAll>> getStoresByKeyword(@RequestParam("keyword") String keyword) {
-        return ResponseEntity.status(HttpStatus.OK).body(storeService.getStoresByName(keyword));
+    public ResponseEntity<ApiResponse<List<StoreResponseDto.GetAll>>> getStoresByKeyword(@RequestParam("keyword") String keyword) {
+        List<StoreResponseDto.GetAll> response = storeService.getStoresByName(keyword);
+
+        return ApiResponse.onSuccess(SuccessStatus.OK, response);
     }
 
 }
