@@ -63,12 +63,14 @@ public class ReviewServiceImpl implements ReviewService {
         return new ReviewResponseDto("리뷰가 작성되었습니다.");
     }
 
-    // 리뷰 조회
+    /**
+     * 리뷰 조회
+     * */
     @Override
     public Page<ReviewCheckResponseDto> checkReview(Long storeId, AuthUser authUser, List<Integer> rating, int page, int size) {
         Pageable pageable = PageRequest.of(page-1, size); // 페이지 사이즈 설정 
         
-        //로그인한 유저인지 확인 어스유저 통해서 확인
+        //로그인한 유저인지 확인
         userRepository.findById(authUser.getId()).orElseThrow(()-> new IllegalArgumentException("해당 유저가 존재하지 않습니다."));
         
         Page<Review> review; 
@@ -103,6 +105,33 @@ public class ReviewServiceImpl implements ReviewService {
     }
         return new PageImpl<>(response, pageable, review.getTotalElements());
         }
+
+
+    /**
+     * 리뷰 수정
+     * */
+    @Override
+    @Transactional
+    public ReviewResponseDto updateReview(Long storeId, Long reviewId, AuthUser authUser, ReviewCreateRequestDto requestDto) {
+
+        Review review = reviewRepository.findById(reviewId)
+                .orElseThrow(() -> new IllegalArgumentException("해당 리뷰가 존재하지 않습니다."));
+        // 리뷰가 작성자가 맞는지 검증
+        if (!review.getUser().getId().equals(authUser.getId())) {
+            throw new IllegalArgumentException("리뷰 작성자가 아닙니다.");
+        }
+        // 가게 일치하는지 검증
+        if (!review.getStore().getId().equals(storeId)) {
+            throw new IllegalArgumentException("해당 가게 리뷰가 아닙니다.");
+        }
+
+        review.update(requestDto.getRating(),requestDto.getContent(),requestDto.getVisible());
+
+        return new ReviewResponseDto("리뷰가 성공적으로 수정되었습니다..");
+
+    }
+
+
 
 //        hardDelete
 //    delete : 한행=로우 하나만 지우는거
