@@ -26,7 +26,7 @@ public class StoreServiceImpl implements StoreService {
         if (user.getUserRole() != UserRole.OWNER) {
             throw new RuntimeException("가게 생성 권한이 없습니다.");}
 
-        int storeCount = storeRepository.countByUserId(ownerId);
+        int storeCount = storeRepository.countByUserIdAndDeletedFalse(ownerId);
         if (storeCount >= 3) {
             throw new RuntimeException("가게는 최대 3개까지 등록 가능합니다.");}
 
