@@ -7,6 +7,7 @@ import com.example.toanyone.domain.menu.enums.SubCategory;
 import com.example.toanyone.domain.menu.repository.MenuRepository;
 import com.example.toanyone.domain.store.entity.Store;
 import com.example.toanyone.domain.store.repository.StoreRepository;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -21,6 +22,7 @@ public class MenuServiceImpl implements MenuService {
     private final StoreRepository storeRepository;
 
     @Override
+    @Transactional
     public MenuDto.Response createMenu(
             Integer storeId, String name, String description, Integer price,
             MainCategory mainCategory, SubCategory subCategory) {

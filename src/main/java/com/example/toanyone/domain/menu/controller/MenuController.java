@@ -21,7 +21,7 @@ public class MenuController {
             @PathVariable Integer storeId,
             @Valid @RequestBody MenuDto.Request requestDto) {
 
-        MenuDto.Response responseDto = menuService.createMenu(
+        menuService.createMenu(
                 storeId,
                 requestDto.getName(),
                 requestDto.getDescription(),
@@ -29,7 +29,7 @@ public class MenuController {
                 requestDto.getMainCategory(),
                 requestDto.getSubCategory());
 
-        return ResponseEntity.status(HttpStatus.CREATED).body(responseDto.getName()+" 메뉴가 추가되었습니다");
+        return ResponseEntity.status(HttpStatus.CREATED).body("메뉴가 추가되었습니다");
 
     }
 
