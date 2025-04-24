@@ -8,6 +8,8 @@ import com.example.toanyone.global.common.entity.BaseEntity;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Size;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -62,6 +64,12 @@ public class Review extends BaseEntity {
     public Review(Order order, User user,Integer rating, String content , Boolean visible) {
         this.order = order;
         this.user = user;
+        this.rating = rating;
+        this.content = content;
+        this.visible = visible;
+    }
+
+    public void update(Integer rating, String content, Boolean visible) {
         this.rating = rating;
         this.content = content;
         this.visible = visible;

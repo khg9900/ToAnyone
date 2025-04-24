@@ -98,4 +98,40 @@ public class OrderDto {
         private Integer price;
         private Integer count;
     }
+
+    public static class OwnerOrderListResponse {
+        private Long orderId;
+        private String nickname;
+        private String orderStatus;
+        private LocalDateTime createdAt;
+
+        public OwnerOrderListResponse(Long orderId, String nickname, String orderStatus, LocalDateTime createdAt) {
+            this.orderId = orderId;
+            this.nickname = nickname;
+            this.orderStatus = orderStatus;
+            this.createdAt = createdAt;
+        }
+    }
+
+    public static class UserOrderHistoryResponse {
+        private Long orderId;
+        private String storeName;
+        private String orderStatus;
+        private Integer orderPrice;
+        private Integer deliveryFee;
+        private Integer totalPrice;
+        private LocalDateTime createdAt;
+
+        public UserOrderHistoryResponse(Long orderId, String storeName, String orderStatus, int orderPrice, int deliveryFee, int totalPrice, LocalDateTime createdAt) {
+            this.orderId = orderId;
+            this.storeName = storeName;
+            this.orderStatus = orderStatus;
+            this.orderPrice = orderPrice;
+            this.deliveryFee = deliveryFee;
+            this.totalPrice = totalPrice;
+            this.createdAt = createdAt;
+        }
+    }
+
+
 }
