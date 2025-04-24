@@ -26,7 +26,6 @@ public class MenuController {
         MainCategory mainCategory = MainCategory.of(requestDto.getMainCategory());
         SubCategory subCategory = SubCategory.of(requestDto.getSubCategory());
 
-
         MenuDto.Response response = menuService.createMenu(
                 storeId,
                 requestDto.getName(),
