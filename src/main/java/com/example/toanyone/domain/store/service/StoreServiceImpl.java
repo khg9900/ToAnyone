@@ -7,7 +7,10 @@ import com.example.toanyone.domain.store.repository.StoreRepository;
 import com.example.toanyone.domain.user.entity.User;
 import com.example.toanyone.domain.user.enums.UserRole;
 import com.example.toanyone.domain.user.repository.UserRepository;
+import com.example.toanyone.global.common.code.ErrorStatus;
+import com.example.toanyone.global.common.error.ApiException;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -28,17 +31,17 @@ public class StoreServiceImpl implements StoreService {
     public StoreResponseDto.Complete createStore(Long ownerId, StoreRequestDto.Create dto) {
 
         User user = userRepository.findById(ownerId).orElseThrow(
-                () -> new RuntimeException("존재하지 않는 유저입니다."));
+                () -> new ApiException(ErrorStatus.USER_NOT_FOUND));
 
         if (user.getUserRole() != UserRole.OWNER) {
-            throw new RuntimeException("가게 생성 권한이 없습니다.");}
+            throw new ApiException(ErrorStatus.STORE_NO_PERMISSION);}
 
         int storeCount = storeRepository.countByUserIdAndDeletedFalse(ownerId);
         if (storeCount >= 3) {
-            throw new RuntimeException("가게는 최대 3개까지 등록 가능합니다.");}
+            throw new ApiException(ErrorStatus.STORE_MAX_LIMIT_EXCEEDED);}
 
         if (storeRepository.existsByName(dto.getName())) {
-            throw new RuntimeException("이미 존재하는 가게이름입니다.");}
+            throw new ApiException(ErrorStatus.STORE_ALREADY_EXISTS);}
 
         Store newStore = new Store(user, dto);
         storeRepository.save(newStore);
@@ -54,8 +57,7 @@ public class StoreServiceImpl implements StoreService {
 
         int storeCount = storeRepository.countByUserIdAndDeletedFalse(ownerId);
         if(storeCount == 0) {
-            throw new RuntimeException("생성된 가게가 없습니다.");
-        }
+            throw new RuntimeException("생성된 가게가 없습니다.");}
 
         List<Store> stores = storeRepository.findByUserIdAndDeletedFalse(ownerId);
         List<StoreResponseDto.GetAll> result = new ArrayList<>();
