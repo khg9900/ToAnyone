@@ -6,6 +6,8 @@ import com.example.toanyone.domain.store.dto.StoreResponseDto;
 import com.example.toanyone.domain.store.service.StoreService;
 import com.example.toanyone.global.auth.annotation.Auth;
 import com.example.toanyone.global.auth.dto.AuthUser;
+import com.example.toanyone.global.common.code.SuccessStatus;
+import com.example.toanyone.global.common.response.ApiResponse;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -50,6 +52,18 @@ public class StoreController {
     @GetMapping("/stores")
     public ResponseEntity<List<StoreResponseDto.GetAll>> getStoresByKeyword(@RequestParam("keyword") String keyword) {
         return ResponseEntity.status(HttpStatus.OK).body(storeService.getStoresByName(keyword));
+    }
+
+    /**
+     * 가게 단건 조회
+     * @param storeId
+     * @return
+     */
+    @GetMapping("/stores/{storeId}")
+    public ResponseEntity<ApiResponse<StoreResponseDto.GetById>> getStoreById(@PathVariable Long storeId) {
+        StoreResponseDto.GetById dto = storeService.getStoreById(storeId);
+
+        return ApiResponse.onSuccess(SuccessStatus.OK, dto);
     }
 
 }

@@ -86,5 +86,12 @@ public class StoreServiceImpl implements StoreService {
         return result;
     }
 
+    @Override
+    public StoreResponseDto.GetById getStoreById(Long storeId) {
+        Store store = storeRepository.findByIdOrElseThrow(storeId);
+
+        return new StoreResponseDto.GetById(store);
+    }
+
 
 }
