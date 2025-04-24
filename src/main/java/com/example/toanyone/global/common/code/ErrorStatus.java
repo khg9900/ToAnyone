@@ -31,13 +31,15 @@ public enum ErrorStatus implements BaseErrorCode {
     STORE_NOT_FOUND(HttpStatus.NOT_FOUND, "5004","가게 정보가 없습니다."),
     STORE_SEARCH_NO_MATCH(HttpStatus.NOT_FOUND, "5005","검색한 단어가 포함된 가게명이 존재하지 않습니다."),
     STORE_SHUT_DOWN(HttpStatus.BAD_REQUEST, "5006", "폐업된 가게입니다."),
-    STORE_CLOSED(HttpStatus.BAD_REQUEST, "5007", "영업 종료된 가게입니다.");
+    STORE_CLOSED(HttpStatus.BAD_REQUEST, "5007", "영업 종료된 가게입니다."),
+    STORE_ALREADY_DELETED(HttpStatus.BAD_REQUEST, "5008", "이미 폐업된 가게입니다.");
 
 
 
 
 
-    ;
+
+            ;
 
     private final HttpStatus httpStatus;
     private final String code;
