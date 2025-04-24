@@ -38,6 +38,7 @@ public class Order {
     @Enumerated(EnumType.STRING)
     private OrderStatus status;
 
+
     /**
      * @이윤승
      * 리뷰와 오더 1:1 연관관계 매핑
@@ -53,6 +54,7 @@ public class Order {
         orderItems.add(item);
         item.setOrder(this);
     }
+
 
     public void changeStatus(OrderStatus status) {
         this.status = status;
