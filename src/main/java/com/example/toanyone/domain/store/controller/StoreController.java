@@ -20,6 +20,12 @@ public class StoreController {
 
     final StoreService storeService;
 
+    /**
+     * 가게 생성
+     * @param authUser 로그인된 유저
+     * @param dto 가게생성시 필요한 정보
+     * @return 생성 완료 메세지
+     */
     @PostMapping("/owner/stores")
     public ResponseEntity<StoreResponseDto.Complete> createStore(@Auth AuthUser authUser,
                                                                  @Valid @RequestBody StoreRequestDto.Create dto) {

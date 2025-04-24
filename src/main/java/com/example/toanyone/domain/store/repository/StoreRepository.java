@@ -11,7 +11,7 @@ public interface StoreRepository extends JpaRepository<Store, Long> {
 
     int countByUserId(Long ownerId);
 
-    boolean existByName(String name);
+    boolean existsByName(String name);
   
       Optional<Store> findById(Long storeId);
 
