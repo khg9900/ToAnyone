@@ -25,7 +25,7 @@ public class StoreController {
 
     /**
      * 가게 생성
-     * @param authUser 로그인된 유저
+     * @param authUser 로그인된 유저(OWNER)
      * @param dto 가게생성시 필요한 정보
      * @return 생성 완료 메세지
      */
@@ -35,6 +35,11 @@ public class StoreController {
         return ResponseEntity.status(HttpStatus.CREATED).body(storeService.createStore(authUser.getId(), dto));
     }
 
+    /**
+     * 본인(OWNER) 가게 조회
+     * @param authUser 로그인 된 유저(OWNER)
+     * @return Store List
+     */
     @GetMapping("/owner/stores")
     public ResponseEntity<List<StoreResponseDto.GetAll>> getStoresByOwner(@Auth AuthUser authUser) {
         return ResponseEntity.status(HttpStatus.OK).body(storeService.getStoresByOwner(authUser.getId()));
