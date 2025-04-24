@@ -22,11 +22,13 @@ public enum ErrorStatus implements BaseErrorCode {
     CART_ITEMS_NOT_FOUND(HttpStatus.NOT_FOUND, "4004", "장바구니를 찾을 수 없습니다."),
 
     // 5000: Store 에러코드
-    STORE_NO_PERMISSION(HttpStatus.FORBIDDEN,"5001","가게 생성 권한이 없습니다."),
-    STORE_MAX_LIMIT_EXCEEDED(HttpStatus.BAD_REQUEST,"5002","가게는 최대 3개까지 등록 가능합니다."),
-    STORE_ALREADY_EXISTS(HttpStatus.BAD_REQUEST,"5003","이미 존재하는 가게이름입니다."),
-    STORE_NOT_FOUND(HttpStatus.NOT_FOUND,"5004","가게 정보가 없습니다."),
-    STORE_SEARCH_NO_MATCH(HttpStatus.NOT_FOUND,"5005","검색한 단어가 포함된 가게명이 존재하지 않습니다.");
+    STORE_NO_PERMISSION(HttpStatus.FORBIDDEN, "5001","가게 생성 권한이 없습니다."),
+    STORE_MAX_LIMIT_EXCEEDED(HttpStatus.BAD_REQUEST, "5002","가게는 최대 3개까지 등록 가능합니다."),
+    STORE_ALREADY_EXISTS(HttpStatus.BAD_REQUEST, "5003","이미 존재하는 가게이름입니다."),
+    STORE_NOT_FOUND(HttpStatus.NOT_FOUND, "5004","가게 정보가 없습니다."),
+    STORE_SEARCH_NO_MATCH(HttpStatus.NOT_FOUND, "5005","검색한 단어가 포함된 가게명이 존재하지 않습니다."),
+    STORE_SHUT_DOWN(HttpStatus.BAD_REQUEST, "5006", "폐업된 가게입니다."),
+    STORE_CLOSED(HttpStatus.BAD_REQUEST, "5007", "영업 종료된 가게입니다.");
 
 
 

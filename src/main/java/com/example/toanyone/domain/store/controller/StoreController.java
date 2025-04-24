@@ -62,8 +62,8 @@ public class StoreController {
 
     /**
      * 가게 단건 조회
-     * @param storeId
-     * @return
+     * @param storeId 가게Id
+     * @return 가게 정보 및 메뉴 정보 리스트
      */
     @GetMapping("/stores/{storeId}")
     public ResponseEntity<ApiResponse<StoreResponseDto.GetById>> getStoreById(@PathVariable Long storeId) {
