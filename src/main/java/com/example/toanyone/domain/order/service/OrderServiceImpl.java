@@ -23,7 +23,6 @@ import java.util.List;
   - 장바구니 초기화 등
 */
 
-/*
 @Service
 @RequiredArgsConstructor
 public class OrderServiceImpl implements OrderService {
@@ -33,7 +32,7 @@ public class OrderServiceImpl implements OrderService {
     private final OrderItemRepository orderItemRepository;
     private final CartService cartService;
 
-
+    /*
      주문 생성 메서드
      - 고객이 장바구니(cartId)를 기반으로 주문을 생성
      - 유효성 검사: 장바구니 존재, 가게 상태, 최소 주문 금액 확인
@@ -43,7 +42,7 @@ public class OrderServiceImpl implements OrderService {
      @param user 현재 로그인한 사용자 (주문자)
      @param cartId 주문하고자 하는 장바구니 ID
      @return 주문 생성 결과 DTO
-
+    */
     @Transactional
     @Override
     public OrderDto.CreateResponse createOrder(User user, Long cartId) {
@@ -97,4 +96,3 @@ public class OrderServiceImpl implements OrderService {
         );
     }
 }
-*/
