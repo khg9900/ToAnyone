@@ -46,9 +46,12 @@ public class ReviewServiceImpl implements ReviewService {
         User user = userRepository.findById(authUser.getId())
                 .orElseThrow(()-> new IllegalArgumentException("not found user"));
 
-        Order order = orderRepository.findValidOrderReview(orderId, storeId, user.getId(), OrderStatus.DELIVERED)
+        Order order = orderRepository.findReviewableOrder(orderId, user.getId())
                 .orElseThrow(() -> new IllegalArgumentException("리뷰 작성 조건을 만족하지 않는 주문입니다."));
 
+        if (!storeId.equals(order.getStore().getId())) {
+            throw new IllegalArgumentException("해당 가게의 주문이 아닙니다.");
+        }
 
         Review review = new Review(
                 order,

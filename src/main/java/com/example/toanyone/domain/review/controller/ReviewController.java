@@ -29,7 +29,7 @@ public class ReviewController {
     /**
      * 리뷰생성
      * */
-    @PostMapping("/{storeId}/orders/{orderId}/{reviews}")
+    @PostMapping("/{storeId}/orders/{orderId}/reviews")
     public ResponseEntity<ReviewResponseDto> reviewCreate(@PathVariable Long storeId,
                                                     @PathVariable Long orderId,
                                                     @Auth AuthUser authUser,
