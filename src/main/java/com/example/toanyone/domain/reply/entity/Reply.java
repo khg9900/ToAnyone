@@ -4,7 +4,6 @@ import com.example.toanyone.domain.review.entity.Review;
 import com.example.toanyone.domain.user.entity.User;
 import com.example.toanyone.global.common.entity.BaseEntity;
 import jakarta.persistence.*;
-import jakarta.validation.constraints.NotBlank;
 import lombok.Getter;
 
 import java.time.LocalDateTime;
@@ -31,9 +30,4 @@ public class Reply extends BaseEntity {
     @Column(columnDefinition = "TEXT")
     private String content;
 
-    public Reply(Review review, User owner, String content) {
-        this.review = review;
-        this.owner = owner;
-        this.content = content;
-    }
 }

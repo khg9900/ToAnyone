@@ -46,7 +46,7 @@ public enum ErrorStatus implements BaseErrorCode {
     REVIEW_NOT_FOUND(HttpStatus.NOT_FOUND, "6004", "해당 리뷰가 존재하지 않습니다."),
     REVIEW_ACCESS_DENIED(HttpStatus.BAD_REQUEST, "6005", "해당 권한이 없습니다."),
     REVIEW_STORE_MISMATCH(HttpStatus.BAD_REQUEST, "6006", "해당 가게의 리뷰가 아닙니다."),
-    REPLY_ALREADY_EXISTS(HttpStatus.BAD_REQUEST, "6007", "이미 댓글이 존재합니다."),
+
     ;
 
     private final HttpStatus httpStatus;
