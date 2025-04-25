@@ -12,4 +12,6 @@ public interface StoreService {
     List<StoreResponseDto.GetAll> getStoresByOwner(Long id);
 
     List<StoreResponseDto.GetAll> getStoresByName(String keyword);
+
+    StoreResponseDto.GetById getStoreById(Long storeId);
 }

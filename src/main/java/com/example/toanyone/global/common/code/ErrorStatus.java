@@ -4,6 +4,7 @@ import com.example.toanyone.global.common.dto.ErrorReasonDto;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
+import org.springframework.web.client.HttpClientErrorException.Unauthorized;
 
 @Getter
 @RequiredArgsConstructor
@@ -14,15 +15,28 @@ public enum ErrorStatus implements BaseErrorCode {
 
     // 3000: user 에러 코드
     USER_NOT_FOUND(HttpStatus.NOT_FOUND, "3001","고객 정보가 없습니다."),
+    INVALID_PASSWORD(HttpStatus.UNAUTHORIZED, "3002", "비밀번호가 올바르지 않습니다"),
+    OWNER_HAS_ACTIVE_STORE(HttpStatus.CONFLICT, "3003", "운영 중인 가게가 존재하여 회원 탈퇴가 불가합니다."),
 
     // 4000: menu 에러코드
     MENU_ALREADY_EXISTS(HttpStatus.CONFLICT,"4001","이미 존재하는 메뉴입니다."),
     MENU_ALREADY_DELETED(HttpStatus.BAD_REQUEST, "4002", "이미 삭제된 메뉴입니다."),
     MENU_NOT_FOUND(HttpStatus.NOT_FOUND, "4003","존재하지 않는 메뉴입니다."),
+
     CART_ITEMS_NOT_FOUND(HttpStatus.NOT_FOUND, "4004", "장바구니에서 해당 품목을 찾을 수 없습니다."),
     CART_ITEM_QUANTITY_UNDERFLOW(HttpStatus.BAD_REQUEST, "4005", "차감하려는 수량이 담긴 수량보다 많습니다.");
 
-    // 5000:
+    // 5000: Store 에러코드
+    STORE_NO_PERMISSION(HttpStatus.FORBIDDEN, "5001","가게 생성 권한이 없습니다."),
+    STORE_MAX_LIMIT_EXCEEDED(HttpStatus.BAD_REQUEST, "5002","가게는 최대 3개까지 등록 가능합니다."),
+    STORE_ALREADY_EXISTS(HttpStatus.BAD_REQUEST, "5003","이미 존재하는 가게이름입니다."),
+    STORE_NOT_FOUND(HttpStatus.NOT_FOUND, "5004","가게 정보가 없습니다."),
+    STORE_SEARCH_NO_MATCH(HttpStatus.NOT_FOUND, "5005","검색한 단어가 포함된 가게명이 존재하지 않습니다."),
+    STORE_SHUT_DOWN(HttpStatus.BAD_REQUEST, "5006", "폐업된 가게입니다."),
+    STORE_CLOSED(HttpStatus.BAD_REQUEST, "5007", "영업 종료된 가게입니다.");
+
+
+
 
 
     ;
