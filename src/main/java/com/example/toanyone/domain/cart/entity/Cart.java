@@ -47,4 +47,12 @@ public class Cart {
         this.totalPrice += price * quantity;
     }
 
+    public void changeTotalPrice() {
+        int changedPrice = 0;
+        for (CartItem cartItem : cartItems) {
+            changedPrice += cartItem.getMenu_price()*cartItem.getQuantity();
+        }
+        this.totalPrice = changedPrice;
+    }
+
 }

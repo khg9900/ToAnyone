@@ -70,6 +70,22 @@ public class StoreController {
     }
 
     /**
+     * 가게 정보 수정
+     * @param authUser 로그인 유저 정보
+     * @param storeId 수정할 가게 Id
+     * @param dto 수정 필드 내용
+     * @return
+     */
+    @PatchMapping("/owner/stores/{storeId}")
+    public ResponseEntity<ApiResponse<StoreResponseDto.Complete>> updateStore(@Auth AuthUser authUser,
+                                                                              @PathVariable Long storeId,
+                                                                              @Valid @RequestBody StoreRequestDto.Update dto) {
+        StoreResponseDto.Complete responseDto = storeService.updateStore(authUser, storeId, dto);
+
+        return ApiResponse.onSuccess(SuccessStatus.OK, responseDto);
+    }
+
+    /**
      * 가게 폐업처리(soft delete)
      * @param authUser 요청 유저
      * @param storeId 폐업 처리할 store Id

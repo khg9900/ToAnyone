@@ -11,6 +11,7 @@ import com.example.toanyone.domain.user.repository.UserRepository;
 import com.example.toanyone.global.auth.dto.AuthUser;
 import com.example.toanyone.global.common.code.ErrorStatus;
 import com.example.toanyone.global.common.error.ApiException;
+import jakarta.validation.Valid;
 import com.example.toanyone.global.config.PasswordEncoder;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -110,11 +111,27 @@ public class StoreServiceImpl implements StoreService {
     }
 
     /**
+     * 가게 정보 수정
+     */
+    @Override
+    @Transactional
+    public StoreResponseDto.Complete updateStore(AuthUser authUser, Long storeId, StoreRequestDto.Update dto) {
+
+        Store store = storeRepository.findByIdOrElseThrow(storeId);
+
+        if(!authUser.getId().equals(store.getUser().getId())) {
+            throw new ApiException(ErrorStatus.STORE_FORBIDDEN);}
+
+        if(store.getDeleted()) {
+            throw new ApiException(ErrorStatus.STORE_SHUT_DOWN);}
+
+        store.update(dto);
+
+        return new StoreResponseDto.Complete("정보가 수정되었습니다.");
+    }
+
+    /**
      * 가게 폐업처리(soft delete)
-     * @param authUser
-     * @param storeId
-     * @param dto
-     * @return
      */
     @Override
     @Transactional
