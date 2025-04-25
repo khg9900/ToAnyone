@@ -14,8 +14,10 @@ public interface OrderService {
       @param cartId  주문할 장바구니 ID
       @return 주문 생성 응답 DTO
     */
-    List<OrderDto.OwnerOrderListResponse> getOrdersByStore(Long storeId);
+    List<OrderDto.OwnerOrderListResponse> getOrdersByStore(AuthUser authUser, Long storeId);
     List<OrderDto.UserOrderHistoryResponse> getOrdersByUser(AuthUser authUser);
     OrderDto.CreateResponse createOrder(AuthUser authUser);
+    // src/main/java/com/example/toanyone/domain/order/service/OrderService.java
+
 
 }

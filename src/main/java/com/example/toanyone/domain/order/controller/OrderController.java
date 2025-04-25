@@ -35,11 +35,13 @@ public class OrderController {
     // 사장님 - 가게 주문 목록 조회
     @GetMapping("/owner/stores/{storeId}/orders")
     public ResponseEntity<ApiResponse<List<OrderDto.OwnerOrderListResponse>>> getStoreOrders(
+            @Auth AuthUser authUser,
             @PathVariable Long storeId
     ) {
-        List<OrderDto.OwnerOrderListResponse> response = orderService.getOrdersByStore(storeId);
+        List<OrderDto.OwnerOrderListResponse> response = orderService.getOrdersByStore(authUser, storeId);
         return ApiResponse.onSuccess(SuccessStatus.OK, response);
     }
+
 
     // 유저 - 내 주문 내역 조회
     @GetMapping("/orders")

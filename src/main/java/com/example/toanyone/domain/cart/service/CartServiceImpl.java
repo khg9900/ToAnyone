@@ -85,7 +85,6 @@ public class CartServiceImpl implements CartService {
     @Override
     @Transactional
     public CartResponseDto clearCartItems(AuthUser authUser) {
-<<<<<<< HEAD
         User user = userRepository.findById(authUser.getId())
                 .orElseThrow(() -> new ApiException(ErrorStatus.USER_NOT_FOUND));
         return clearCartItems(user);
@@ -94,11 +93,7 @@ public class CartServiceImpl implements CartService {
     @Override
     @Transactional
     public CartResponseDto clearCartItems(User user) {
-        Cart cart = cartRepository.findByUserOrElseThrow(user);
-=======
-
-        Cart cart = cartRepository.findByUserIdOrElseThrow(authUser.getId());
->>>>>>> 53730a172b79bb4c6fa5a456629e74bcc1b42130
+        Cart cart = cartRepository.findByUserIdOrElseThrow(user.getId());
         cartRepository.delete(cart);
         return new CartResponseDto("장바구니가 비워졌습니다");
     }

@@ -105,7 +105,19 @@ public class OrderServiceImpl implements OrderService {
 
     @Override
     @Transactional(readOnly = true)
-    public List<OrderDto.OwnerOrderListResponse> getOrdersByStore(Long storeId) {
+    public List<OrderDto.OwnerOrderListResponse> getOrdersByStore(AuthUser authUser, Long storeId) {
+        // 1. 유저 정보 가져오기
+        User user = userRepository.findById(authUser.getId())
+                .orElseThrow(() -> new ApiException(ErrorStatus.USER_NOT_FOUND));
+
+        // 2. 가게 조회 + 사장님 본인인지 검증
+        Store store = storeRepository.findById(storeId)
+                .orElseThrow(() -> new ApiException(ErrorStatus.STORE_NOT_FOUND));
+        if (!store.getOwner().getId().equals(user.getId())) {
+            throw new ApiException(ErrorStatus.ORDER_ACCESS_DENIED_BY_NON_OWNER); //  사장님 아님
+        }
+
+        // 3. 해당 가게 주문 목록 조회
         List<Order> orders = orderRepository.findAllByStoreId(storeId);
 
         return orders.stream()
@@ -117,6 +129,7 @@ public class OrderServiceImpl implements OrderService {
                 ))
                 .toList();
     }
+
 
     @Override
     @Transactional(readOnly = true)

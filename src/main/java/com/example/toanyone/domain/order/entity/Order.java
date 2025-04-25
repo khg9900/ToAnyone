@@ -44,7 +44,7 @@ public class Order {
     private OrderStatus status;
 
     /**
-     * @이윤승
+     * 이윤승
      * 리뷰와 오더 1:1 연관관계 매핑
      * */
     @OneToOne(mappedBy = "order", fetch = FetchType.LAZY)
@@ -59,19 +59,12 @@ public class Order {
         item.setOrder(this);
     }
 
-<<<<<<< HEAD
+
     @CreatedDate
     @Column(updatable = false)
     private LocalDateTime createdAt;
 
-    public Integer getDeliveryFee() {
-        return deliveryFee;
-    }
-=======
-
->>>>>>> 53730a172b79bb4c6fa5a456629e74bcc1b42130
     public void changeStatus(OrderStatus status) {
         this.status = status;
     }
-
 }

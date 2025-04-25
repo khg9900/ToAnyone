@@ -70,13 +70,15 @@ public class Store extends BaseEntity {
         this.phone = dto.getPhone();
     }
 
-<<<<<<< HEAD
     // 고승표 추가
     public boolean isOpen() {
         return this.status == Status.OPEN;
     }
+    // Store.java
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "owner_id") // 이 컬럼 이름이 실제 DB랑 맞아야 함!
+    private User owner;
 
-=======
     public void update(StoreRequestDto.Update dto) {
         if (dto.getOpenTime() != null) this.openTime = dto.getOpenTime();
         if (dto.getCloseTime() != null) this.closeTime = dto.getCloseTime();
@@ -85,6 +87,5 @@ public class Store extends BaseEntity {
         if (dto.getNotice() != null) this.notice = dto.getNotice();
         if (dto.getStatus() != null) this.status = dto.getStatus();
     }
->>>>>>> 53730a172b79bb4c6fa5a456629e74bcc1b42130
 
 }
