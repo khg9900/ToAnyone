@@ -37,20 +37,18 @@ public class CartServiceImpl implements CartService {
     @Transactional
     public CartResponseDto createCart(AuthUser authUser, Long storeId , Long menuId, Integer quantity) {
 
-        User user = userRepository.findById(authUser.getId()).get();
+        User user = userRepository.findById(authUser.getId())
+                .orElseThrow(() -> new ApiException(ErrorStatus.USER_NOT_FOUND));
         Store store = storeRepository.findByIdOrElseThrow(storeId);
         Menu menu = menuRepository.findByIdOrElseThrow(menuId);
+        Cart cart = cartRepository.findByUserId(user.getId())
+                .orElseGet(() -> cartRepository.save(new Cart(user, store, 0)));
 
-        if (!cartRepository.existsByUserId(authUser.getId())){
-            Cart cart = new Cart(user, store, 0);
-            cartRepository.save(cart);
-        }
+        int price = menu.getPrice();
 
-        Cart cart = cartRepository.findByUserOrElseThrow(user);
+        cart.setTotalPrice(price, quantity);
 
-        cart.setTotalPrice(menu.getPrice(), quantity);
-
-        CartItem cartItem = new CartItem(cart, menu, quantity, menu.getPrice());
+        CartItem cartItem = new CartItem(cart, menu, quantity, price);
         cartItemRepository.save(cartItem);
 
         return new CartResponseDto("장바구니에 추가되었습니다");
@@ -59,9 +57,7 @@ public class CartServiceImpl implements CartService {
     @Override
     @Transactional
     public CartItemDto.Response getCartItems(AuthUser authUser) {
-
-        User user = userRepository.findById(authUser.getId()).get();
-        Cart cart = cartRepository.findByUserOrElseThrow(user);
+        Cart cart = cartRepository.findByUserIdOrElseThrow(authUser.getId());
 
         Long storeId = cart.getStore().getId();
         Store store = storeRepository.findByIdOrElseThrow(storeId);
@@ -87,9 +83,8 @@ public class CartServiceImpl implements CartService {
     @Override
     @Transactional
     public CartResponseDto clearCartItems(AuthUser authUser) {
-        User user = userRepository.findById(authUser.getId())
-                .orElseThrow(() -> new ApiException(ErrorStatus.USER_NOT_FOUND));
-        Cart cart = cartRepository.findByUserOrElseThrow(user);
+
+        Cart cart = cartRepository.findByUserIdOrElseThrow(authUser.getId());
         cartRepository.delete(cart);
         return new CartResponseDto("장바구니가 비워졌습니다");
     }
@@ -97,10 +92,8 @@ public class CartServiceImpl implements CartService {
     @Override
     @Transactional
     public CartResponseDto updateCartItems(AuthUser authUser, Long storeId, Long menuId, Integer quantity) {
-        User user = userRepository.findById(authUser.getId()).get();
-        Menu menu = menuRepository.findByIdOrElseThrow(menuId);
-        Cart cart = cartRepository.findByUserOrElseThrow(user);
-        CartItem cartItem = cartItemRepository.findCartItemsByMenuAndCartOrElseThrow(menu, cart);
+        Cart cart = cartRepository.findByUserIdOrElseThrow(authUser.getId());
+        CartItem cartItem = cartItemRepository.findByMenuIdAndCartOrElseThrow(menuId, cart);
 
         int changedQuantity = cartItem.getQuantity() + quantity;
         if (changedQuantity<0){
