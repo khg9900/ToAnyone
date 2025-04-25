@@ -13,7 +13,7 @@ public class UserResponseDto {
     @NoArgsConstructor
     public static class Get {
 
-        private UserRole role;
+        private String role;
         private String name;
         private String nickname;
         private String email;

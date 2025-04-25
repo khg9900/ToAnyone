@@ -1,6 +1,8 @@
 package com.example.toanyone.global.auth.jwt;
 
+import com.example.toanyone.domain.user.entity.User;
 import com.example.toanyone.domain.user.enums.UserRole;
+import com.example.toanyone.global.auth.service.CustomUserDetails;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.ExpiredJwtException;
@@ -19,89 +21,91 @@ import java.util.HashMap;
 import java.util.Map;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.stereotype.Component;
+import org.springframework.web.filter.OncePerRequestFilter;
 
 @Slf4j
+@Component
 @RequiredArgsConstructor
-public class JwtFilter implements Filter {
+public class JwtFilter extends OncePerRequestFilter {
 
     private final JwtUtil jwtUtil;
 
     @Override
-    public void init(FilterConfig filterConfig) throws ServletException {
-        Filter.super.init(filterConfig);
-    }
+    protected void doFilterInternal(HttpServletRequest request,
+        HttpServletResponse response,
+        FilterChain filterChain) throws ServletException, IOException {
 
-    @Override
-    public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) throws IOException, ServletException {
-        HttpServletRequest httpRequest = (HttpServletRequest) request;
-        HttpServletResponse httpResponse = (HttpServletResponse) response;
+        // 1. 헤더에서 토큰 꺼내기
+        String bearerJwt = request.getHeader("Authorization");
 
-        String url = httpRequest.getRequestURI();
+        // 2. 토큰 검증
+        if (bearerJwt == null || !bearerJwt.startsWith("Bearer ")) {
+//            setErrorResponse(response, JwtErrorCode.TOKEN_REQUIRED);
+            // ??
+            filterChain.doFilter(request, response);
+//            return;
 
-        if (url.startsWith("/auth")) {
-            chain.doFilter(request, response);
-            return;
         }
-
-        String bearerJwt = httpRequest.getHeader("Authorization");
-
-        if (bearerJwt == null) {
-            // 토큰이 없는 경우 400을 반환합니다.
-            setErrorResponse(httpResponse, JwtErrorCode.TOKEN_REQUIRED);
-            return;
-        }
-
+        // "Bearer " 이후만 추출
         String jwt = jwtUtil.substringToken(bearerJwt);
 
         try {
-            // JWT 유효성 검사와 claims 추출
+            // 토큰에서 값 꺼내기
             Claims claims = jwtUtil.extractClaims(jwt);
             if (claims == null) {
-                setErrorResponse(httpResponse, JwtErrorCode.INVALID_JWT_CLAIMS);
+                setErrorResponse(response, JwtErrorCode.INVALID_JWT_CLAIMS);
                 return;
             }
 
             UserRole userRole = UserRole.valueOf(claims.get("userRole", String.class));
 
-            httpRequest.setAttribute("userId", Long.parseLong(claims.getSubject()));
-            httpRequest.setAttribute("email", claims.get("email"));
-            httpRequest.setAttribute("userRole", claims.get("userRole"));
+            request.setAttribute("userId", Long.parseLong(claims.getSubject()));
+            request.setAttribute("email", claims.get("email"));
+            request.setAttribute("userRole", claims.get("userRole"));
 
-            if (url.startsWith("/owner")) {
-                // 관리자 권한이 없는 경우 403을 반환합니다.
-                if (!UserRole.OWNER.equals(userRole)) {
-                    httpResponse.setStatus(HttpServletResponse.SC_FORBIDDEN);
-                    response.setContentType("application/json;charset=UTF-8");
-                    response.getWriter().write("사장님만 접근할 수 있는 기능입니다.");
-                    return;
-                }
-                chain.doFilter(request, response);
-                return;
-            }
+            Long userId = (Long) request.getAttribute("userId");
+            String email = (String) request.getAttribute("email");
+            String role = (String) request.getAttribute("userRole");
 
-            chain.doFilter(request, response);
+            //userEntity를 생성하여 값 set
+            User user = new User();
+            user.setEmail(email);
+            user.setPassword("temppassword");
+            user.setUserRole(role);
 
-        } catch (SecurityException | MalformedJwtException e) {
-            log.error("Invalid JWT signature, 유효하지 않는 JWT 서명 입니다.", e);
-            setErrorResponse(httpResponse, JwtErrorCode.INVALID_JWT_SIGNATURE);
+            //UserDetails에 회원 정보 객체 담기
+            CustomUserDetails customUserDetails = new CustomUserDetails(user);
+
+            //스프링 시큐리티 인증 토큰 생성
+            Authentication authToken = new UsernamePasswordAuthenticationToken(customUserDetails,
+                null, customUserDetails.getAuthorities());
+            //세션에 사용자 등록
+            SecurityContextHolder.getContext().setAuthentication(authToken);
+
+            filterChain.doFilter(request, response);
+
+
+//        } catch (SecurityException | MalformedJwtException e) {
+//            log.error("Invalid JWT signature, 유효하지 않는 JWT 서명 입니다.", e);
+//            setErrorResponse(response, JwtErrorCode.INVALID_JWT_SIGNATURE);
         } catch (ExpiredJwtException e) {
             log.error("Expired JWT token, 만료된 JWT token 입니다.", e);
-            setErrorResponse(httpResponse, JwtErrorCode.EXPIRED_JWT_TOKEN);
-        } catch (UnsupportedJwtException e) {
-            log.error("Unsupported JWT token, 지원되지 않는 JWT 토큰 입니다.", e);
-            setErrorResponse(httpResponse, JwtErrorCode.UNSUPPORTED_JWT_TOKEN);
-        } catch (Exception e) {
-            log.error("Invalid JWT token, 유효하지 않는 JWT 토큰 입니다.", e);
-            setErrorResponse(httpResponse, JwtErrorCode.INVALID_JWT_TOKEN);
+            setErrorResponse(response, JwtErrorCode.EXPIRED_JWT_TOKEN);
+//        } catch (UnsupportedJwtException e) {
+//            log.error("Unsupported JWT token, 지원되지 않는 JWT 토큰 입니다.", e);
+//            setErrorResponse(response, JwtErrorCode.UNSUPPORTED_JWT_TOKEN);
+//        } catch (Exception e) {
+//            log.error("Invalid JWT token, 유효하지 않는 JWT 토큰 입니다.", e);
+//            setErrorResponse(response, JwtErrorCode.INVALID_JWT_TOKEN);
         }
     }
 
-    @Override
-    public void destroy() {
-        Filter.super.destroy();
-    }
-
-    public static void setErrorResponse(HttpServletResponse response, JwtErrorCode error) throws IOException {
+    public static void setErrorResponse(HttpServletResponse response, JwtErrorCode error)
+        throws IOException {
         response.setContentType("application/json;charset=UTF-8");
 
         response.setStatus(error.getHttpStatus().value());

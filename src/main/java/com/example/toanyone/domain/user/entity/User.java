@@ -13,8 +13,10 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
 import java.time.LocalDate;
+import java.time.Period;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 @Getter
 @Entity
@@ -26,15 +28,18 @@ public class User extends BaseEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @Setter
     @Column(unique = true)
     private String email;
 
+    @Setter
     private String password;
 
     private String username;
 
-    @Enumerated(EnumType.STRING)
-    private UserRole userRole;
+//    @Enumerated(EnumType.STRING)
+    @Setter
+    private String userRole;
 
     @Column(unique = true)
     private String nickname;
@@ -51,8 +56,8 @@ public class User extends BaseEntity {
 
     private Integer age;
 
-    public User(String email, String password, String name, UserRole role, String nickname,
-        String phone, String address, Gender gender, LocalDate birth, int age) {
+    public User(String email, String password, String name, String role, String nickname,
+        String phone, String address, String gender, String birth) {
         this.email = email;
         this.password = password;
         this.username = name;
@@ -60,9 +65,13 @@ public class User extends BaseEntity {
         this.nickname = nickname;
         this.phone = phone;
         this.address = address;
-        this.gender = gender;
-        this.birth = birth;
-        this.age = age;
+        this.gender = Gender.of(gender);
+        this.birth = LocalDate.parse(birth);
+        this.age = calculateAge(birth);
+    }
+
+    public Integer calculateAge(String birth) {
+        return Period.between(LocalDate.parse(birth), LocalDate.now()).getYears();
     }
 
     public void updateInfo(UserRequestDto.Update updateInfo) {

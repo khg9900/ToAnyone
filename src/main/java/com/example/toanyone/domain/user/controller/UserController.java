@@ -24,7 +24,9 @@ public class UserController {
     private final UserService userService;
 
     @GetMapping
-    public ResponseEntity<ApiResponse<UserResponseDto.Get>> getUserInfo(@Auth AuthUser authUser) {
+    public ResponseEntity<ApiResponse<UserResponseDto.Get>> getUserInfo(
+        @Auth AuthUser authUser
+    ) {
         return ApiResponse.onSuccess(SuccessStatus.OK, userService.getUserInfo(authUser.getId()));
     }
 
