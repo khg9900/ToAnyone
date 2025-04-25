@@ -31,9 +31,8 @@ public class StoreController {
     @PostMapping("/owner/stores")
     public ResponseEntity<ApiResponse<StoreResponseDto.Complete>> createStore(@Auth AuthUser authUser,
                                                                              @Valid @RequestBody StoreRequestDto.Create dto) {
-        StoreResponseDto.Complete responseDto = storeService.createStore(authUser.getId(), dto);
 
-        return ApiResponse.onSuccess(SuccessStatus.CREATED, responseDto);
+        return ApiResponse.onSuccess(SuccessStatus.CREATED, storeService.createStore(authUser.getId(), dto));
     }
 
     /**
@@ -80,10 +79,23 @@ public class StoreController {
     public ResponseEntity<ApiResponse<StoreResponseDto.Complete>> updateStore(@Auth AuthUser authUser,
                                                                               @PathVariable Long storeId,
                                                                               @Valid @RequestBody StoreRequestDto.Update dto) {
-        StoreResponseDto.Complete responseDto = storeService.updateStore(authUser, storeId, dto);
 
-        return ApiResponse.onSuccess(SuccessStatus.OK, responseDto);
+        return ApiResponse.onSuccess(SuccessStatus.OK, storeService.updateStore(authUser, storeId, dto));
     }
 
+    /**
+     * 가게 폐업처리(soft delete)
+     * @param authUser 요청 유저
+     * @param storeId 폐업 처리할 store Id
+     * @param dto 비밀번호 검증
+     * @return
+     */
+    @DeleteMapping("/owner/stores/{storeId}")
+    public ResponseEntity<ApiResponse<StoreResponseDto.Complete>> deleteStore(@Auth AuthUser authUser,
+                                                                              @PathVariable Long storeId,
+                                                                            @Valid @RequestBody StoreRequestDto.Delete dto) {
+
+        return ApiResponse.onSuccess(SuccessStatus.OK, storeService.deleteStore(authUser, storeId, dto));
+    }
 }
 
