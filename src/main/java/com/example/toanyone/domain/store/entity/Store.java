@@ -57,6 +57,8 @@ public class Store extends BaseEntity {
     @OneToMany(mappedBy = "store")
     private List<Menu> menus = new ArrayList<>();
 
+
+
     public Store(User user, StoreRequestDto.Create dto) {
         this.user = user;
         this.name = dto.getName();
@@ -71,6 +73,10 @@ public class Store extends BaseEntity {
 
     }
 
+    // 고승표 추가
+    public boolean isOpen() {
+        return this.status == Status.OPEN;
+    }
 
 
 }

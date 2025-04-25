@@ -26,6 +26,7 @@ import java.util.List;
   - 주문 생성
   - 주문 항목(OrderItem) 저장
   - 장바구니 초기화 등
+*/
 
 @Service
 @RequiredArgsConstructor
@@ -38,7 +39,7 @@ public class OrderServiceImpl implements OrderService {
     private final CartRepository cartRepository;
     private final StoreRepository storeRepository;
 
-
+/*
      주문 생성 메서드
      - 고객이 장바구니(cartId)를 기반으로 주문을 생성
      - 유효성 검사: 장바구니 존재, 가게 상태, 최소 주문 금액 확인
@@ -48,6 +49,7 @@ public class OrderServiceImpl implements OrderService {
      @param user 현재 로그인한 사용자 (주문자)
      @param cartId 주문하고자 하는 장바구니 ID
      @return 주문 생성 결과 DTO
+*/
 
     @Transactional
     @Override
@@ -82,7 +84,6 @@ public class OrderServiceImpl implements OrderService {
                 .user(user) // 누가 주문했는지
                 .status(OrderStatus.WAITING) // 접수 대기 상태
                 .totalPrice(orderPrice + store.getDeliveryFee()) // 총 금액 = 메뉴 + 배달비
-                .defaultDeliveryFee(store.getDefaultDeliveryFee()) // 배달비 저장
                 .build();
 
         orderRepository.save(order); // 주문 저장
@@ -96,6 +97,8 @@ public class OrderServiceImpl implements OrderService {
         // 8. 장바구니 비우기 (주문 완료 시 초기화)
         cartService.clearCartItems(user);
 
+
+
         // 9. 생성된 주문 정보를 응답 DTO로 변환해서 반환
         return new OrderDto.CreateResponse(
                 order.getId(), // 주문 ID
@@ -103,6 +106,12 @@ public class OrderServiceImpl implements OrderService {
                 order.getStatus().name() // 주문 상태 문자열
         );
     }
+
+    @Override
+    public List<OrderDto.OwnerOrderListResponse> getOrdersByStore(Long storeId) {
+        // TODO: storeId 기준으로 주문 목록 조회하고 DTO 변환
+        return null;
+    }
 }
-*/
+
 
