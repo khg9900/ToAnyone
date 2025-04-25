@@ -16,7 +16,7 @@ public interface CartService {
 
     CartItemDto.Response getCartItems(AuthUser authUser);
 
-    CartResponseDto clearCartItems(User user);
+    CartResponseDto clearCartItems(AuthUser authUser);
 
     CartResponseDto updateCartItems(AuthUser authUser, Long storeId,
                                     Long menuId, Integer quantity);

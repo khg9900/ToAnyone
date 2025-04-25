@@ -86,7 +86,9 @@ public class CartServiceImpl implements CartService {
 
     @Override
     @Transactional
-    public CartResponseDto clearCartItems(User user) {
+    public CartResponseDto clearCartItems(AuthUser authUser) {
+        User user = userRepository.findById(authUser.getId())
+                .orElseThrow(() -> new ApiException(ErrorStatus.USER_NOT_FOUND));
         Cart cart = cartRepository.findByUserOrElseThrow(user);
         cartRepository.delete(cart);
         return new CartResponseDto("장바구니가 비워졌습니다");
