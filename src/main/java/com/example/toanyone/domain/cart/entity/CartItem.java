@@ -35,4 +35,8 @@ public class CartItem {
         this.menu_price = menu_price;
     }
 
+    public void setCartItemQuantity(int changedQuantity) {
+        this.quantity = changedQuantity;
+    }
+
 }

@@ -87,12 +87,31 @@ public class CartServiceImpl implements CartService {
     @Override
     @Transactional
     public CartResponseDto clearCartItems(User user) {
-
-
         Cart cart = cartRepository.findByUserOrElseThrow(user);
-
         cartRepository.delete(cart);
-
         return new CartResponseDto("장바구니가 비워졌습니다");
+    }
+
+    @Override
+    @Transactional
+    public CartResponseDto updateCartItems(AuthUser authUser, Long storeId, Long menuId, Integer quantity) {
+        User user = userRepository.findById(authUser.getId()).get();
+        Menu menu = menuRepository.findByIdOrElseThrow(menuId);
+        Cart cart = cartRepository.findByUserOrElseThrow(user);
+        CartItem cartItem = cartItemRepository.findCartItemsByMenuAndCartOrElseThrow(menu, cart);
+
+        int changedQuantity = cartItem.getQuantity() + quantity;
+        if (changedQuantity<0){
+            throw new ApiException(ErrorStatus.CART_ITEM_QUANTITY_UNDERFLOW);
+        }
+        if (changedQuantity ==0) {
+            cartItemRepository.delete(cartItem);
+            cart.changeTotalPrice();
+            return new CartResponseDto("해당 품목을 삭제합니다");
+        }
+        cartItem.setCartItemQuantity(changedQuantity);
+        cart.changeTotalPrice();
+
+        return new CartResponseDto("품목의 수량 변경이 완료되었습니다.");
     }
 }

@@ -59,6 +59,16 @@ public class CartController {
         return ApiResponse.onSuccess(SuccessStatus.OK, response);
     }
 
-    public ResponseEntity<ApiResponse<CartResponseDto>> updateCart()
+    @PatchMapping("/{storeId}")
+    public ResponseEntity<ApiResponse<CartResponseDto>> updateCart(
+            @Auth AuthUser authUser,
+            @PathVariable Long storeId,
+            @Valid @RequestBody CartItemDto.CartItems cartItemDto
+    ){
+        CartResponseDto response = cartService.updateCartItems(
+                authUser, storeId, cartItemDto.getMenuId(), cartItemDto.getQuantity());
+
+        return ApiResponse.onSuccess(SuccessStatus.OK, response);
+    }
 
 }
