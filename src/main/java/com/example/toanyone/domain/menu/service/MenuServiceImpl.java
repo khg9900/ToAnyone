@@ -31,7 +31,9 @@ public class MenuServiceImpl implements MenuService {
             MainCategory mainCategory, SubCategory subCategory) {
 
         Store store = storeRepository.findByIdOrElseThrow(storeId);
-        if (!store.getUser().getId().equals(authUser.getId())){
+        Long ownerId = storeRepository.findOwnerIdByStoreIdOrElseThrow(storeId);
+
+        if (!ownerId.equals(authUser.getId())){
             throw new ApiException(ErrorStatus.NOT_STORE_OWNER);
         }
 
@@ -50,15 +52,17 @@ public class MenuServiceImpl implements MenuService {
     @Transactional
     public MenuDto.Response updateMenu(AuthUser authUser, Long storeId, Long menuId, String name, String description,
                                        Integer price, MainCategory mainCategory, SubCategory subCategory) {
-        Store store = storeRepository.findByIdOrElseThrow(storeId);
-        if (!store.getUser().getId().equals(authUser.getId())){
+
+        Long ownerId = storeRepository.findOwnerIdByStoreIdOrElseThrow(storeId);
+        log.info("ownerId: " + ownerId);
+
+        if (!ownerId.equals(authUser.getId())){
             throw new ApiException(ErrorStatus.NOT_STORE_OWNER);
         }
 
         Menu menu = menuRepository.findByIdOrElseThrow(menuId);
 
         menu.setMenu(name, description, price, mainCategory, subCategory);
-        log.info("Menu updated {}", menu);
 
         return new MenuDto.Response("메뉴 수정되었습니다");
     }
@@ -66,8 +70,8 @@ public class MenuServiceImpl implements MenuService {
     @Override
     @Transactional
     public MenuDto.Response deleteMenu(AuthUser authUser, Long storeId, Long menuId) {
-        Store store = storeRepository.findByIdOrElseThrow(storeId);
-        if (!store.getUser().getId().equals(authUser.getId())){
+        Long ownerId = storeRepository.findOwnerIdByStoreIdOrElseThrow(storeId);
+        if (!ownerId.equals(authUser.getId())){
             throw new ApiException(ErrorStatus.NOT_STORE_OWNER);
         }
 
