@@ -1,6 +1,7 @@
 package com.example.toanyone.domain.order.dto;
 import com.example.toanyone.domain.order.enums.OrderStatus;
 
+import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import lombok.*;
 
@@ -9,9 +10,8 @@ import java.util.List;
 
 public class OrderDto {
 
-    //
+
     // 주문 생성 요청 DTO
-    //
     @Getter
     @NoArgsConstructor
     @AllArgsConstructor
@@ -20,32 +20,7 @@ public class OrderDto {
         private Long cartId;
     }
 
-
-    //
-    // 주문 상태 변경 요청 DTO (사장님)
-    //
-    @Getter
-    @NoArgsConstructor
-    @AllArgsConstructor
-    public static class StatusUpdateRequest {
-
-        @NotNull(message = "주문 상태는 필수입니다.")
-        private OrderStatus status;
-    }
-
-    //
-    // 주문 상태 변경 응답 DTO (사장님)
-    //
-    @Getter
-    @NoArgsConstructor
-    @AllArgsConstructor
-    public static class StatusUpdateResponse {
-        private String message;
-    }
-
-    //
     // 사장님 - 가게 주문 목록 조회 응답
-    //
     @Getter
     @AllArgsConstructor
     @NoArgsConstructor
@@ -56,9 +31,7 @@ public class OrderDto {
         private LocalDateTime createdAt;
     }
 
-    //
     // 고객 - 내 주문 내역 목록 조회 응답
-    //
     @Getter
     @AllArgsConstructor
     @NoArgsConstructor
@@ -73,9 +46,7 @@ public class OrderDto {
         private List<OrderItemDetail> items;
     }
 
-    //
     // 고객 - 주문 내역 메뉴 항목
-    //
     @Getter
     @AllArgsConstructor
     @NoArgsConstructor
@@ -124,6 +95,30 @@ public class OrderDto {
             private Integer price;
             private Integer count;
         }
+    }
+
+    // 주문 상태 변경 요청 DTO (사장님)
+    @Getter
+    @NoArgsConstructor
+    @AllArgsConstructor
+    @Builder
+    public static class StatusUpdateRequest {
+        // 변경할 주문 상태 (WAITING, COOKING, DELIVERING 등)
+        @NotBlank(message = "주문 상태는 필수입니다.")
+        private String status;
+    }
+
+    // 주문 상태 변경 응답 DTO (사장님)
+    @Getter
+    @NoArgsConstructor
+    @AllArgsConstructor
+    @Builder
+    public static class StatusUpdateResponse {
+        // 변경된 주문 ID
+        private Long orderId;
+
+        // 변경 후 주문 상태
+        private String updatedStatus;
     }
 
 
