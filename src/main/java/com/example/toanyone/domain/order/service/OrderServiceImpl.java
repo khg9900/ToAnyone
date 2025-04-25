@@ -1,7 +1,6 @@
 package com.example.toanyone.domain.order.service;
 
 import com.example.toanyone.domain.cart.entity.Cart;
-import com.example.toanyone.domain.cart.entity.CartItem;
 import com.example.toanyone.domain.cart.repository.CartRepository;
 import com.example.toanyone.domain.cart.service.CartService;
 import com.example.toanyone.domain.order.dto.OrderDto;
@@ -13,6 +12,8 @@ import com.example.toanyone.domain.order.repository.OrderRepository;
 import com.example.toanyone.domain.store.entity.Store;
 import com.example.toanyone.domain.store.repository.StoreRepository;
 import com.example.toanyone.domain.user.entity.User;
+import com.example.toanyone.domain.user.repository.UserRepository;
+import com.example.toanyone.global.auth.dto.AuthUser;
 import com.example.toanyone.global.common.code.ErrorStatus;
 import com.example.toanyone.global.common.error.ApiException;
 import lombok.RequiredArgsConstructor;
@@ -21,61 +22,46 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
-/*
-  주문 관련 비즈니스 로직을 구현한 서비스 클래스
-  - 주문 생성
-  - 주문 항목(OrderItem) 저장
-  - 장바구니 초기화 등
-*/
-
 @Service
 @RequiredArgsConstructor
 public class OrderServiceImpl implements OrderService {
 
-    // 의존성 주입 (final + RequiredArgsConstructor 덕분에 자동 주입됨)
     private final OrderRepository orderRepository;
     private final OrderItemRepository orderItemRepository;
     private final CartService cartService;
     private final CartRepository cartRepository;
     private final StoreRepository storeRepository;
-
-/*
-     주문 생성 메서드
-     - 고객이 장바구니(cartId)를 기반으로 주문을 생성
-     - 유효성 검사: 장바구니 존재, 가게 상태, 최소 주문 금액 확인
-     - 주문(Order)과 주문 항목(OrderItem) 저장
-     - 장바구니 초기화
-
-     @param user 현재 로그인한 사용자 (주문자)
-     @param cartId 주문하고자 하는 장바구니 ID
-     @return 주문 생성 결과 DTO
-*/
+    private final UserRepository userRepository;
 
     @Transactional
     @Override
-    public OrderDto.CreateResponse createOrder(User user, Long cartId) {
+    public OrderDto.CreateResponse createOrder(AuthUser authUser, Long cartId) {
+        // 0. 유저 정보 조회
+        User user = userRepository.findById(authUser.getId())
+                .orElseThrow(() -> new ApiException(ErrorStatus.USER_NOT_FOUND));
+
         // 1. 장바구니 조회
         Cart cart = cartRepository.findByUserOrElseThrow(user);
         if (cart == null) {
-            throw new IllegalArgumentException("장바구니를 찾을 수 없습니다.");
+            throw new ApiException(ErrorStatus.CART_NOT_FOUND);
         }
 
         // 2. 장바구니와 연결된 가게 정보 가져오기
         Long storeId = cart.getStore().getId();
-        Store store = storeRepository.findById(storeId).get();
-//                .orElseThrow(()->new ApiException(ErrorStatus.)); //store 없을때 에러 추가 필요
+        Store store = storeRepository.findById(storeId)
+                .orElseThrow(() -> new ApiException(ErrorStatus.STORE_NOT_FOUND));
 
         // 3. 가게가 영업 중인지 확인 (CLOSED, TEMP_CLOSED이면 주문 불가)
         if (!store.isOpen()) {
-            throw new IllegalStateException("[" + store.getName() + "] 가게는 현재 영업 중이 아닙니다.");
+            throw new ApiException(ErrorStatus.ORDER_STORE_CLOSED);
         }
 
-        // 4. 메비뉴 총 금액 계산 (배달는 제외)
+        // 4. 메뉴 총 금액 계산 (배달료 제외)
         int orderPrice = cart.getTotalPrice();
 
         // 5. 최소 주문 금액을 충족하는지 확인
         if (orderPrice < store.getMinOrderPrice()) {
-            throw new IllegalArgumentException("최소 주문 금액을 만족해야 합니다.");
+            throw new ApiException(ErrorStatus.ORDER_MIN_PRICE_NOT_MET);
         }
 
         // 6. 주문 엔티티 생성 및 저장 (상태는 기본값 WAITING)
@@ -84,6 +70,7 @@ public class OrderServiceImpl implements OrderService {
                 .user(user) // 누가 주문했는지
                 .status(OrderStatus.WAITING) // 접수 대기 상태
                 .totalPrice(orderPrice + store.getDeliveryFee()) // 총 금액 = 메뉴 + 배달비
+                .deliveryFee(store.getDeliveryFee()) // 배달비 저장
                 .build();
 
         orderRepository.save(order); // 주문 저장
@@ -97,8 +84,6 @@ public class OrderServiceImpl implements OrderService {
         // 8. 장바구니 비우기 (주문 완료 시 초기화)
         cartService.clearCartItems(user);
 
-
-
         // 9. 생성된 주문 정보를 응답 DTO로 변환해서 반환
         return new OrderDto.CreateResponse(
                 order.getId(), // 주문 ID
@@ -108,10 +93,52 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
+    @Transactional(readOnly = true)
     public List<OrderDto.OwnerOrderListResponse> getOrdersByStore(Long storeId) {
-        // TODO: storeId 기준으로 주문 목록 조회하고 DTO 변환
-        return null;
+        List<Order> orders = orderRepository.findAllByStoreId(storeId);
+
+        return orders.stream()
+                .map(order -> new OrderDto.OwnerOrderListResponse(
+                        order.getId(),
+                        order.getUser().getNickname(),
+                        order.getStatus().name(),
+                        order.getCreatedAt()
+                ))
+                .toList();
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public List<OrderDto.UserOrderHistoryResponse> getOrdersByUser(AuthUser authUser) {
+        // 1. 유저 정보 가져오기 (nickname 포함)
+        User user = userRepository.findById(authUser.getId())
+                .orElseThrow(() -> new ApiException(ErrorStatus.USER_NOT_FOUND));
+
+        // 2. 주문 목록 조회
+        List<Order> orders = orderRepository.findAllByUser(user);
+
+        // 3. 주문 목록을 DTO로 변환
+        return orders.stream()
+                .map(order -> {
+                    List<OrderDto.UserOrderHistoryResponse.OrderItemInfo> items = order.getOrderItems().stream()
+                            .map(item -> new OrderDto.UserOrderHistoryResponse.OrderItemInfo(
+                                    item.getMenu().getName(),
+                                    item.getMenuPrice(),
+                                    item.getQuantity()
+                            ))
+                            .toList();
+
+                    return new OrderDto.UserOrderHistoryResponse(
+                            order.getId(),
+                            order.getStore().getName(),
+                            order.getStatus().name(),
+                            order.getTotalPrice() - order.getDeliveryFee(),
+                            order.getDeliveryFee(),
+                            order.getTotalPrice(),
+                            order.getCreatedAt(),
+                            items
+                    );
+                })
+                .toList();
     }
 }
-
-

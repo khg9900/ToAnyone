@@ -37,6 +37,8 @@ public class Order {
 
     private Integer totalPrice;
 
+    @Column(nullable = false)
+    private Integer deliveryFee;
 
     @Enumerated(EnumType.STRING)
     private OrderStatus status;
@@ -60,7 +62,9 @@ public class Order {
     @Column(updatable = false)
     private LocalDateTime createdAt;
 
-
+    public Integer getDeliveryFee() {
+        return deliveryFee;
+    }
     public void changeStatus(OrderStatus status) {
         this.status = status;
     }

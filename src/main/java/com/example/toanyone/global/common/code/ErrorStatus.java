@@ -24,7 +24,7 @@ public enum ErrorStatus implements BaseErrorCode {
     MENU_NOT_FOUND(HttpStatus.NOT_FOUND, "4003","존재하지 않는 메뉴입니다."),
 
     CART_ITEMS_NOT_FOUND(HttpStatus.NOT_FOUND, "4004", "장바구니에서 해당 품목을 찾을 수 없습니다."),
-    CART_ITEM_QUANTITY_UNDERFLOW(HttpStatus.BAD_REQUEST, "4005", "차감하려는 수량이 담긴 수량보다 많습니다.");
+    CART_ITEM_QUANTITY_UNDERFLOW(HttpStatus.BAD_REQUEST, "4005", "차감하려는 수량이 담긴 수량보다 많습니다."),
 
     // 5000: Store 에러코드
     STORE_NO_PERMISSION(HttpStatus.FORBIDDEN, "5001","가게 생성 권한이 없습니다."),
@@ -33,13 +33,21 @@ public enum ErrorStatus implements BaseErrorCode {
     STORE_NOT_FOUND(HttpStatus.NOT_FOUND, "5004","가게 정보가 없습니다."),
     STORE_SEARCH_NO_MATCH(HttpStatus.NOT_FOUND, "5005","검색한 단어가 포함된 가게명이 존재하지 않습니다."),
     STORE_SHUT_DOWN(HttpStatus.BAD_REQUEST, "5006", "폐업된 가게입니다."),
-    STORE_CLOSED(HttpStatus.BAD_REQUEST, "5007", "영업 종료된 가게입니다.");
+    STORE_CLOSED(HttpStatus.BAD_REQUEST, "5007", "영업 종료된 가게입니다."),
 
 
+    // 6000
+
+    // 7000
+
+    // 8000: Order 에러코드
+    ORDER_NOT_FOUND(HttpStatus.NOT_FOUND, "8001", "주문 정보를 찾을 수 없습니다."),
+    ORDER_MIN_PRICE_NOT_MET(HttpStatus.BAD_REQUEST, "8002", "최소 주문 금액을 만족해야 합니다."),
+    ORDER_STORE_CLOSED(HttpStatus.BAD_REQUEST, "8003", "가게가 영업 중이 아닙니다."),
+    CART_NOT_FOUND(HttpStatus.NOT_FOUND, "8004", "장바구니를 찾을 수 없습니다."),
+    ORDER_INVALID_USER(HttpStatus.FORBIDDEN, "8005", "해당 주문에 대한 권한이 없습니다.");
 
 
-
-    ;
 
     private final HttpStatus httpStatus;
     private final String code;

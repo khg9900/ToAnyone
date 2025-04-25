@@ -1,7 +1,6 @@
 package com.example.toanyone.domain.order.dto;
 import com.example.toanyone.domain.order.enums.OrderStatus;
 
-import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotNull;
 import lombok.*;
 

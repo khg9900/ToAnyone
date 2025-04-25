@@ -18,6 +18,9 @@ public interface CartService {
 
     CartResponseDto clearCartItems(AuthUser authUser);
 
+    //고승표 추가
+    CartResponseDto clearCartItems(User user); // 오버로딩용
+
     CartResponseDto updateCartItems(AuthUser authUser, Long storeId,
                                     Long menuId, Integer quantity);
 }
