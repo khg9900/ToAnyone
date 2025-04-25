@@ -55,6 +55,17 @@ public class Store extends BaseEntity {
     @OneToMany(mappedBy = "store")
     private List<Menu> menus = new ArrayList<>();
 
+
+    // Store.java
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "owner_id") // 이 컬럼 이름이 실제 DB랑 맞아야 함!
+    private User owner;
+
+    // 고승표 추가
+    public boolean isOpen() {
+        return this.status == Status.OPEN;
+    }
+
     public Store(User user, StoreRequestDto.Create dto, Status status, LocalTime openTime, LocalTime closeTime) {
         this.user = user;
         this.name = dto.getName();

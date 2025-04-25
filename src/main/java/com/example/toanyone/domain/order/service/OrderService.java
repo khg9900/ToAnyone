@@ -1,5 +1,5 @@
 package com.example.toanyone.domain.order.service;
-
+import com.example.toanyone.global.auth.dto.AuthUser;
 import com.example.toanyone.domain.order.dto.OrderDto;
 import com.example.toanyone.domain.user.entity.User;
 import java.util.List;
@@ -14,7 +14,10 @@ public interface OrderService {
       @param cartId  주문할 장바구니 ID
       @return 주문 생성 응답 DTO
     */
-    OrderDto.CreateResponse createOrder(User user, Long cartId);
-    List<OrderDto.OwnerOrderListResponse> getOrdersByStore(Long storeId);
-    List<OrderDto.UserOrderHistoryResponse> getOrdersByUser();
+    List<OrderDto.OwnerOrderListResponse> getOrdersByStore(AuthUser authUser, Long storeId);
+    List<OrderDto.UserOrderHistoryResponse> getOrdersByUser(AuthUser authUser);
+    OrderDto.CreateResponse createOrder(AuthUser authUser);
+    // src/main/java/com/example/toanyone/domain/order/service/OrderService.java
+
+
 }
