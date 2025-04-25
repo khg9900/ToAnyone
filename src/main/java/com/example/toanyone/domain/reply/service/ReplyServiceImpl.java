@@ -13,6 +13,7 @@ import com.example.toanyone.domain.user.repository.UserRepository;
 import com.example.toanyone.global.auth.dto.AuthUser;
 import com.example.toanyone.global.common.code.ErrorStatus;
 import com.example.toanyone.global.common.error.ApiException;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -26,6 +27,7 @@ public class ReplyServiceImpl implements ReplyService {
     private final UserRepository userRepository;
 
     @Override
+    @Transactional
     public ReplyResponseDto createReply(Long storeId, Long reviewId, AuthUser authUser, ReplyRequestDto requestDto) {
 
         // 리뷰 존재 확인
@@ -53,5 +55,40 @@ public class ReplyServiceImpl implements ReplyService {
         replyRepository.save(reply);
 
         return new ReplyResponseDto("댓글이 등록되었습니다.");
+    }
+
+    @Override
+    @Transactional
+    public ReplyResponseDto updateReply(Long storeId, Long reviewId, AuthUser authUser, ReplyRequestDto requestDto) {
+
+        // 리뷰 존재 확인
+        Review review = reviewRepository.findById(reviewId).orElseThrow(() -> new ApiException(ErrorStatus.REVIEW_NOT_FOUND));
+
+        // 해당 가게 리뷰인지 검증
+        if (!review.getStore().getId().equals(storeId)){
+            throw new ApiException(ErrorStatus.REVIEW_STORE_MISMATCH);
+        }
+
+        // 사장님 유저 검증
+        User owner = userRepository.findById(authUser.getId()).orElseThrow(() -> new ApiException(ErrorStatus.USER_NOT_FOUND));
+
+        if (!owner.getUserRole().equals(UserRole.OWNER)){
+            throw new ApiException(ErrorStatus.REVIEW_ACCESS_DENIED);
+        }
+
+        // 댓글이 없으면 예외처리
+        Reply reply = review.getReply();
+        if (reply == null) {
+            throw new ApiException(ErrorStatus.REPLY_NOT_FOUND);
+        }
+
+        // 댓글 작성자 본인 확인
+        if (!reply.getOwner().getId().equals(owner.getId())) {
+            throw new ApiException(ErrorStatus.REVIEW_ACCESS_DENIED);
+        }
+
+        reply.updateContent(requestDto.getContent());
+
+        return new ReplyResponseDto("댓글이 수정되었습니다.");
     }
 }
