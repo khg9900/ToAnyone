@@ -21,7 +21,7 @@ public enum ErrorStatus implements BaseErrorCode {
     MENU_ALREADY_EXISTS(HttpStatus.CONFLICT,"4001","이미 존재하는 메뉴입니다."),
     MENU_ALREADY_DELETED(HttpStatus.BAD_REQUEST, "4002", "이미 삭제된 메뉴입니다."),
     MENU_NOT_FOUND(HttpStatus.NOT_FOUND, "4003","존재하지 않는 메뉴입니다."),
-  
+
     // 5000: Store 에러코드
     STORE_NO_PERMISSION(HttpStatus.FORBIDDEN,"5001","가게 생성 권한이 없습니다."),
     STORE_MAX_LIMIT_EXCEEDED(HttpStatus.BAD_REQUEST,"5002","가게는 최대 3개까지 등록 가능합니다."),
@@ -42,7 +42,8 @@ public enum ErrorStatus implements BaseErrorCode {
     REVIEW_NOT_FOUND(HttpStatus.NOT_FOUND, "6004", "해당 리뷰가 존재하지 않습니다."),
     REVIEW_ACCESS_DENIED(HttpStatus.BAD_REQUEST, "6005", "해당 권한이 없습니다."),
     REVIEW_STORE_MISMATCH(HttpStatus.BAD_REQUEST, "6006", "해당 가게의 리뷰가 아닙니다."),
-  
+    REPLY_ALREADY_EXISTS(HttpStatus.BAD_REQUEST, "6007", "이미 댓글이 존재합니다."),
+
     //7000 : cart 에러코드
     CART_ITEMS_NOT_FOUND(HttpStatus.NOT_FOUND, "7001", "장바구니에서 해당 품목을 찾을 수 없습니다."),
     CART_ITEM_QUANTITY_UNDERFLOW(HttpStatus.BAD_REQUEST, "7002", "차감하려는 수량이 담긴 수량보다 많습니다."),
