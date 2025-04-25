@@ -55,7 +55,7 @@ public class Store extends BaseEntity {
     @OneToMany(mappedBy = "store")
     private List<Menu> menus = new ArrayList<>();
 
-    public Store(User user, StoreRequestDto.Create dto) {
+    public Store(User user, StoreRequestDto.Create dto, Status status) {
         this.user = user;
         this.name = dto.getName();
         this.address = dto.getAddress();
@@ -64,7 +64,7 @@ public class Store extends BaseEntity {
         this.deliveryFee = dto.getDeliveryFee();
         this.minOrderPrice = dto.getMinOrderPrice();
         this.notice = dto.getNotice();
-        this.status = dto.getStatus();
+        this.status = status;
         this.phone = dto.getPhone();
     }
 
@@ -74,7 +74,7 @@ public class Store extends BaseEntity {
         if (dto.getDeliveryFee() != null) this.deliveryFee = dto.getDeliveryFee();
         if (dto.getMinOrderPrice() != null) this.minOrderPrice = dto.getMinOrderPrice();
         if (dto.getNotice() != null) this.notice = dto.getNotice();
-        if (dto.getStatus() != null) this.status = dto.getStatus();
+        if (dto.getStatus() != null) this.status = Status.of(dto.getStatus());
     }
 
 }

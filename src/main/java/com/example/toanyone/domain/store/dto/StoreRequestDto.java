@@ -40,8 +40,8 @@ public class StoreRequestDto {
 
         private String notice;
 
-        @NotNull(message = "가게 상태 입력은 필수입니다.")
-        private Status status;
+        @NotBlank(message = "가게 상태 입력은 필수입니다.")
+        private String status;
 
         @NotBlank(message = "가게 번호 입력은 필수입니다.")
         @Pattern(regexp = "^\\d{2,3}-\\d{3,4}-\\d{4}$", message = "전화번호는 000-0000-0000 형식이어야 합니다.")
@@ -50,7 +50,6 @@ public class StoreRequestDto {
 
     // 가게 정보 수정
     @Getter
-    @Builder
     @AllArgsConstructor
     @JsonInclude(JsonInclude.Include.NON_NULL)
     public static class Update {
@@ -63,7 +62,7 @@ public class StoreRequestDto {
         private Integer deliveryFee;
         private Integer minOrderPrice;
         private String notice;
-        private Status status;
+        private String status;
     }
 
     // 가게 폐업 처리

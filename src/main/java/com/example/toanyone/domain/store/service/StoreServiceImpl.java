@@ -4,6 +4,7 @@ import com.example.toanyone.domain.menu.repository.MenuRepository;
 import com.example.toanyone.domain.store.dto.StoreRequestDto;
 import com.example.toanyone.domain.store.dto.StoreResponseDto;
 import com.example.toanyone.domain.store.entity.Store;
+import com.example.toanyone.domain.store.enums.Status;
 import com.example.toanyone.domain.store.repository.StoreRepository;
 import com.example.toanyone.domain.user.entity.User;
 import com.example.toanyone.domain.user.enums.UserRole;
@@ -48,7 +49,8 @@ public class StoreServiceImpl implements StoreService {
         if (storeRepository.existsByName(dto.getName())) {
             throw new ApiException(ErrorStatus.STORE_ALREADY_EXISTS);}
 
-        Store newStore = new Store(user, dto);
+        Status status = Status.of(dto.getStatus());
+        Store newStore = new Store(user, dto, status);
         storeRepository.save(newStore);
 
         return new StoreResponseDto.Complete("가게가 생성되었습니다.");
