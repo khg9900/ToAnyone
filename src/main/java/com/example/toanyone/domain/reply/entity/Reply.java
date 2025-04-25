@@ -39,4 +39,8 @@ public class Reply extends BaseEntity {
         this.owner = owner;
         this.content = content;
     }
+
+    public void updateContent(String content) {
+        this.content = content;
+    }
 }

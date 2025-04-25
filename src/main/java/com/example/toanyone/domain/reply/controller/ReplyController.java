@@ -32,4 +32,15 @@ public class ReplyController {
         return ApiResponse.onSuccess(SuccessStatus.OK, responseDto);
     }
 
+    /**
+     * 댓글 수정
+     * */
+    @PatchMapping("/{storeId}/reviews/{reviewId}/reply")
+    public ResponseEntity<ApiResponse<ReplyResponseDto>> replyUpdate(@PathVariable Long storeId,
+                                                                     @PathVariable Long reviewId,
+                                                                     @Auth AuthUser authUser,
+                                                                     @Valid @RequestBody ReplyRequestDto requestDto) {
+        ReplyResponseDto responseDto = replyService.updateReply(storeId, reviewId, authUser, requestDto);
+        return ApiResponse.onSuccess(SuccessStatus.OK, responseDto);
+    }
 }

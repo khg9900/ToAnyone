@@ -8,4 +8,6 @@ import jakarta.validation.Valid;
 public interface ReplyService {
 
     ReplyResponseDto createReply(Long storeId, Long reviewId, AuthUser authUser, ReplyRequestDto requestDto);
+
+    ReplyResponseDto updateReply(Long storeId, Long reviewId, AuthUser authUser, ReplyRequestDto requestDto);
 }
