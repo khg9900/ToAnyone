@@ -15,6 +15,7 @@ import com.example.toanyone.global.config.PasswordEncoder;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -108,15 +109,28 @@ public class StoreServiceImpl implements StoreService {
         return new StoreResponseDto.GetById(store);
     }
 
+    /**
+     * 가게 폐업처리(soft delete)
+     * @param authUser
+     * @param storeId
+     * @param dto
+     * @return
+     */
     @Override
+    @Transactional
     public StoreResponseDto.Complete deleteStore(AuthUser authUser, Long storeId, StoreRequestDto.Delete dto) {
-
+    //todo 응답은 성공되는데, 가게 삭제가 안됨, 가게 주인 유저 검증도 안됨
         Optional<User> user = userRepository.findById(authUser.getId());
 
         if(!passwordEncoder.matches(dto.getPassword(), user.get().getPassword())) {
             throw new ApiException(ErrorStatus.INVALID_PASSWORD);};
 
         Store store = storeRepository.findByIdOrElseThrow(storeId);
+
+        if(!authUser.getId().equals(store.getUser().getId())) {
+            throw new ApiException(ErrorStatus.STORE_FORBIDDEN);
+        }
+
         if(store.getDeleted()) {
             throw new ApiException(ErrorStatus.STORE_ALREADY_DELETED);}
 

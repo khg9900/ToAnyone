@@ -32,7 +32,8 @@ public enum ErrorStatus implements BaseErrorCode {
     STORE_SEARCH_NO_MATCH(HttpStatus.NOT_FOUND, "5005","검색한 단어가 포함된 가게명이 존재하지 않습니다."),
     STORE_SHUT_DOWN(HttpStatus.BAD_REQUEST, "5006", "폐업된 가게입니다."),
     STORE_CLOSED(HttpStatus.BAD_REQUEST, "5007", "영업 종료된 가게입니다."),
-    STORE_ALREADY_DELETED(HttpStatus.BAD_REQUEST, "5008", "이미 폐업된 가게입니다.");
+    STORE_FORBIDDEN(HttpStatus.FORBIDDEN, "5008", "가게 접근 권한이 없습니다."),
+    STORE_ALREADY_DELETED(HttpStatus.BAD_REQUEST, "5010", "이미 폐업된 가게입니다.");
 
 
 

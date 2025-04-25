@@ -69,7 +69,13 @@ public class StoreController {
         return ApiResponse.onSuccess(SuccessStatus.OK, storeService.getStoreById(storeId));
     }
 
-    // 가게 폐업(삭제)
+    /**
+     * 가게 폐업처리(soft delete)
+     * @param authUser 요청 유저
+     * @param storeId 폐업 처리할 store Id
+     * @param dto 비밀번호 검증
+     * @return
+     */
     @DeleteMapping("/owner/stores/{storeId}")
     public ResponseEntity<ApiResponse<StoreResponseDto.Complete>> deleteStore(@Auth AuthUser authUser,
                                                                               @PathVariable Long storeId,
