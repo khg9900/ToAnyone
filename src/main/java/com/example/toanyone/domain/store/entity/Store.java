@@ -68,9 +68,15 @@ public class Store extends BaseEntity {
         this.notice = dto.getNotice();
         this.status = dto.getStatus();
         this.phone = dto.getPhone();
-
     }
 
-
+    public void update(StoreRequestDto.Update dto) {
+        if (dto.getOpenTime() != null) this.openTime = dto.getOpenTime();
+        if (dto.getCloseTime() != null) this.closeTime = dto.getCloseTime();
+        if (dto.getDeliveryFee() != null) this.deliveryFee = dto.getDeliveryFee();
+        if (dto.getMinOrderPrice() != null) this.minOrderPrice = dto.getMinOrderPrice();
+        if (dto.getNotice() != null) this.notice = dto.getNotice();
+        if (dto.getStatus() != null) this.status = dto.getStatus();
+    }
 
 }
