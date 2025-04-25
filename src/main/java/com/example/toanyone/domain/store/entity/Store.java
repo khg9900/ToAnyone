@@ -2,14 +2,12 @@ package com.example.toanyone.domain.store.entity;
 
 import com.example.toanyone.domain.menu.entity.Menu;
 import com.example.toanyone.domain.store.dto.StoreRequestDto;
-import com.example.toanyone.domain.user.entity.User;
 import com.example.toanyone.domain.store.enums.Status;
+import com.example.toanyone.domain.user.entity.User;
 import com.example.toanyone.global.common.entity.BaseEntity;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-
-import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.List;

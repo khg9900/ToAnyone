@@ -11,17 +11,14 @@ import com.example.toanyone.domain.user.repository.UserRepository;
 import com.example.toanyone.global.auth.dto.AuthUser;
 import com.example.toanyone.global.common.code.ErrorStatus;
 import com.example.toanyone.global.common.error.ApiException;
-import jakarta.validation.Valid;
 import com.example.toanyone.global.config.PasswordEncoder;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -33,7 +30,7 @@ public class StoreServiceImpl implements StoreService {
     private final PasswordEncoder passwordEncoder;
 
     /**
-     * 가게 생성(Service)
+     * 가게 생성
      */
     @Override
     public StoreResponseDto.Complete createStore(Long ownerId, StoreRequestDto.Create dto) {
@@ -136,7 +133,6 @@ public class StoreServiceImpl implements StoreService {
     @Override
     @Transactional
     public StoreResponseDto.Complete deleteStore(AuthUser authUser, Long storeId, StoreRequestDto.Delete dto) {
-    //todo 응답은 성공되는데, 가게 삭제가 안됨, 가게 주인 유저 검증도 안됨
         Optional<User> user = userRepository.findById(authUser.getId());
 
         if(!passwordEncoder.matches(dto.getPassword(), user.get().getPassword())) {
