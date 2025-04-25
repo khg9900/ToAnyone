@@ -23,7 +23,9 @@ public enum ErrorStatus implements BaseErrorCode {
     MENU_ALREADY_EXISTS(HttpStatus.CONFLICT,"4001","이미 존재하는 메뉴입니다."),
     MENU_ALREADY_DELETED(HttpStatus.BAD_REQUEST, "4002", "이미 삭제된 메뉴입니다."),
     MENU_NOT_FOUND(HttpStatus.NOT_FOUND, "4003","존재하지 않는 메뉴입니다."),
-    CART_ITEMS_NOT_FOUND(HttpStatus.NOT_FOUND, "4004", "장바구니를 찾을 수 없습니다."),
+
+    CART_ITEMS_NOT_FOUND(HttpStatus.NOT_FOUND, "4004", "장바구니에서 해당 품목을 찾을 수 없습니다."),
+    CART_ITEM_QUANTITY_UNDERFLOW(HttpStatus.BAD_REQUEST, "4005", "차감하려는 수량이 담긴 수량보다 많습니다.");
 
     // 5000: Store 에러코드
     STORE_NO_PERMISSION(HttpStatus.FORBIDDEN,"5001","가게 생성 권한이 없습니다."),

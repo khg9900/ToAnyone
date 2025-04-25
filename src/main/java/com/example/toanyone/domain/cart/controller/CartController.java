@@ -44,4 +44,24 @@ public class CartController {
         return ApiResponse.onSuccess(SuccessStatus.OK, response);
     }
 
+
+    @DeleteMapping
+    public ResponseEntity<ApiResponse<CartResponseDto>> clearCart(@Auth AuthUser authUser){
+        CartResponseDto response = cartService.clearCartItems(authUser);
+
+        return ApiResponse.onSuccess(SuccessStatus.OK, response);
+    }
+
+    @PatchMapping("/{storeId}")
+    public ResponseEntity<ApiResponse<CartResponseDto>> updateCart(
+            @Auth AuthUser authUser,
+            @PathVariable Long storeId,
+            @Valid @RequestBody CartItemDto.CartItems cartItemDto
+    ){
+        CartResponseDto response = cartService.updateCartItems(
+                authUser, storeId, cartItemDto.getMenuId(), cartItemDto.getQuantity());
+
+        return ApiResponse.onSuccess(SuccessStatus.OK, response);
+    }
+
 }
