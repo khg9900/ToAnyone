@@ -14,8 +14,8 @@ public interface OrderService {
       @param cartId  주문할 장바구니 ID
       @return 주문 생성 응답 DTO
     */
-    OrderDto.CreateResponse createOrder(AuthUser authUser, Long cartId);
     List<OrderDto.OwnerOrderListResponse> getOrdersByStore(Long storeId);
     List<OrderDto.UserOrderHistoryResponse> getOrdersByUser(AuthUser authUser);
+    OrderDto.CreateResponse createOrder(AuthUser authUser);
 
 }

@@ -25,10 +25,9 @@ public class OrderController {
     // 주문 생성
     @PostMapping("/orders")
     public ResponseEntity<ApiResponse<OrderDto.CreateResponse>> createOrder(
-            @Auth AuthUser authUser,
-            @RequestBody @Valid OrderDto.CreateRequest request
+            @Auth AuthUser authUser
     ) {
-        OrderDto.CreateResponse response = orderService.createOrder(authUser, request.getCartId());
+        OrderDto.CreateResponse response = orderService.createOrder(authUser);
         return ApiResponse.onSuccess(SuccessStatus.CREATED, response);
     }
 

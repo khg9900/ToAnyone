@@ -33,9 +33,20 @@ public class OrderServiceImpl implements OrderService {
     private final StoreRepository storeRepository;
     private final UserRepository userRepository;
 
+    /*
+         주문 생성 메서드
+         - 고객의 Auth 정보를 기반으로 주문을 생성
+         - 유효성 검사: 장바구니 존재, 가게 상태, 최소 주문 금액 확인
+         - 주문(Order)과 주문 항목(OrderItem) 저장
+         - 장바구니 초기화
+
+         @param authUser 현재 로그인한 사용자
+         @return 주문 생성 결과 DTO
+    */
+
     @Transactional
     @Override
-    public OrderDto.CreateResponse createOrder(AuthUser authUser, Long cartId) {
+    public OrderDto.CreateResponse createOrder(AuthUser authUser) {
         // 0. 유저 정보 조회
         User user = userRepository.findById(authUser.getId())
                 .orElseThrow(() -> new ApiException(ErrorStatus.USER_NOT_FOUND));
@@ -56,7 +67,7 @@ public class OrderServiceImpl implements OrderService {
             throw new ApiException(ErrorStatus.ORDER_STORE_CLOSED);
         }
 
-        // 4. 메뉴 총 금액 계산 (배달료 제외)
+        // 4. 메뉴 총 금액 계산 (배달비 제외)
         int orderPrice = cart.getTotalPrice();
 
         // 5. 최소 주문 금액을 충족하는지 확인
