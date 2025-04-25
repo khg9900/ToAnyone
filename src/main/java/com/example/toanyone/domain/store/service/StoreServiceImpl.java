@@ -1,5 +1,6 @@
 package com.example.toanyone.domain.store.service;
 
+import com.example.toanyone.domain.menu.repository.MenuRepository;
 import com.example.toanyone.domain.store.dto.StoreRequestDto;
 import com.example.toanyone.domain.store.dto.StoreResponseDto;
 import com.example.toanyone.domain.store.entity.Store;
@@ -10,13 +11,14 @@ import com.example.toanyone.domain.user.repository.UserRepository;
 import com.example.toanyone.global.auth.dto.AuthUser;
 import com.example.toanyone.global.common.code.ErrorStatus;
 import com.example.toanyone.global.common.error.ApiException;
-import jakarta.validation.Valid;
+import com.example.toanyone.global.config.PasswordEncoder;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -24,9 +26,11 @@ public class StoreServiceImpl implements StoreService {
 
     public final StoreRepository storeRepository;
     public final UserRepository userRepository;
+    private final MenuRepository menuRepository;
+    private final PasswordEncoder passwordEncoder;
 
     /**
-     * 가게 생성(Service)
+     * 가게 생성
      */
     @Override
     public StoreResponseDto.Complete createStore(Long ownerId, StoreRequestDto.Create dto) {
@@ -121,6 +125,30 @@ public class StoreServiceImpl implements StoreService {
         store.update(dto);
 
         return new StoreResponseDto.Complete("정보가 수정되었습니다.");
+    }
+
+    /**
+     * 가게 폐업처리(soft delete)
+     */
+    @Override
+    @Transactional
+    public StoreResponseDto.Complete deleteStore(AuthUser authUser, Long storeId, StoreRequestDto.Delete dto) {
+        Optional<User> user = userRepository.findById(authUser.getId());
+
+        if(!passwordEncoder.matches(dto.getPassword(), user.get().getPassword())) {
+            throw new ApiException(ErrorStatus.INVALID_PASSWORD);};
+
+        Store store = storeRepository.findByIdOrElseThrow(storeId);
+
+        if(!authUser.getId().equals(store.getUser().getId())) {
+            throw new ApiException(ErrorStatus.STORE_FORBIDDEN);
+        }
+
+        if(store.getDeleted()) {
+            throw new ApiException(ErrorStatus.STORE_ALREADY_DELETED);}
+
+        store.softDelete();
+        return new StoreResponseDto.Complete("가게가 폐업 처리되었습니다.");
     }
 
 

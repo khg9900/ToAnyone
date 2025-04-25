@@ -4,6 +4,8 @@ import com.example.toanyone.domain.store.entity.Store;
 import com.example.toanyone.global.common.code.ErrorStatus;
 import com.example.toanyone.global.common.error.ApiException;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
@@ -25,5 +27,14 @@ public interface StoreRepository extends JpaRepository<Store, Long> {
     List<Store> findByUserIdAndDeletedFalse(Long ownerId);
 
     List<Store> findByNameContainingAndDeletedFalse(String keyword);
+
+    @Query("SELECT s.user.id FROM Store s WHERE s.id = :storeId")
+    Optional<Long> findOwnerIdByStoreId(@Param("storeId") Long storeId);
+
+    default Long findOwnerIdByStoreIdOrElseThrow(Long storeId) {
+        return findOwnerIdByStoreId(storeId).orElseThrow(
+                ()-> new ApiException(ErrorStatus.STORE_NOT_FOUND));
+    }
+
 
 }

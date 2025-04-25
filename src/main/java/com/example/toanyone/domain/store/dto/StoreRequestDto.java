@@ -13,12 +13,14 @@ import java.time.LocalTime;
 
 public class StoreRequestDto {
 
+    // 가게 생성
     @Getter
     @Builder
     @AllArgsConstructor
     public static class Create {
         @NotBlank(message = "가게 이름 입력은 필수입니다.")
         private String name;
+
         @NotBlank(message = "가게 주소 입력은 필수입니다.")
         private String address;
 
@@ -32,16 +34,21 @@ public class StoreRequestDto {
 
         @NotNull(message = "배달비 입력은 필수입니다.")
         private Integer deliveryFee;
+
         @NotNull(message = "최소 주문 금액 입력은 필수입니다.")
         private Integer minOrderPrice;
+
         private String notice;
+
         @NotNull(message = "가게 상태 입력은 필수입니다.")
         private Status status;
+
         @NotBlank(message = "가게 번호 입력은 필수입니다.")
         @Pattern(regexp = "^\\d{2,3}-\\d{3,4}-\\d{4}$", message = "전화번호는 000-0000-0000 형식이어야 합니다.")
         private String phone;
     }
 
+    // 가게 정보 수정
     @Getter
     @Builder
     @AllArgsConstructor
@@ -59,6 +66,7 @@ public class StoreRequestDto {
         private Status status;
     }
 
+    // 가게 폐업 처리
     @Getter
     @AllArgsConstructor
     public static class Delete {
