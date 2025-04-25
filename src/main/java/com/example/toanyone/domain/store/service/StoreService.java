@@ -17,5 +17,5 @@ public interface StoreService {
 
     StoreResponseDto.GetById getStoreById(Long storeId);
 
-    StoreResponseDto.Complete updateStore(AuthUser authUser, Long storeId, StoreRequestDto.@Valid Update dto);
+    StoreResponseDto.Complete updateStore(AuthUser authUser, Long storeId, StoreRequestDto.Update dto);
 }

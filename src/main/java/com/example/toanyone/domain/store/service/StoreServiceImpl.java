@@ -108,7 +108,7 @@ public class StoreServiceImpl implements StoreService {
      */
     @Override
     @Transactional
-    public StoreResponseDto.Complete updateStore(AuthUser authUser, Long storeId, StoreRequestDto.@Valid Update dto) {
+    public StoreResponseDto.Complete updateStore(AuthUser authUser, Long storeId, StoreRequestDto.Update dto) {
 
         Store store = storeRepository.findByIdOrElseThrow(storeId);
 
