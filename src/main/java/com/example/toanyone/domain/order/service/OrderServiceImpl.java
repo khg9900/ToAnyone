@@ -52,7 +52,7 @@ public class OrderServiceImpl implements OrderService {
                 .orElseThrow(() -> new ApiException(ErrorStatus.USER_NOT_FOUND));
 
         // 1. 장바구니 조회
-        Cart cart = cartRepository.findByUserOrElseThrow(user);
+        Cart cart = cartRepository.findByUserIdOrElseThrow(user.getId());
         if (cart == null) {
             throw new ApiException(ErrorStatus.CART_NOT_FOUND);
         }
