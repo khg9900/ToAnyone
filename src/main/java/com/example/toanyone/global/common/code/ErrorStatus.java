@@ -37,13 +37,19 @@ public enum ErrorStatus implements BaseErrorCode {
     NOT_STORE_OWNER(HttpStatus.BAD_REQUEST, "5010", "가게의 주인이 아니면 접근할 수 없습니다"),
 
 
+    // 6000: review
+    REVIEW_CREATE_FORBIDDEN(HttpStatus.FORBIDDEN, "6001", "리뷰 작성 조건을 만족하지 않는 주문입니다."),
+    ORDER_STORE_MISMATCH(HttpStatus.BAD_REQUEST, "6002", "해당 가게의 주문이 아닙니다."),
+    REVIEW_INVALID_RATING(HttpStatus.BAD_REQUEST, "6003", "별점은 1점에서 5점 사이만 조회 가능합니다."),
+    REVIEW_NOT_FOUND(HttpStatus.NOT_FOUND, "6004", "해당 리뷰가 존재하지 않습니다."),
+    REVIEW_ACCESS_DENIED(HttpStatus.BAD_REQUEST, "6005", "해당 권한이 없습니다."),
+    REVIEW_STORE_MISMATCH(HttpStatus.BAD_REQUEST, "6006", "해당 가게의 리뷰가 아닙니다."),
+  
     //7000 : cart 에러코드
     CART_ITEMS_NOT_FOUND(HttpStatus.NOT_FOUND, "7001", "장바구니에서 해당 품목을 찾을 수 없습니다."),
     CART_ITEM_QUANTITY_UNDERFLOW(HttpStatus.BAD_REQUEST, "7002", "차감하려는 수량이 담긴 수량보다 많습니다."),
 
-
-
-            ;
+    ;
 
     private final HttpStatus httpStatus;
     private final String code;
