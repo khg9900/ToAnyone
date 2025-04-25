@@ -56,36 +56,36 @@ public class Store extends BaseEntity {
     private List<Menu> menus = new ArrayList<>();
 
 
-
-    public Store(User user, StoreRequestDto.Create dto) {
-        this.user = user;
-        this.name = dto.getName();
-        this.address = dto.getAddress();
-        this.openTime = dto.getOpenTime();
-        this.closeTime = dto.getCloseTime();
-        this.deliveryFee = dto.getDeliveryFee();
-        this.minOrderPrice = dto.getMinOrderPrice();
-        this.notice = dto.getNotice();
-        this.status = dto.getStatus();
-        this.phone = dto.getPhone();
-    }
-
-    // 고승표 추가
-    public boolean isOpen() {
-        return this.status == Status.OPEN;
-    }
     // Store.java
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "owner_id") // 이 컬럼 이름이 실제 DB랑 맞아야 함!
     private User owner;
 
-    public void update(StoreRequestDto.Update dto) {
-        if (dto.getOpenTime() != null) this.openTime = dto.getOpenTime();
-        if (dto.getCloseTime() != null) this.closeTime = dto.getCloseTime();
+    // 고승표 추가
+    public boolean isOpen() {
+        return this.status == Status.OPEN;
+    }
+
+    public Store(User user, StoreRequestDto.Create dto, Status status, LocalTime openTime, LocalTime closeTime) {
+        this.user = user;
+        this.name = dto.getName();
+        this.address = dto.getAddress();
+        this.openTime = openTime;
+        this.closeTime = closeTime;
+        this.deliveryFee = dto.getDeliveryFee();
+        this.minOrderPrice = dto.getMinOrderPrice();
+        this.notice = dto.getNotice();
+        this.status = status;
+        this.phone = dto.getPhone();
+    }
+
+    public void update(StoreRequestDto.Update dto, Status status, LocalTime openTime, LocalTime closeTime) {
+        if (dto.getOpenTime() != null) this.openTime = openTime;
+        if (dto.getCloseTime() != null) this.closeTime = closeTime;
         if (dto.getDeliveryFee() != null) this.deliveryFee = dto.getDeliveryFee();
         if (dto.getMinOrderPrice() != null) this.minOrderPrice = dto.getMinOrderPrice();
         if (dto.getNotice() != null) this.notice = dto.getNotice();
-        if (dto.getStatus() != null) this.status = dto.getStatus();
+        if (dto.getStatus() != null) this.status = status;
     }
 
 }
