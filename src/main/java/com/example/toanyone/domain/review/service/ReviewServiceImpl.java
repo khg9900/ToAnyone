@@ -11,6 +11,7 @@ import com.example.toanyone.domain.review.dto.ReviewCreateRequestDto;
 import com.example.toanyone.domain.review.dto.ReviewResponseDto;
 import com.example.toanyone.domain.review.entity.Review;
 import com.example.toanyone.domain.review.repository.ReviewRepository;
+import com.example.toanyone.domain.store.entity.Store;
 import com.example.toanyone.domain.user.entity.User;
 import com.example.toanyone.domain.user.repository.UserRepository;
 import com.example.toanyone.global.auth.dto.AuthUser;
@@ -55,9 +56,12 @@ public class ReviewServiceImpl implements ReviewService {
             throw new ApiException(ErrorStatus.ORDER_STORE_MISMATCH);
         }
 
+        Store store = order.getStore();
+
         Review review = new Review(
                 order,
                 user,
+                store,
                 request.getRating(),
                 request.getContent(),
                 request.getVisible()
