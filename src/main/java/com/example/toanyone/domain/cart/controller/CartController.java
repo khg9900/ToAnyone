@@ -5,13 +5,9 @@ import com.example.toanyone.domain.cart.dto.CartItemDto;
 import com.example.toanyone.domain.cart.dto.CartRequestDto;
 import com.example.toanyone.domain.cart.dto.CartResponseDto;
 import com.example.toanyone.domain.cart.service.CartService;
-import com.example.toanyone.domain.user.entity.User;
-import com.example.toanyone.domain.user.repository.UserRepository;
 import com.example.toanyone.global.auth.annotation.Auth;
 import com.example.toanyone.global.auth.dto.AuthUser;
-import com.example.toanyone.global.common.code.ErrorStatus;
 import com.example.toanyone.global.common.code.SuccessStatus;
-import com.example.toanyone.global.common.error.ApiException;
 import com.example.toanyone.global.common.response.ApiResponse;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -27,7 +23,6 @@ import org.springframework.web.bind.annotation.*;
 public class CartController {
 
     public final CartService cartService;
-    public final UserRepository userRepository;
 
     @PostMapping
     public ResponseEntity<ApiResponse<CartResponseDto>> createCart(
