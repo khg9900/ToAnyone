@@ -25,8 +25,12 @@ import java.util.List;
 public class ReviewController {
     private final ReviewService reviewService;
 
-    @PostMapping("/{storeId}/orders/{orderId}/{reviews}")
-    public ResponseEntity<ReviewResponseDto> review(@PathVariable Long storeId,
+
+    /**
+     * 리뷰생성
+     * */
+    @PostMapping("/{storeId}/orders/{orderId}/reviews")
+    public ResponseEntity<ReviewResponseDto> reviewCreate(@PathVariable Long storeId,
                                                     @PathVariable Long orderId,
                                                     @Auth AuthUser authUser,
                                                     @Valid @RequestBody ReviewCreateRequestDto requestDto) {
@@ -35,7 +39,24 @@ public class ReviewController {
         return ResponseEntity.status(HttpStatus.OK).body(response);
     }
 
-    @GetMapping("{storeId}/reviews")
+    /**
+     * 리뷰수정
+     * */
+    @PatchMapping("/{storeId}/reviews/{reviewId}")
+    public ResponseEntity<ReviewResponseDto> reviewUpdate(@PathVariable Long storeId,
+                                                    @PathVariable Long reviewId,
+                                                    @Auth AuthUser authUser,
+                                                    @Valid @RequestBody ReviewCreateRequestDto requestDto){
+        ReviewResponseDto response  = reviewService.updateReview(storeId, reviewId, authUser, requestDto);
+        return ResponseEntity.status(HttpStatus.OK).body(response);
+
+    }
+
+
+    /**
+     * 리뷰조회
+     * */
+    @GetMapping("/{storeId}/reviews")
     public ResponseEntity<Page<ReviewCheckResponseDto>> reviewCheck(@PathVariable Long storeId,
                                                               @Auth AuthUser authUser,
                                                               @RequestParam(required = false) List<Integer> rating,
@@ -44,4 +65,11 @@ public class ReviewController {
         Page<ReviewCheckResponseDto> review = reviewService.checkReview(storeId, authUser, rating, page, size);
         return ResponseEntity.status(HttpStatus.OK).body(review);
     }
+
+
+    /**
+     * 리뷰삭제
+     * */
+
+
 }
