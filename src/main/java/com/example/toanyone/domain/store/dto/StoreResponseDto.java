@@ -13,6 +13,7 @@ import java.util.List;
 
 public class StoreResponseDto {
 
+    // 메뉴 다건 조회
     @Getter
     @AllArgsConstructor
     public static class GetAll {
@@ -21,6 +22,7 @@ public class StoreResponseDto {
 
     }
 
+    // 메뉴 단건 조회
     @Getter
     @AllArgsConstructor
     public static class GetById {
@@ -69,6 +71,7 @@ public class StoreResponseDto {
         }
     }
 
+    // 요청 성공
     @Getter
     public static class Complete {
         private final String message;

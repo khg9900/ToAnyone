@@ -7,6 +7,7 @@ import com.example.toanyone.domain.menu.enums.SubCategory;
 import com.example.toanyone.domain.menu.repository.MenuRepository;
 import com.example.toanyone.domain.store.entity.Store;
 import com.example.toanyone.domain.store.repository.StoreRepository;
+import com.example.toanyone.global.auth.dto.AuthUser;
 import com.example.toanyone.global.common.code.ErrorStatus;
 import com.example.toanyone.global.common.error.ApiException;
 import jakarta.transaction.Transactional;
@@ -26,10 +27,15 @@ public class MenuServiceImpl implements MenuService {
     @Override
     @Transactional
     public MenuDto.Response createMenu(
-            Long storeId, String name, String description, Integer price,
+            AuthUser authUser, Long storeId, String name, String description, Integer price,
             MainCategory mainCategory, SubCategory subCategory) {
 
         Store store = storeRepository.findByIdOrElseThrow(storeId);
+        Long ownerId = storeRepository.findOwnerIdByStoreIdOrElseThrow(storeId);
+
+        if (!ownerId.equals(authUser.getId())){
+            throw new ApiException(ErrorStatus.NOT_STORE_OWNER);
+        }
 
         if (menuRepository.existsByStoreAndName(store, name)) {
             throw new ApiException(ErrorStatus.MENU_ALREADY_EXISTS);
@@ -44,21 +50,31 @@ public class MenuServiceImpl implements MenuService {
 
     @Override
     @Transactional
-    public MenuDto.Response updateMenu(Long storeId, Long menuId, String name, String description,
+    public MenuDto.Response updateMenu(AuthUser authUser, Long storeId, Long menuId, String name, String description,
                                        Integer price, MainCategory mainCategory, SubCategory subCategory) {
-        storeRepository.findByIdOrElseThrow(storeId);
+
+        Long ownerId = storeRepository.findOwnerIdByStoreIdOrElseThrow(storeId);
+        log.info("ownerId: " + ownerId);
+
+        if (!ownerId.equals(authUser.getId())){
+            throw new ApiException(ErrorStatus.NOT_STORE_OWNER);
+        }
+
         Menu menu = menuRepository.findByIdOrElseThrow(menuId);
 
         menu.setMenu(name, description, price, mainCategory, subCategory);
-        log.info("Menu updated {}", menu);
 
         return new MenuDto.Response("메뉴 수정되었습니다");
     }
 
     @Override
     @Transactional
-    public MenuDto.Response deleteMenu(Long storeId, Long menuId) {
-        storeRepository.findByIdOrElseThrow(storeId);
+    public MenuDto.Response deleteMenu(AuthUser authUser, Long storeId, Long menuId) {
+        Long ownerId = storeRepository.findOwnerIdByStoreIdOrElseThrow(storeId);
+        if (!ownerId.equals(authUser.getId())){
+            throw new ApiException(ErrorStatus.NOT_STORE_OWNER);
+        }
+
         Menu menu = menuRepository.findByIdOrElseThrow(menuId);
         if (menu.getDeleted()){
             throw new ApiException(ErrorStatus.MENU_ALREADY_DELETED);

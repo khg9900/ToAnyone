@@ -2,14 +2,12 @@ package com.example.toanyone.domain.store.entity;
 
 import com.example.toanyone.domain.menu.entity.Menu;
 import com.example.toanyone.domain.store.dto.StoreRequestDto;
-import com.example.toanyone.domain.user.entity.User;
 import com.example.toanyone.domain.store.enums.Status;
+import com.example.toanyone.domain.user.entity.User;
 import com.example.toanyone.global.common.entity.BaseEntity;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-
-import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -70,13 +68,23 @@ public class Store extends BaseEntity {
         this.notice = dto.getNotice();
         this.status = dto.getStatus();
         this.phone = dto.getPhone();
-
     }
 
+<<<<<<< HEAD
     // 고승표 추가
     public boolean isOpen() {
         return this.status == Status.OPEN;
     }
 
+=======
+    public void update(StoreRequestDto.Update dto) {
+        if (dto.getOpenTime() != null) this.openTime = dto.getOpenTime();
+        if (dto.getCloseTime() != null) this.closeTime = dto.getCloseTime();
+        if (dto.getDeliveryFee() != null) this.deliveryFee = dto.getDeliveryFee();
+        if (dto.getMinOrderPrice() != null) this.minOrderPrice = dto.getMinOrderPrice();
+        if (dto.getNotice() != null) this.notice = dto.getNotice();
+        if (dto.getStatus() != null) this.status = dto.getStatus();
+    }
+>>>>>>> 53730a172b79bb4c6fa5a456629e74bcc1b42130
 
 }

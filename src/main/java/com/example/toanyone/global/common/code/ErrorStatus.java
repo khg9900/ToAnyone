@@ -4,7 +4,6 @@ import com.example.toanyone.global.common.dto.ErrorReasonDto;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
-import org.springframework.web.client.HttpClientErrorException.Unauthorized;
 
 @Getter
 @RequiredArgsConstructor
@@ -23,22 +22,33 @@ public enum ErrorStatus implements BaseErrorCode {
     MENU_ALREADY_DELETED(HttpStatus.BAD_REQUEST, "4002", "이미 삭제된 메뉴입니다."),
     MENU_NOT_FOUND(HttpStatus.NOT_FOUND, "4003","존재하지 않는 메뉴입니다."),
 
-    CART_ITEMS_NOT_FOUND(HttpStatus.NOT_FOUND, "4004", "장바구니에서 해당 품목을 찾을 수 없습니다."),
-    CART_ITEM_QUANTITY_UNDERFLOW(HttpStatus.BAD_REQUEST, "4005", "차감하려는 수량이 담긴 수량보다 많습니다."),
+
 
     // 5000: Store 에러코드
-    STORE_NO_PERMISSION(HttpStatus.FORBIDDEN, "5001","가게 생성 권한이 없습니다."),
-    STORE_MAX_LIMIT_EXCEEDED(HttpStatus.BAD_REQUEST, "5002","가게는 최대 3개까지 등록 가능합니다."),
-    STORE_ALREADY_EXISTS(HttpStatus.BAD_REQUEST, "5003","이미 존재하는 가게이름입니다."),
-    STORE_NOT_FOUND(HttpStatus.NOT_FOUND, "5004","가게 정보가 없습니다."),
-    STORE_SEARCH_NO_MATCH(HttpStatus.NOT_FOUND, "5005","검색한 단어가 포함된 가게명이 존재하지 않습니다."),
+    STORE_NO_PERMISSION(HttpStatus.FORBIDDEN,"5001","가게 생성 권한이 없습니다."),
+    STORE_MAX_LIMIT_EXCEEDED(HttpStatus.BAD_REQUEST,"5002","가게는 최대 3개까지 등록 가능합니다."),
+    STORE_ALREADY_EXISTS(HttpStatus.BAD_REQUEST,"5003","이미 존재하는 가게이름입니다."),
+    STORE_NOT_FOUND(HttpStatus.NOT_FOUND,"5004","생성된 가게가 없습니다."),
+    STORE_SEARCH_NO_MATCH(HttpStatus.NOT_FOUND,"5005","검색한 단어가 포함된 가게명이 존재하지 않습니다."),
     STORE_SHUT_DOWN(HttpStatus.BAD_REQUEST, "5006", "폐업된 가게입니다."),
     STORE_CLOSED(HttpStatus.BAD_REQUEST, "5007", "영업 종료된 가게입니다."),
+    STORE_FORBIDDEN(HttpStatus.FORBIDDEN, "5008", "가게 접근 권한이 없습니다."),
+    STORE_INVALID_STATUS(HttpStatus.BAD_REQUEST, "5009", "OPEN, SOLD_OUT, TEMP_CLOSED, CLOSE 중 하나를 선택해주세요."),
+    STORE_ALREADY_DELETED(HttpStatus.BAD_REQUEST, "5010", "이미 폐업된 가게입니다."),
+    NOT_STORE_OWNER(HttpStatus.BAD_REQUEST, "5011", "가게의 주인이 아니면 접근할 수 없습니다"),
 
+    // 6000: review
+    REVIEW_CREATE_FORBIDDEN(HttpStatus.FORBIDDEN, "6001", "리뷰 작성 조건을 만족하지 않는 주문입니다."),
+    ORDER_STORE_MISMATCH(HttpStatus.BAD_REQUEST, "6002", "해당 가게의 주문이 아닙니다."),
+    REVIEW_INVALID_RATING(HttpStatus.BAD_REQUEST, "6003", "별점은 1점에서 5점 사이만 조회 가능합니다."),
+    REVIEW_NOT_FOUND(HttpStatus.NOT_FOUND, "6004", "해당 리뷰가 존재하지 않습니다."),
+    REVIEW_ACCESS_DENIED(HttpStatus.BAD_REQUEST, "6005", "해당 권한이 없습니다."),
+    REVIEW_STORE_MISMATCH(HttpStatus.BAD_REQUEST, "6006", "해당 가게의 리뷰가 아닙니다."),
+    REPLY_ALREADY_EXISTS(HttpStatus.BAD_REQUEST, "6007", "이미 댓글이 존재합니다."),
 
-    // 6000
-
-    // 7000
+    //7000 : cart 에러코드
+    CART_ITEMS_NOT_FOUND(HttpStatus.NOT_FOUND, "7001", "장바구니에서 해당 품목을 찾을 수 없습니다."),
+    CART_ITEM_QUANTITY_UNDERFLOW(HttpStatus.BAD_REQUEST, "7002", "차감하려는 수량이 담긴 수량보다 많습니다."),
 
     // 8000: Order 에러코드
     ORDER_NOT_FOUND(HttpStatus.NOT_FOUND, "8001", "주문 정보를 찾을 수 없습니다."),
@@ -46,9 +56,6 @@ public enum ErrorStatus implements BaseErrorCode {
     ORDER_STORE_CLOSED(HttpStatus.BAD_REQUEST, "8003", "가게가 영업 중이 아닙니다."),
     CART_NOT_FOUND(HttpStatus.NOT_FOUND, "8004", "장바구니를 찾을 수 없습니다."),
     ORDER_INVALID_USER(HttpStatus.FORBIDDEN, "8005", "해당 주문에 대한 권한이 없습니다.");
-
-
-
     private final HttpStatus httpStatus;
     private final String code;
     private final String message;

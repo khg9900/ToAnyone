@@ -8,6 +8,8 @@ import com.example.toanyone.global.auth.dto.AuthUser;
 import com.example.toanyone.global.common.code.ErrorStatus;
 import com.example.toanyone.global.common.error.ApiException;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
@@ -15,10 +17,11 @@ import java.util.Optional;
 
 @Repository
 public interface CartItemRepository extends JpaRepository<CartItem, Long> {
-    Optional<CartItem> findCartItemsByMenuAndCart(Menu menu, Cart cart);
+    @Query("SELECT c FROM CartItem c WHERE c.menu.id = :menuId AND c.cart = :cart")
+    Optional<CartItem> findByMenuIdAndCart(@Param("menuId") Long menuId, @Param("cart") Cart cart);
 
-    default CartItem findCartItemsByMenuAndCartOrElseThrow(Menu menu, Cart cart) {
-        return findCartItemsByMenuAndCart(menu, cart).orElseThrow(
+    default CartItem findByMenuIdAndCartOrElseThrow(Long menuId, Cart cart) {
+        return findByMenuIdAndCart(menuId, cart).orElseThrow(
                 ()-> new ApiException(ErrorStatus.CART_ITEMS_NOT_FOUND));
     }
 
