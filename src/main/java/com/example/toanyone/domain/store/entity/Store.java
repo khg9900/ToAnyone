@@ -55,12 +55,12 @@ public class Store extends BaseEntity {
     @OneToMany(mappedBy = "store")
     private List<Menu> menus = new ArrayList<>();
 
-    public Store(User user, StoreRequestDto.Create dto, Status status) {
+    public Store(User user, StoreRequestDto.Create dto, Status status, LocalTime openTime, LocalTime closeTime) {
         this.user = user;
         this.name = dto.getName();
         this.address = dto.getAddress();
-        this.openTime = dto.getOpenTime();
-        this.closeTime = dto.getCloseTime();
+        this.openTime = openTime;
+        this.closeTime = closeTime;
         this.deliveryFee = dto.getDeliveryFee();
         this.minOrderPrice = dto.getMinOrderPrice();
         this.notice = dto.getNotice();
@@ -68,13 +68,13 @@ public class Store extends BaseEntity {
         this.phone = dto.getPhone();
     }
 
-    public void update(StoreRequestDto.Update dto) {
-        if (dto.getOpenTime() != null) this.openTime = dto.getOpenTime();
-        if (dto.getCloseTime() != null) this.closeTime = dto.getCloseTime();
+    public void update(StoreRequestDto.Update dto, Status status, LocalTime openTime, LocalTime closeTime) {
+        if (dto.getOpenTime() != null) this.openTime = openTime;
+        if (dto.getCloseTime() != null) this.closeTime = closeTime;
         if (dto.getDeliveryFee() != null) this.deliveryFee = dto.getDeliveryFee();
         if (dto.getMinOrderPrice() != null) this.minOrderPrice = dto.getMinOrderPrice();
         if (dto.getNotice() != null) this.notice = dto.getNotice();
-        if (dto.getStatus() != null) this.status = Status.of(dto.getStatus());
+        if (dto.getStatus() != null) this.status = status;
     }
 
 }

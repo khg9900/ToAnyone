@@ -33,7 +33,8 @@ public enum ErrorStatus implements BaseErrorCode {
     STORE_FORBIDDEN(HttpStatus.FORBIDDEN, "5008", "가게 접근 권한이 없습니다."),
     STORE_INVALID_STATUS(HttpStatus.BAD_REQUEST, "5009", "OPEN, SOLD_OUT, TEMP_CLOSED, CLOSE 중 하나를 선택해주세요."),
     STORE_ALREADY_DELETED(HttpStatus.BAD_REQUEST, "5010", "이미 폐업된 가게입니다."),
-    NOT_STORE_OWNER(HttpStatus.BAD_REQUEST, "5011", "가게의 주인이 아니면 접근할 수 없습니다"),
+    NOT_STORE_OWNER(HttpStatus.BAD_REQUEST, "5011", "가게의 주인이 아니면 접근할 수 없습니다."),
+    INVALID_TIME_RANGE(HttpStatus.BAD_REQUEST, "5012", "00:00~24:00 사이의 범위를 입력해주세요."),
 
     // 6000: review
     REVIEW_CREATE_FORBIDDEN(HttpStatus.FORBIDDEN, "6001", "리뷰 작성 조건을 만족하지 않는 주문입니다."),
