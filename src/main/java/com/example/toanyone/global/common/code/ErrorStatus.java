@@ -1,11 +1,9 @@
 package com.example.toanyone.global.common.code;
 
-import com.example.toanyone.domain.store.entity.Store;
 import com.example.toanyone.global.common.dto.ErrorReasonDto;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
-import org.springframework.web.client.HttpClientErrorException.Unauthorized;
 
 @Getter
 @RequiredArgsConstructor
@@ -26,7 +24,6 @@ public enum ErrorStatus implements BaseErrorCode {
     CART_ITEMS_NOT_FOUND(HttpStatus.NOT_FOUND, "4004", "장바구니에서 해당 품목을 찾을 수 없습니다."),
     CART_ITEM_QUANTITY_UNDERFLOW(HttpStatus.BAD_REQUEST, "4005", "차감하려는 수량이 담긴 수량보다 많습니다."),
 
-
     // 5000: Store 에러코드
     STORE_NO_PERMISSION(HttpStatus.FORBIDDEN,"5001","가게 생성 권한이 없습니다."),
     STORE_MAX_LIMIT_EXCEEDED(HttpStatus.BAD_REQUEST,"5002","가게는 최대 3개까지 등록 가능합니다."),
@@ -37,7 +34,7 @@ public enum ErrorStatus implements BaseErrorCode {
     STORE_CLOSED(HttpStatus.BAD_REQUEST, "5007", "영업 종료된 가게입니다."),
     STORE_FORBIDDEN(HttpStatus.FORBIDDEN, "5008", "가게 접근 권한이 없습니다."),
     STORE_INVALID_STATUS(HttpStatus.BAD_REQUEST, "5009", "OPEN, SOLD_OUT, TEMP_CLOSED, CLOSE 중 하나를 선택해주세요."),
-
+    STORE_ALREADY_DELETED(HttpStatus.BAD_REQUEST, "5010", "이미 폐업된 가게입니다."),
 
     // 6000: review
     REVIEW_CREATE_FORBIDDEN(HttpStatus.FORBIDDEN, "6001", "리뷰 작성 조건을 만족하지 않는 주문입니다."),
