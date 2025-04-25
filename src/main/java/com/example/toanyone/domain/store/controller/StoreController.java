@@ -93,7 +93,7 @@ public class StoreController {
     @DeleteMapping("/owner/stores/{storeId}")
     public ResponseEntity<ApiResponse<StoreResponseDto.Complete>> deleteStore(@Auth AuthUser authUser,
                                                                               @PathVariable Long storeId,
-                                                                            @RequestBody StoreRequestDto.Delete dto) {
+                                                                            @Valid @RequestBody StoreRequestDto.Delete dto) {
 
         return ApiResponse.onSuccess(SuccessStatus.OK, storeService.deleteStore(authUser, storeId, dto));
     }
