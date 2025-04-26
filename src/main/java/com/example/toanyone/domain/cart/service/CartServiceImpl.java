@@ -41,15 +41,25 @@ public class CartServiceImpl implements CartService {
                 .orElseThrow(() -> new ApiException(ErrorStatus.USER_NOT_FOUND));
         Store store = storeRepository.findByIdOrElseThrow(storeId);
         Menu menu = menuRepository.findByIdOrElseThrow(menuId);
-        Cart cart = cartRepository.findByUserId(user.getId())
-                .orElseGet(() -> cartRepository.save(new Cart(user, store, 0)));
 
+        Cart cart = cartRepository.findByUserId(user.getId())
+                .orElseGet(() -> cartRepository.saveAndFlush(new Cart(user, store, 0)));
+
+        if (!cart.getStore().getId().equals(menu.getStore().getId())) {
+            throw new ApiException(ErrorStatus.MENU_NOT_FOUND);
+        }
         int price = menu.getPrice();
 
         cart.setTotalPrice(price, quantity);
 
         CartItem cartItem = new CartItem(cart, menu, quantity, price);
-        cartItemRepository.save(cartItem);
+
+        try {
+            cartItemRepository.save(cartItem);
+        } catch (Exception e) {
+            log.error("카트아이템 저장 중 에러 발생", e.getMessage());
+            throw e; // 다시 터뜨려야 트랜잭션이 롤백돼
+        }
 
         return new CartResponseDto("장바구니에 추가되었습니다");
     }
