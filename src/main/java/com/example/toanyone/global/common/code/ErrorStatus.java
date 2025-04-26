@@ -58,7 +58,8 @@ public enum ErrorStatus implements BaseErrorCode {
     ORDER_STORE_CLOSED(HttpStatus.BAD_REQUEST, "8003", "가게가 영업 중이 아닙니다."),
     CART_NOT_FOUND(HttpStatus.NOT_FOUND, "8004", "장바구니를 찾을 수 없습니다."),
     ORDER_INVALID_USER(HttpStatus.FORBIDDEN, "8005", "해당 주문에 대한 권한이 없습니다."),
-    ORDER_ACCESS_DENIED_BY_NON_OWNER(HttpStatus.FORBIDDEN, "8006", "해당 가게의 사장님만 접근할 수 있습니다.");
+    ORDER_ACCESS_DENIED_BY_NON_OWNER(HttpStatus.FORBIDDEN, "8006", "해당 가게의 사장님만 접근할 수 있습니다."),
+    ORDER_INVALID_STATUS_CHANGE(HttpStatus.BAD_REQUEST, "8007", "주문 상태 변경 순서가 올바르지 않습니다.");
 
     private final HttpStatus httpStatus;
     private final String code;
