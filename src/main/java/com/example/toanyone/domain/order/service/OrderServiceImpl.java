@@ -113,7 +113,7 @@ public class OrderServiceImpl implements OrderService {
         // 2. 가게 조회 + 사장님 본인인지 검증
         Store store = storeRepository.findById(storeId)
                 .orElseThrow(() -> new ApiException(ErrorStatus.STORE_NOT_FOUND));
-        if (!store.getOwner().getId().equals(user.getId())) {
+        if (!store.getUser().getId().equals(user.getId())) {
             throw new ApiException(ErrorStatus.ORDER_ACCESS_DENIED_BY_NON_OWNER); //  사장님 아님
         }
 
@@ -178,7 +178,7 @@ public class OrderServiceImpl implements OrderService {
         Store store = order.getStore();
 
         // 3. 로그인한 사장님과 가게 주인이 일치하는지 검증
-        if (!store.getOwner().getId().equals(authUser.getId())) {
+        if (!store.getUser().getId().equals(authUser.getId())) {
             throw new ApiException(ErrorStatus.ORDER_ACCESS_DENIED_BY_NON_OWNER);
         }
 
