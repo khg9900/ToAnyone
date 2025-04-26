@@ -51,6 +51,7 @@ public enum ErrorStatus implements BaseErrorCode {
     //7000 : cart 에러코드
     CART_ITEMS_NOT_FOUND(HttpStatus.NOT_FOUND, "7001", "장바구니에서 해당 품목을 찾을 수 없습니다."),
     CART_ITEM_QUANTITY_UNDERFLOW(HttpStatus.BAD_REQUEST, "7002", "차감하려는 수량이 담긴 수량보다 많습니다."),
+    CART_NOT_FOUND(HttpStatus.NOT_FOUND, "7003", "사용자의 장바구니를 찾을 수 없습니다"),
 
     // 8000: Order 에러코드
     ORDER_NOT_FOUND(HttpStatus.NOT_FOUND, "8001", "주문 정보를 찾을 수 없습니다."),
