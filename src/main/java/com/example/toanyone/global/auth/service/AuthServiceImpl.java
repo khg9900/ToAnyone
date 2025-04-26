@@ -59,7 +59,7 @@ public class AuthServiceImpl implements AuthService {
 
     @Transactional
     @Override
-    public AuthResponseDto.CreateToken signin(AuthRequestDto.Signin signinRequest) {
+    public AuthResponseDto.CreateToken login(AuthRequestDto.Login signinRequest) {
 
         // 가입여부 확인
         User user = userRepository.findByEmail(signinRequest.getEmail()).orElseThrow(
@@ -116,6 +116,14 @@ public class AuthServiceImpl implements AuthService {
         jwtUtil.saveRefreshToken(userId, newRefresh);
 
         return new AuthResponseDto.CreateToken(newAccess, newRefresh);
+    }
+
+    public String logout(Long userId) {
+
+        String refreshToken = refreshRepository.getRefreshToken(userId);
+        refreshRepository.deleteByRefresh(refreshToken);
+
+        return "로그아웃 완료";
     }
 
 }

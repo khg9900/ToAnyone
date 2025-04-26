@@ -51,7 +51,7 @@ public class  AuthRequestDto {
 
     @Getter
     @AllArgsConstructor
-    public static class Signin {
+    public static class Login {
 
         @NotBlank
         @Email

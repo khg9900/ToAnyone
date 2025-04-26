@@ -9,7 +9,9 @@ public interface AuthService {
 
     String signup(AuthRequestDto.Signup signupRequest);
 
-    AuthResponseDto.CreateToken signin(AuthRequestDto.Signin signinRequest);
+    AuthResponseDto.CreateToken login(AuthRequestDto.Login signinRequest);
 
     AuthResponseDto.CreateToken reissue(HttpServletRequest request);
+
+    String logout(Long userId);
 }

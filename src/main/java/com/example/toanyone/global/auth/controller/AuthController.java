@@ -1,7 +1,9 @@
 package com.example.toanyone.global.auth.controller;
 
+import com.example.toanyone.global.auth.annotation.Auth;
 import com.example.toanyone.global.auth.dto.AuthRequestDto;
 import com.example.toanyone.global.auth.dto.AuthResponseDto;
+import com.example.toanyone.global.auth.dto.AuthUser;
 import com.example.toanyone.global.auth.service.AuthService;
 import com.example.toanyone.global.common.code.SuccessStatus;
 import com.example.toanyone.global.common.response.ApiResponse;
@@ -25,14 +27,19 @@ public class AuthController {
         return ApiResponse.onSuccess(SuccessStatus.CREATED, authService.signup(signupRequest));
     }
 
-    @PostMapping("/auth/signin")
-    public ResponseEntity<ApiResponse<AuthResponseDto.CreateToken>> signin(@Valid @RequestBody AuthRequestDto.Signin signin) {
-        return ApiResponse.onSuccess(SuccessStatus.OK, authService.signin(signin));
+    @PostMapping("/auth/login")
+    public ResponseEntity<ApiResponse<AuthResponseDto.CreateToken>> login(@Valid @RequestBody AuthRequestDto.Login login) {
+        return ApiResponse.onSuccess(SuccessStatus.OK, authService.login(login));
     }
 
     @PostMapping("/auth/reissue")
     public ResponseEntity<ApiResponse<AuthResponseDto.CreateToken>> reissue(HttpServletRequest request) {
         return ApiResponse.onSuccess(SuccessStatus.OK, authService.reissue(request));
+    }
+
+    @PostMapping("/auth/logout")
+    public ResponseEntity<ApiResponse<String>> logout(@Auth AuthUser authUser) {
+        return ApiResponse.onSuccess(SuccessStatus.OK, authService.logout(authUser.getId()));
     }
 
 }
