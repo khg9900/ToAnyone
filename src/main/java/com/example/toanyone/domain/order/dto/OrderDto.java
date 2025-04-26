@@ -114,9 +114,12 @@ public class OrderDto {
     @AllArgsConstructor
     @Builder
     public static class StatusUpdateResponse {
+        private String message;
+        public StatusUpdateResponse(String message) {
+            this.message = message;
+        }
         // 변경된 주문 ID
         private Long orderId;
-
         // 변경 후 주문 상태
         private String updatedStatus;
     }
