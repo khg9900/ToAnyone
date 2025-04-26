@@ -35,7 +35,7 @@ public class CartServiceImpl implements CartService {
 
     @Override
     @Transactional
-    public CartResponseDto createCart(AuthUser authUser, Long storeId , Long menuId, Integer quantity) {
+    public CartResponseDto addCart(AuthUser authUser, Long storeId , Long menuId, Integer quantity) {
 
         User user = userRepository.findById(authUser.getId())
                 .orElseThrow(() -> new ApiException(ErrorStatus.USER_NOT_FOUND));
@@ -47,7 +47,7 @@ public class CartServiceImpl implements CartService {
         }
 
         Cart cart = cartRepository.findByUserId(user.getId())
-                .orElseGet(() -> cartRepository.saveAndFlush(new Cart(user, store, 0)));
+                .orElseGet(() -> cartRepository.save(new Cart(user, store, 0)));
 
         int price = menu.getPrice();
 

@@ -25,11 +25,11 @@ public class CartController {
     public final CartService cartService;
 
     @PostMapping
-    public ResponseEntity<ApiResponse<CartResponseDto>> createCart(
+    public ResponseEntity<ApiResponse<CartResponseDto>> addCart(
             @Auth AuthUser authUser, @Valid @RequestBody CartRequestDto cartRequestDto) {
 
 
-        CartResponseDto cartResponseDto = cartService.createCart(
+        CartResponseDto cartResponseDto = cartService.addCart(
                 authUser,cartRequestDto.getStoreId(), cartRequestDto.getMenuId(), cartRequestDto.getQuantity()
         );
 
