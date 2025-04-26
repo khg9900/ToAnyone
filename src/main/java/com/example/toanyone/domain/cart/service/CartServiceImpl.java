@@ -80,11 +80,20 @@ public class CartServiceImpl implements CartService {
         );
     }
 
+
+    // 고승표 수정/추가
     @Override
     @Transactional
     public CartResponseDto clearCartItems(AuthUser authUser) {
-
-        Cart cart = cartRepository.findByUserIdOrElseThrow(authUser.getId());
+        User user = userRepository.findById(authUser.getId())
+                .orElseThrow(() -> new ApiException(ErrorStatus.USER_NOT_FOUND));
+        return clearCartItems(user);
+    }
+    // orderservice에서 user로 받을 수 있게
+    @Override
+    @Transactional
+    public CartResponseDto clearCartItems(User user) {
+        Cart cart = cartRepository.findByUserIdOrElseThrow(user.getId());
         cartRepository.delete(cart);
         return new CartResponseDto("장바구니가 비워졌습니다");
     }
@@ -109,4 +118,6 @@ public class CartServiceImpl implements CartService {
 
         return new CartResponseDto("품목의 수량 변경이 완료되었습니다.");
     }
+
+
 }
