@@ -165,4 +165,26 @@ public class OrderServiceImpl implements OrderService {
                 })
                 .toList();
     }
+
+    // 사장님 - 주문 상태 변경
+    @Override
+    @Transactional
+    public void updateOrderStatus(AuthUser authUser, Long orderId, OrderDto.StatusUpdateRequest request) {
+        // 1. 주문 조회
+        Order order = orderRepository.findById(orderId)
+                .orElseThrow(() -> new ApiException(ErrorStatus.ORDER_NOT_FOUND));
+
+        // 2. 주문에 연결된 가게 정보 가져오기
+        Store store = order.getStore();
+
+        // 3. 로그인한 사장님과 가게 주인이 일치하는지 검증
+        if (!store.getOwner().getId().equals(authUser.getId())) {
+            throw new ApiException(ErrorStatus.ORDER_ACCESS_DENIED_BY_NON_OWNER);
+        }
+
+        // 4. 새로운 주문 상태로 업데이트
+        OrderStatus newStatus = OrderStatus.valueOf(request.getStatus()); // 문자열로 받은걸 enum으로 변환
+        order.changeStatus(newStatus);
+    }
+
 }
