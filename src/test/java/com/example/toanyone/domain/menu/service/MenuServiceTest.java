@@ -1,5 +1,6 @@
 package com.example.toanyone.domain.menu.service;
 
+import com.example.toanyone.domain.menu.controller.MenuController;
 import com.example.toanyone.domain.menu.dto.MenuDto;
 import com.example.toanyone.domain.menu.entity.Menu;
 import com.example.toanyone.domain.menu.enums.MainCategory;
@@ -52,6 +53,30 @@ public class MenuServiceTest {
 
         // then
         assertEquals("메뉴 생성되었습니다", response.getMessage());
+    }
+
+
+    @Test
+    void 가게_주인이_아니면_생성을_못한다(){
+        Long storeId = 1L;
+        Long ownerId = 1L;
+        Long anotherOwnerId = 2L;
+
+        AuthUser authUser = new AuthUser(anotherOwnerId, "kkk@gmail.com", UserRole.OWNER);
+        Store store = new Store();
+
+        given(storeRepository.findByIdOrElseThrow(storeId)).willReturn(store);
+        given(storeRepository.findOwnerIdByStoreIdOrElseThrow(storeId)).willReturn(ownerId);
+
+        ApiException apiException = assertThrows(ApiException.class,
+                () -> menuService.createMenu(authUser, storeId,"menu", "description", 1000, MainCategory.KOREAN, SubCategory.DRINK));
+
+        assertEquals("가게의 주인이 아니면 접근할 수 없습니다", apiException.getMessage());
+    }
+
+    @Test
+    void 이미_있는_메뉴는_추가할_수_없다(){
+
     }
 
 }
