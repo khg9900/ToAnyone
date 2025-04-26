@@ -3,6 +3,8 @@ package com.example.toanyone.domain.order.service;
 import com.example.toanyone.domain.cart.entity.Cart;
 import com.example.toanyone.domain.cart.repository.CartRepository;
 import com.example.toanyone.domain.cart.service.CartService;
+import com.example.toanyone.domain.menu.entity.Menu;
+import com.example.toanyone.domain.menu.repository.MenuRepository;
 import com.example.toanyone.domain.order.dto.OrderDto;
 import com.example.toanyone.domain.order.entity.Order;
 import com.example.toanyone.domain.order.entity.OrderItem;
@@ -32,6 +34,7 @@ public class OrderServiceImpl implements OrderService {
     private final CartRepository cartRepository;
     private final StoreRepository storeRepository;
     private final UserRepository userRepository;
+    private final MenuRepository menuRepository;
 
     /*
          주문 생성 메서드
@@ -87,7 +90,19 @@ public class OrderServiceImpl implements OrderService {
         orderRepository.save(order); // 주문 저장
 
         // 7. 장바구니 내 메뉴들을 주문 항목(OrderItem)으로 변환 후 저장
-        List<OrderItem> orderItems = cart.toOrderItems(order); // 장바구니에서 주문 항목 리스트 생성
+        List<OrderItem> orderItems = cart.getCartItems().stream()
+                .map(cartItem -> {
+                    Long menuId = cartItem.getMenu().getId();
+                    Menu menu = menuRepository.findById(menuId)
+                            .orElseThrow(() -> new ApiException(ErrorStatus.MENU_NOT_FOUND));
+                    return OrderItem.builder()
+                            .order(order)
+                            .menu(menu)
+                            .quantity(cartItem.getQuantity())
+                            .menuPrice(cartItem.getMenu_price())
+                            .build();
+                })
+                .toList();  // Java 16 이상
         for (OrderItem item : orderItems) {
             orderItemRepository.save(item); // 하나씩 저장
         }
