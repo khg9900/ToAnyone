@@ -30,7 +30,6 @@ public class StoreServiceImpl implements StoreService {
 
     public final StoreRepository storeRepository;
     public final UserRepository userRepository;
-    private final MenuRepository menuRepository;
     private final PasswordEncoder passwordEncoder;
 
     /**
