@@ -1,6 +1,5 @@
 package com.example.toanyone.global.resolver;
 
-import com.example.toanyone.domain.user.enums.UserRole;
 import com.example.toanyone.global.auth.annotation.Auth;
 import com.example.toanyone.global.auth.dto.AuthUser;
 import jakarta.servlet.http.HttpServletRequest;

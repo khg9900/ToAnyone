@@ -4,6 +4,8 @@ import com.example.toanyone.global.auth.dto.AuthUser;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.ExpiredJwtException;
+import io.jsonwebtoken.MalformedJwtException;
+import io.jsonwebtoken.UnsupportedJwtException;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -31,16 +33,20 @@ public class JwtFilter extends OncePerRequestFilter {
     private final JwtUtil jwtUtil;
 
     @Override
-    protected void doFilterInternal(HttpServletRequest request,
-        HttpServletResponse response,
-        FilterChain filterChain) throws ServletException, IOException {
+    protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
 
         // 1. 헤더에서 토큰 꺼내기
         String bearerJwt = request.getHeader("Authorization");
 
-        // 2. 토큰 확인 -> 없을 경우 LoginFilter
+        // 2. 토큰 존재 유무 확인
         if (bearerJwt == null || !bearerJwt.startsWith("Bearer ")) {
             filterChain.doFilter(request, response);
+            return;
+        }
+
+        if (request.getRequestURI().equals("/auth/reissue")) {
+            filterChain.doFilter(request, response);
+            return;
         }
 
         // 3. "Bearer " 이후만 추출
@@ -54,14 +60,20 @@ public class JwtFilter extends OncePerRequestFilter {
                 return;
             }
 
-            // 5. 토큰에서 꺼낸 회원 정보 저장
+            // 5. accessToken 이 맞는지 확인
+            if (!claims.get("category").equals("access")) {
+                setErrorResponse(response, JwtErrorCode.ACCESS_TOKEN_REQUIRED);
+                return;
+            }
+
+            // 6. 토큰에서 꺼낸 회원 정보 저장
             AuthUser authUser = new AuthUser(
                 Long.parseLong(claims.getSubject()),
                 (String) claims.get("email"),
                 (String) claims.get("userRole")
             );
 
-            // 6. HttpRequest 에 회원 정보 객체 담기
+            // 7. HttpRequest 에 회원 정보 객체 담기
             request.setAttribute("userId", Long.parseLong(claims.getSubject()));
             request.setAttribute("email", claims.get("email"));
             request.setAttribute("userRole", claims.get("userRole"));
@@ -70,7 +82,6 @@ public class JwtFilter extends OncePerRequestFilter {
             // 7. 인가를 위한 권한 정보 저장
             Collection<? extends GrantedAuthority> authorities =
                 List.of(new SimpleGrantedAuthority(authUser.getUserRole()));
-
 
             // 7. Spring Security 인증 토큰 생성
             Authentication authToken = new UsernamePasswordAuthenticationToken(authUser,
@@ -82,19 +93,18 @@ public class JwtFilter extends OncePerRequestFilter {
             // JwtFilter 끝.
             filterChain.doFilter(request, response);
 
-
-//        } catch (SecurityException | MalformedJwtException e) {
-//            log.error("Invalid JWT signature, 유효하지 않는 JWT 서명 입니다.", e);
-//            setErrorResponse(response, JwtErrorCode.INVALID_JWT_SIGNATURE);
+        } catch (SecurityException | MalformedJwtException e) {
+            log.error("Invalid JWT signature, 유효하지 않는 JWT 서명 입니다.", e);
+            setErrorResponse(response, JwtErrorCode.INVALID_JWT_SIGNATURE);
         } catch (ExpiredJwtException e) {
             log.error("Expired JWT token, 만료된 JWT token 입니다.", e);
             setErrorResponse(response, JwtErrorCode.EXPIRED_JWT_TOKEN);
-//        } catch (UnsupportedJwtException e) {
-//            log.error("Unsupported JWT token, 지원되지 않는 JWT 토큰 입니다.", e);
-//            setErrorResponse(response, JwtErrorCode.UNSUPPORTED_JWT_TOKEN);
-//        } catch (Exception e) {
-//            log.error("Invalid JWT token, 유효하지 않는 JWT 토큰 입니다.", e);
-//            setErrorResponse(response, JwtErrorCode.INVALID_JWT_TOKEN);
+        } catch (UnsupportedJwtException e) {
+            log.error("Unsupported JWT token, 지원되지 않는 JWT 토큰 입니다.", e);
+            setErrorResponse(response, JwtErrorCode.UNSUPPORTED_JWT_TOKEN);
+        } catch (Exception e) {
+            log.error("Invalid JWT token, 유효하지 않는 JWT 토큰 입니다.", e);
+            setErrorResponse(response, JwtErrorCode.INVALID_JWT_TOKEN);
         }
     }
 

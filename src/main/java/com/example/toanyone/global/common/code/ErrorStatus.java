@@ -12,6 +12,7 @@ public enum ErrorStatus implements BaseErrorCode {
 
     // 2000: auth 에러 코드
     TOKEN_INVALID(HttpStatus.UNAUTHORIZED, "2001", "잘못된 토큰입니다."),
+    EXPIRED_JWT_TOKEN(HttpStatus.UNAUTHORIZED, "2002", "만료된 JWT 토큰입니다."),
 
     // 3000: user 에러 코드
     USER_NOT_FOUND(HttpStatus.NOT_FOUND, "3001","고객 정보가 없습니다."),
