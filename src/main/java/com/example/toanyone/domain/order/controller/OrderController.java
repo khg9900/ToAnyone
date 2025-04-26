@@ -59,7 +59,9 @@ public class OrderController {
             @RequestBody @Valid OrderDto.StatusUpdateRequest request
     ) {
         orderService.updateOrderStatus(authUser, orderId, request);
-        return ApiResponse.onSuccess(SuccessStatus.OK, new OrderDto.StatusUpdateResponse("주문 상태가 변경되었습니다."));
+        OrderDto.StatusUpdateResponse response = new OrderDto.StatusUpdateResponse("주문 상태가 변경되었습니다.");
+        return ApiResponse.onSuccess(SuccessStatus.OK, response);
+
     }
 
 
