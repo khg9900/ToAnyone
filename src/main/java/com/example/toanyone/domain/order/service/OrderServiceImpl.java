@@ -183,8 +183,17 @@ public class OrderServiceImpl implements OrderService {
         }
 
         // 4. 새로운 주문 상태로 업데이트
-        OrderStatus newStatus = OrderStatus.valueOf(request.getStatus()); // 문자열로 받은걸 enum으로 변환
+        // (1) 문자열로 받은 걸 enum으로 변환
+        OrderStatus newStatus = OrderStatus.valueOf(request.getStatus());
+
+        // (2) 현재 상태에서 가능한지 검증
+        if (!order.getStatus().isValidNextStatus(newStatus)) {
+            throw new ApiException(ErrorStatus.ORDER_INVALID_STATUS_CHANGE);
+        }
+
+        // (3) 검증 통과하면 상태 변경
         order.changeStatus(newStatus);
+
     }
 
 }
