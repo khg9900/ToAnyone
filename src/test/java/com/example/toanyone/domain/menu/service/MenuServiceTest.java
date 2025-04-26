@@ -76,7 +76,22 @@ public class MenuServiceTest {
 
     @Test
     void 이미_있는_메뉴는_추가할_수_없다(){
+        Long storeId = 1L;
+        Long ownerId = 1L;
+        AuthUser authUser = new AuthUser(1L, "kkk@gmail.com", UserRole.OWNER);
+        Store store = new Store();
 
+        //given
+        given(storeRepository.findByIdOrElseThrow(storeId)).willReturn(store);
+        given(storeRepository.findOwnerIdByStoreIdOrElseThrow(storeId)).willReturn(ownerId);
+        given(menuRepository.existsByStoreAndName(store, "menu")).willReturn(true);
+
+        //when
+        ApiException apiException = assertThrows(ApiException.class,
+                ()-> menuService.createMenu(authUser, storeId,"menu", "description", 1000, MainCategory.KOREAN, SubCategory.DRINK));
+
+        //then
+        assertEquals("이미 존재하는 메뉴입니다.", apiException.getMessage());
     }
 
 }
