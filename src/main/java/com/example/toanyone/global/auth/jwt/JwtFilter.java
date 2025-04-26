@@ -1,28 +1,24 @@
 package com.example.toanyone.global.auth.jwt;
 
-import com.example.toanyone.domain.user.entity.User;
-import com.example.toanyone.domain.user.enums.UserRole;
-import com.example.toanyone.global.auth.service.CustomUserDetails;
+import com.example.toanyone.global.auth.dto.AuthUser;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.ExpiredJwtException;
-import io.jsonwebtoken.MalformedJwtException;
-import io.jsonwebtoken.UnsupportedJwtException;
-import jakarta.servlet.Filter;
 import jakarta.servlet.FilterChain;
-import jakarta.servlet.FilterConfig;
 import jakarta.servlet.ServletException;
-import jakarta.servlet.ServletRequest;
-import jakarta.servlet.ServletResponse;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.util.Collection;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
@@ -42,50 +38,48 @@ public class JwtFilter extends OncePerRequestFilter {
         // 1. 헤더에서 토큰 꺼내기
         String bearerJwt = request.getHeader("Authorization");
 
-        // 2. 토큰 검증
+        // 2. 토큰 확인 -> 없을 경우 LoginFilter
         if (bearerJwt == null || !bearerJwt.startsWith("Bearer ")) {
-//            setErrorResponse(response, JwtErrorCode.TOKEN_REQUIRED);
-            // ??
             filterChain.doFilter(request, response);
-//            return;
-
         }
-        // "Bearer " 이후만 추출
+
+        // 3. "Bearer " 이후만 추출
         String jwt = jwtUtil.substringToken(bearerJwt);
 
         try {
-            // 토큰에서 값 꺼내기
+            // 4. 토큰에서 값 꺼내기
             Claims claims = jwtUtil.extractClaims(jwt);
             if (claims == null) {
                 setErrorResponse(response, JwtErrorCode.INVALID_JWT_CLAIMS);
                 return;
             }
 
-            UserRole userRole = UserRole.valueOf(claims.get("userRole", String.class));
+            // 5. 토큰에서 꺼낸 회원 정보 저장
+            AuthUser authUser = new AuthUser(
+                Long.parseLong(claims.getSubject()),
+                (String) claims.get("email"),
+                (String) claims.get("userRole")
+            );
 
+            // 6. HttpRequest 에 회원 정보 객체 담기
             request.setAttribute("userId", Long.parseLong(claims.getSubject()));
             request.setAttribute("email", claims.get("email"));
             request.setAttribute("userRole", claims.get("userRole"));
 
-            Long userId = (Long) request.getAttribute("userId");
-            String email = (String) request.getAttribute("email");
-            String role = (String) request.getAttribute("userRole");
 
-            //userEntity를 생성하여 값 set
-            User user = new User();
-            user.setEmail(email);
-            user.setPassword("temppassword");
-            user.setUserRole(role);
+            // 7. 인가를 위한 권한 정보 저장
+            Collection<? extends GrantedAuthority> authorities =
+                List.of(new SimpleGrantedAuthority(authUser.getUserRole()));
 
-            //UserDetails에 회원 정보 객체 담기
-            CustomUserDetails customUserDetails = new CustomUserDetails(user);
 
-            //스프링 시큐리티 인증 토큰 생성
-            Authentication authToken = new UsernamePasswordAuthenticationToken(customUserDetails,
-                null, customUserDetails.getAuthorities());
-            //세션에 사용자 등록
+            // 7. Spring Security 인증 토큰 생성
+            Authentication authToken = new UsernamePasswordAuthenticationToken(authUser,
+                null, authorities);
+
+            // 8. SecurityContextHolder(세션)에 토큰 담기
             SecurityContextHolder.getContext().setAuthentication(authToken);
 
+            // JwtFilter 끝.
             filterChain.doFilter(request, response);
 
 

@@ -28,18 +28,15 @@ public class User extends BaseEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Setter
     @Column(unique = true)
     private String email;
 
-    @Setter
     private String password;
 
     private String username;
 
-//    @Enumerated(EnumType.STRING)
-    @Setter
-    private String userRole;
+    @Enumerated(EnumType.STRING)
+    private UserRole userRole;
 
     @Column(unique = true)
     private String nickname;
@@ -56,7 +53,7 @@ public class User extends BaseEntity {
 
     private Integer age;
 
-    public User(String email, String password, String name, String role, String nickname,
+    public User(String email, String password, String name, UserRole role, String nickname,
         String phone, String address, String gender, String birth) {
         this.email = email;
         this.password = password;

@@ -1,6 +1,7 @@
 package com.example.toanyone.global.auth.service;
 
 import com.example.toanyone.domain.user.entity.User;
+import com.example.toanyone.domain.user.enums.UserRole;
 import com.example.toanyone.domain.user.repository.UserRepository;
 import com.example.toanyone.global.auth.dto.AuthRequestDto;
 import com.example.toanyone.global.auth.dto.AuthResponseDto;
@@ -27,13 +28,14 @@ public class AuthServiceImpl implements AuthService {
             throw new RuntimeException("이미 존재하는 이메일입니다.");
         }
 
+        // 비밀번호 암호화
         String encodedPassword = passwordEncoder.encode(signupRequest.getPassword());
 
         User newUser = new User(
             signupRequest.getEmail(),
             encodedPassword,
             signupRequest.getUsername(),
-            signupRequest.getRole(),
+            UserRole.of(signupRequest.getRole()),
             signupRequest.getNickname(),
             signupRequest.getPhone(),
             signupRequest.getAddress(),
@@ -43,27 +45,31 @@ public class AuthServiceImpl implements AuthService {
 
         User savedUser = userRepository.save(newUser);
 
-//        String bearerToken = jwtUtil.createToken(savedUser.getId(), savedUser.getEmail(), savedUser.getUserRole());
+        // 회원가입 성공 시 토큰 발급
+        String bearerToken = jwtUtil.createToken(savedUser.getId(), savedUser.getEmail(), savedUser.getUserRole());
 
-        return new AuthResponseDto.CreateToken("회원가입 성공");
+        return new AuthResponseDto.CreateToken(bearerToken);
     }
 
     @Transactional(readOnly = true)
     @Override
     public AuthResponseDto.CreateToken signin(AuthRequestDto.Signin signinRequest) {
+
+        // 가입여부 확인
         User user = userRepository.findByEmail(signinRequest.getEmail()).orElseThrow(
             () -> new RuntimeException("가입되지 않은 유저입니다."));
 
-        // 탈퇴한 회원인지 확인합니다.
+        // 탈퇴한 회원인지 확인
         if (user.isDeleted()) {
             throw new RuntimeException("탈퇴한 회원입니다.");
         }
 
-        // 로그인 시 이메일과 비밀번호가 일치하지 않을 경우 401을 반환합니다.
+        // 비밀번호 검증
         if (!passwordEncoder.matches(signinRequest.getPassword(), user.getPassword())) {
             throw new RuntimeException("잘못된 비밀번호입니다.");
         }
 
+        // 로그인 성공 시 토큰 발급
         String bearerToken = jwtUtil.createToken(user.getId(), user.getEmail(), user.getUserRole());
 
         return new AuthResponseDto.CreateToken(bearerToken);

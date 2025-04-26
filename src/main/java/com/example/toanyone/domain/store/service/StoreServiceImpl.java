@@ -33,7 +33,7 @@ public class StoreServiceImpl implements StoreService {
         User user = userRepository.findById(ownerId).orElseThrow(
                 () -> new ApiException(ErrorStatus.USER_NOT_FOUND));
 
-        if (UserRole.of(user.getUserRole()) != UserRole.OWNER) {
+        if (user.getUserRole() != UserRole.OWNER) {
             throw new ApiException(ErrorStatus.STORE_NO_PERMISSION);}
 
         int storeCount = storeRepository.countByUserIdAndDeletedFalse(ownerId);
