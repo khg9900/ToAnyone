@@ -57,7 +57,6 @@ public enum ErrorStatus implements BaseErrorCode {
     ORDER_NOT_FOUND(HttpStatus.NOT_FOUND, "8001", "주문 정보를 찾을 수 없습니다."),
     ORDER_MIN_PRICE_NOT_MET(HttpStatus.BAD_REQUEST, "8002", "최소 주문 금액을 만족해야 합니다."),
     ORDER_STORE_CLOSED(HttpStatus.BAD_REQUEST, "8003", "가게가 영업 중이 아닙니다."),
-    CART_NOT_FOUND(HttpStatus.NOT_FOUND, "8004", "장바구니를 찾을 수 없습니다."),
     ORDER_INVALID_USER(HttpStatus.FORBIDDEN, "8005", "해당 주문에 대한 권한이 없습니다."),
     ORDER_ACCESS_DENIED_BY_NON_OWNER(HttpStatus.FORBIDDEN, "8006", "해당 가게의 사장님만 접근할 수 있습니다.");
 
