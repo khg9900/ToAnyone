@@ -1,5 +1,6 @@
 package com.example.toanyone.domain.store.service;
 
+import com.example.toanyone.domain.menu.dto.MenuDto;
 import com.example.toanyone.domain.menu.entity.Menu;
 import com.example.toanyone.domain.menu.enums.MainCategory;
 import com.example.toanyone.domain.menu.enums.SubCategory;
@@ -267,9 +268,12 @@ public class StoreServiceTest {
                 .build();
 
         Store store = new Store(user, requestDto);
-        Menu menu1 = new Menu(store, "메뉴1", "소개1", 5000, MainCategory.KOREAN, SubCategory.MAIN);
+        MenuDto.Request dto1 = new MenuDto.Request("메뉴1", "소개1", 5000, "KOREAN", "MAIN");
+        MenuDto.Request dto2 = new MenuDto.Request("메뉴2", "소개2", 5000, "CHINESE", "SIDE");
+
+        Menu menu1 = new Menu(store, dto1);
         ReflectionTestUtils.setField(menu1, "id", 1L);
-        Menu menu2 = new Menu(store, "메뉴2", "소개2", 5000, MainCategory.CHINESE, SubCategory.SIDE);
+        Menu menu2 = new Menu(store, dto2);
         ReflectionTestUtils.setField(menu2, "id", 2L);
 
         List<Menu> menus = List.of(menu1, menu2);
