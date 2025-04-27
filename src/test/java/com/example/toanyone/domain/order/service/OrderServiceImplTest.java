@@ -275,6 +275,33 @@ class OrderServiceImplTest {
         @Test
         @DisplayName("주문 내역 조회 성공")
         void getUserOrderHistorySuccess() {
+            // given
+            AuthUser authUser = new AuthUser(1L, "user@example.com", "USER");
+
+            User user = new User();
+            ReflectionTestUtils.setField(user, "id", 1L);
+
+            when(userRepository.findById(1L)).thenReturn(Optional.of(user));
+
+            // when
+            var result = orderService.getOrdersByUser(authUser);
+
+            // then
+            assertThat(result).isNotNull();
+        }
+
+        @Test
+        @DisplayName("주문 내역 조회 실패 - 유저 없음")
+        void getUserOrderHistoryFail_UserNotFound() {
+            // given
+            AuthUser authUser = new AuthUser(999L, "notfound@example.com", "USER");
+
+            when(userRepository.findById(999L)).thenReturn(Optional.empty());
+
+            // when & then
+            assertThatThrownBy(() -> orderService.getOrdersByUser(authUser))
+                    .isInstanceOf(ApiException.class)
+                    .hasMessageContaining("고객 정보가 없습니다.");
         }
     }
 
@@ -285,7 +312,39 @@ class OrderServiceImplTest {
         @Test
         @DisplayName("가게 주문 목록 조회 성공")
         void getStoreOrdersSuccess() {
+            // given
+            AuthUser authUser = new AuthUser(1L, "owner@example.com", "OWNER");
 
+            User user = new User();
+            ReflectionTestUtils.setField(user, "id", 1L);
+
+            Store store = new Store();
+            ReflectionTestUtils.setField(store, "id", 100L);
+            ReflectionTestUtils.setField(store, "user", user); // ⭐ user 세팅 추가
+
+            when(userRepository.findById(authUser.getId())).thenReturn(Optional.of(user));
+            when(storeRepository.findById(store.getId())).thenReturn(Optional.of(store));
+
+            // when
+            var result = orderService.getOrdersByStore(authUser, store.getId());
+
+            // then
+            assertThat(result).isNotNull();
+        }
+
+
+        @Test
+        @DisplayName("가게 주문 목록 조회 실패 - 가게 없음")
+        void getStoreOrdersFail_StoreNotFound() {
+            // given
+            AuthUser authUser = new AuthUser(1L, "owner@example.com", "OWNER");
+
+            when(storeRepository.findById(999L)).thenReturn(Optional.empty());
+
+            // when & then
+            assertThatThrownBy(() -> orderService.getOrdersByStore(authUser, 999L))
+                    .isInstanceOf(ApiException.class)
+                    .hasMessageContaining("고객 정보가 없습니다.");
         }
     }
 }
