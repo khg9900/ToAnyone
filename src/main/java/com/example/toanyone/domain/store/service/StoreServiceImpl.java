@@ -115,31 +115,6 @@ public class StoreServiceImpl implements StoreService {
     @Transactional
     public StoreResponseDto.Complete updateStore(AuthUser authUser, Long storeId, StoreRequestDto.Update dto) {
 
-        // Dto 데이터 타입 변환 검증
-        Status status = null;
-        LocalTime openTime = null;
-        LocalTime closeTime = null;
-
-        if(dto.getStatus() != null) {
-            status = Status.of(dto.getStatus());
-        }
-
-        if(dto.getOpenTime() != null) {
-            try {
-                openTime = LocalTime.parse(dto.getOpenTime(), DateTimeFormatter.ofPattern("HH:mm"));
-            } catch (DateTimeParseException e) {
-                throw new ApiException(ErrorStatus.INVALID_TIME_RANGE);
-            }
-        }
-
-        if(dto.getCloseTime() != null) {
-            try {
-                closeTime = LocalTime.parse(dto.getCloseTime(), DateTimeFormatter.ofPattern("HH:mm"));
-            } catch (DateTimeParseException e) {
-                throw new ApiException(ErrorStatus.INVALID_TIME_RANGE);
-            }
-        }
-
         // DB 접근 검증
         Store store = storeRepository.findByIdOrElseThrow(storeId);
 
@@ -149,7 +124,7 @@ public class StoreServiceImpl implements StoreService {
         if(store.getDeleted()) {
             throw new ApiException(ErrorStatus.STORE_SHUT_DOWN);}
 
-        store.update(dto, status, openTime, closeTime);
+        store.update(dto);
 
         return new StoreResponseDto.Complete("정보가 수정되었습니다.");
     }

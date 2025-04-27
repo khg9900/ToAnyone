@@ -80,13 +80,13 @@ public class Store extends BaseEntity {
         this.phone = dto.getPhone();
     }
 
-    public void update(StoreRequestDto.Update dto, Status status, LocalTime openTime, LocalTime closeTime) {
-        if (dto.getOpenTime() != null) this.openTime = openTime;
-        if (dto.getCloseTime() != null) this.closeTime = closeTime;
+    public void update(StoreRequestDto.Update dto) {
+        if (dto.getOpenTime() != null) this.openTime = StoreConverter.toLocalTime(dto.getOpenTime());
+        if (dto.getCloseTime() != null) this.closeTime = StoreConverter.toLocalTime(dto.getCloseTime());
         if (dto.getDeliveryFee() != null) this.deliveryFee = dto.getDeliveryFee();
         if (dto.getMinOrderPrice() != null) this.minOrderPrice = dto.getMinOrderPrice();
         if (dto.getNotice() != null) this.notice = dto.getNotice();
-        if (dto.getStatus() != null) this.status = status;
+        if (dto.getStatus() != null) this.status = StoreConverter.toStatus(dto.getStatus());
     }
 
 }
