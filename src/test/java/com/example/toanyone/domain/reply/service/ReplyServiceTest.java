@@ -66,19 +66,20 @@ public class ReplyServiceTest {
 
     @Test
     void 댓글_생성_실패_이미_댓글존재() {
-
         Long ownerId = 1L;
         Long storeId = 1L;
         Long reviewId = 1L;
 
         AuthUser authUser = new AuthUser(ownerId, "owner@test.com", "OWNER");
 
-        User owner = new User();
+
+        User owner = new User("owner@test.com", "password123", "사장님", UserRole.OWNER, "nickname", "010-1234-5678", "서울시 강남구", "MALE", "1990-01-01");
         ReflectionTestUtils.setField(owner, "id", ownerId);
 
         Review review = new Review();
         ReflectionTestUtils.setField(review, "store", new com.example.toanyone.domain.store.entity.Store());
         ReflectionTestUtils.setField(review.getStore(), "id", storeId);
+
 
         Reply existingReply = new Reply();
         ReflectionTestUtils.setField(existingReply, "id", 100L);

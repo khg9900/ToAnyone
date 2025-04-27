@@ -46,17 +46,21 @@ public class ReviewServiceImpl implements ReviewService {
     @Transactional
     public ReviewResponseDto createReview(Long storeId, Long orderId, AuthUser authUser, ReviewCreateRequestDto request){
 
-        User user = userRepository.findById(authUser.getId())
-                .orElseThrow(()-> new ApiException(ErrorStatus.USER_NOT_FOUND));
-
-        Order order = orderRepository.findReviewableOrder(orderId, user.getId())
+        // 가게 일치 여부 검증
+        Order order = orderRepository.findReviewableOrder(orderId, authUser.getId())
                 .orElseThrow(() -> new ApiException(ErrorStatus.REVIEW_CREATE_FORBIDDEN));
 
         if (!storeId.equals(order.getStore().getId())) {
             throw new ApiException(ErrorStatus.ORDER_STORE_MISMATCH);
         }
 
+        // 사용자 존재 여부 검증
+        User user = userRepository.findById(authUser.getId())
+                .orElseThrow(()-> new ApiException(ErrorStatus.USER_NOT_FOUND));
+
+
         Store store = order.getStore();
+
 
         Review review = new Review(
                 order,
@@ -84,28 +88,7 @@ public class ReviewServiceImpl implements ReviewService {
         // 별점이 null이거나 빈 리스트이면 전체 리뷰 조회
         if (rating == null || rating.isEmpty()) {
             reviewPage = reviewRepository.findAllByStoreId(storeId, pageable);
-
-            List<ReviewCheckResponseDto> response = new ArrayList<>();
-            for (Review review : reviewPage.getContent()) {
-                Reply reply = review.getReply();
-
-                ReplyDto replyDto;
-                if (reply != null) {
-                    replyDto = new ReplyDto(reply.getId(), reply.getContent(), reply.getUpdatedAt());
-                } else {
-                    replyDto = null;
-                }
-
-                response.add(new ReviewCheckResponseDto(
-                        review.getId(),
-                        review.getRating(),
-                        review.getContent(),
-                        review.getVisible(),
-                        review.getUpdatedAt(),
-                        replyDto
-                ));
-            }
-            return new PageImpl<>(response, pageable, reviewPage.getTotalElements());
+            return convertToResponseDtoPage(reviewPage, pageable);
         }
 
         // 별점 유효성 검사
@@ -117,27 +100,7 @@ public class ReviewServiceImpl implements ReviewService {
 
         // 별점 조건으로 리뷰 조회
         reviewPage = reviewRepository.findReviewByRating(storeId, rating, pageable);
-        List<ReviewCheckResponseDto> response = new ArrayList<>();
-        for (Review review : reviewPage.getContent()) {
-            Reply reply = review.getReply();
-
-            ReplyDto replyDto;
-            if (reply != null) {
-                replyDto = new ReplyDto(reply.getId(), reply.getContent(), reply.getUpdatedAt());
-            } else {
-                replyDto = null;
-            }
-
-            response.add(new ReviewCheckResponseDto(
-                    review.getId(),
-                    review.getRating(),
-                    review.getContent(),
-                    review.getVisible(),
-                    review.getUpdatedAt(),
-                    replyDto
-            ));
-        }
-        return new PageImpl<>(response, pageable, reviewPage.getTotalElements());
+        return convertToResponseDtoPage(reviewPage, pageable);
     }
 
     /**
@@ -183,8 +146,8 @@ public class ReviewServiceImpl implements ReviewService {
             throw new ApiException(ErrorStatus.REVIEW_STORE_MISMATCH);
         }
 
-        // 리뷰 댓글 존재하는지 확인
-        if(!(review.getReply().getId() ==null)){
+        // 리뷰 댓글이 존재하는지 확인
+        if (review.getReply() != null) {
             review.getReply().softDelete();
         }
 
@@ -199,7 +162,31 @@ public class ReviewServiceImpl implements ReviewService {
     }
 
 
-//    public 페이징 함수 처리
+    // 페이징 함수 처리
+// 페이징 처리 로직을 분리하여 중복 제거
+    private Page<ReviewCheckResponseDto> convertToResponseDtoPage(Page<Review> reviewPage, Pageable pageable) {
+        List<ReviewCheckResponseDto> response = new ArrayList<>();
+        for (Review review : reviewPage.getContent()) {
+            Reply reply = review.getReply();
+
+            ReplyDto replyDto;
+            if (reply != null) {
+                replyDto = new ReplyDto(reply.getId(), reply.getContent(), reply.getUpdatedAt());
+            } else {
+                replyDto = null;
+            }
+
+            response.add(new ReviewCheckResponseDto(
+                    review.getId(),
+                    review.getRating(),
+                    review.getContent(),
+                    review.getVisible(),
+                    review.getUpdatedAt(),
+                    replyDto
+            ));
+        }
+        return new PageImpl<>(response, pageable, reviewPage.getTotalElements());
+    }
 
 //        hardDelete
 //    delete : 한행=로우 하나만 지우는거
