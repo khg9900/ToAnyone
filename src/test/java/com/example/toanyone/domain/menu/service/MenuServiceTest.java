@@ -196,12 +196,15 @@ public class MenuServiceTest {
 
         AuthUser authUser = new AuthUser(anotherOwnerId, "kkk@gmail.com", UserRole.OWNER);
 
+        //given
         given(storeRepository.findOwnerIdByStoreIdOrElseThrow(storeId)).willReturn(ownerId);
 
 
+        //when
         ApiException apiException = assertThrows(ApiException.class,
                 () -> menuService.deleteMenu(authUser, storeId,1L));
 
+        //then
         assertEquals("가게의 주인이 아니면 접근할 수 없습니다.", apiException.getMessage());
     }
 

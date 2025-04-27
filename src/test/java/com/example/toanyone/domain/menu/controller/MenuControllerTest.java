@@ -34,6 +34,7 @@ public class MenuControllerTest {
      */
     @Test
     void 메뉴_생성에_성공했을_때(){
+        //given
         AuthUser authUser = mock(AuthUser.class);
         Long storeId = 1L;
         MenuDto.Request requestDto = new MenuDto.Request(
@@ -56,11 +57,13 @@ public class MenuControllerTest {
                 menuController.createMenu(authUser, storeId, requestDto);
 
 
+        //then
         assertEquals("생성 완료", response.getBody().getMessage());
     }
 
     @Test
     void 존재하지_않는_카테고리명(){
+        //given
         AuthUser authUser = mock(AuthUser.class);
         Long storeId = 1L;
         MenuDto.Request requestDto = new MenuDto.Request(
@@ -77,6 +80,7 @@ public class MenuControllerTest {
 
     @Test
     void 존재하지_않는_서브_카테고리명(){
+        //given
         AuthUser authUser = mock(AuthUser.class);
         Long storeId = 1L;
         MenuDto.Request requestDto = new MenuDto.Request(
