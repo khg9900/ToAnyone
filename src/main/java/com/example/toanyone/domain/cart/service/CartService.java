@@ -11,12 +11,15 @@ import org.springframework.stereotype.Service;
 @Service
 public interface CartService {
 
-    CartResponseDto createCart(AuthUser authUser, Long storeId, Long menuId, Integer quantity
+    CartResponseDto addCart(AuthUser authUser, Long storeId, Long menuId, Integer quantity
     );
 
     CartItemDto.Response getCartItems(AuthUser authUser);
 
     CartResponseDto clearCartItems(AuthUser authUser);
+
+    //고승표 추가
+    CartResponseDto clearCartItems(User user); // 오버로딩용
 
     CartResponseDto updateCartItems(AuthUser authUser, Long storeId,
                                     Long menuId, Integer quantity);

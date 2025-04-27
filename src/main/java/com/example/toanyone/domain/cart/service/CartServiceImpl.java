@@ -35,12 +35,17 @@ public class CartServiceImpl implements CartService {
 
     @Override
     @Transactional
-    public CartResponseDto createCart(AuthUser authUser, Long storeId , Long menuId, Integer quantity) {
+    public CartResponseDto addCart(AuthUser authUser, Long storeId , Long menuId, Integer quantity) {
 
         User user = userRepository.findById(authUser.getId())
                 .orElseThrow(() -> new ApiException(ErrorStatus.USER_NOT_FOUND));
         Store store = storeRepository.findByIdOrElseThrow(storeId);
         Menu menu = menuRepository.findByIdOrElseThrow(menuId);
+
+        if (store.getId().equals(menu.getStore().getId())) {
+            throw new ApiException(ErrorStatus.MENU_IS_NOT_IN_STORE);
+        }
+
         Cart cart = cartRepository.findByUserId(user.getId())
                 .orElseGet(() -> cartRepository.save(new Cart(user, store, 0)));
 
@@ -49,6 +54,7 @@ public class CartServiceImpl implements CartService {
         cart.setTotalPrice(price, quantity);
 
         CartItem cartItem = new CartItem(cart, menu, quantity, price);
+
         cartItemRepository.save(cartItem);
 
         return new CartResponseDto("장바구니에 추가되었습니다");
@@ -80,11 +86,20 @@ public class CartServiceImpl implements CartService {
         );
     }
 
+
+    // 고승표 수정/추가
     @Override
     @Transactional
     public CartResponseDto clearCartItems(AuthUser authUser) {
-
-        Cart cart = cartRepository.findByUserIdOrElseThrow(authUser.getId());
+        User user = userRepository.findById(authUser.getId())
+                .orElseThrow(() -> new ApiException(ErrorStatus.USER_NOT_FOUND));
+        return clearCartItems(user);
+    }
+    // orderservice에서 user로 받을 수 있게
+    @Override
+    @Transactional
+    public CartResponseDto clearCartItems(User user) {
+        Cart cart = cartRepository.findByUserIdOrElseThrow(user.getId());
         cartRepository.delete(cart);
         return new CartResponseDto("장바구니가 비워졌습니다");
     }
@@ -109,4 +124,6 @@ public class CartServiceImpl implements CartService {
 
         return new CartResponseDto("품목의 수량 변경이 완료되었습니다.");
     }
+
+
 }
