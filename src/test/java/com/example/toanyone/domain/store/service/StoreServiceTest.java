@@ -31,7 +31,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.BDDMockito.given;
 
 @ExtendWith(SpringExtension.class)
-public class GetStoreTest {
+public class StoreServiceTest {
     @Mock
     private StoreRepository storeRepository;
     @Mock
@@ -39,10 +39,87 @@ public class GetStoreTest {
     @InjectMocks
     private StoreServiceImpl storeService;
 
+    /**
+     * 1. createStore 메서드 테스트
+     *  (1) 가게 생성 성공
+     *  (2) 가게 생성 개수 제한 (3개)
+     */
+
+    @Test
+    void 가게_생성_성공() {
+
+        Long ownerId = 1L;
+        User user = new User();
+        ReflectionTestUtils.setField(user, "id", 1L);
+        ReflectionTestUtils.setField(user, "userRole", UserRole.OWNER);
+
+        StoreRequestDto.Create reqest = StoreRequestDto.Create.builder()
+                .name("가게이름")
+                .address("주소")
+                .openTime("11:00")
+                .closeTime("21:00")
+                .deliveryFee(3000)
+                .minOrderPrice(10000)
+                .notice("공지")
+                .status(String.valueOf(Status.OPEN))
+                .phone("02-123-4567")
+                .build();
+
+        //GIVEN
+        given(userRepository.findById(ownerId)).willReturn(Optional.of(user));
+        given(storeRepository.countByUserIdAndDeletedFalse(ownerId)).willReturn(1);
+        given(storeRepository.existsByName(reqest.getName())).willReturn(false);
+
+        //WHEN
+        StoreResponseDto.Complete responseDto = storeService.createStore(ownerId, reqest);
+
+        //THEN
+        assertEquals("가게가 생성되었습니다.", responseDto.getMessage());
+
+    }
+
+    @Test
+    void 가게는_3개까지_만들수있다() {
+
+        Long ownerId = 1L;
+        User user = new User();
+        ReflectionTestUtils.setField(user, "id", 1L);
+        ReflectionTestUtils.setField(user, "userRole", UserRole.OWNER);
+
+        StoreRequestDto.Create reqest = StoreRequestDto.Create.builder()
+                .name("가게이름")
+                .address("주소")
+                .openTime("11:00")
+                .closeTime("21:00")
+                .deliveryFee(3000)
+                .minOrderPrice(10000)
+                .notice("공지")
+                .status(String.valueOf(Status.OPEN))
+                .phone("02-123-4567")
+                .build();
+
+        //GIVEN
+        given(userRepository.findById(ownerId)).willReturn(Optional.of(user));
+        given(storeRepository.countByUserIdAndDeletedFalse(ownerId)).willReturn(3);
+
+        //WHEN
+        ApiException apiException = assertThrows(ApiException.class, () -> storeService.createStore(ownerId, reqest));
+
+        //THEN
+        assertEquals("가게는 최대 3개까지 등록 가능합니다.", apiException.getMessage());
+    }
+
+
+    /**
+     * 2. getStoresByOwner 메서드 테스트
+     *  (1) 운영중인 가게 조회 성공
+     *  (2) 운영중인 가게가 없을 경우
+     */
+
     @Test
     void 내가_운영중인가게를_조회한다() {
         Long ownerId = 1L;
-        AuthUser authUser = new AuthUser(ownerId, "eee@gmail.com", UserRole.OWNER);
+        AuthUser authUser = new AuthUser(ownerId, "eee@gmail.com", "OWNER");
 
         User user = new User();
         ReflectionTestUtils.setField(user, "id", 1L);
@@ -81,12 +158,12 @@ public class GetStoreTest {
     @Test
     void 내가_운영중인가게가_없다() {
         Long ownerId = 1L;
-        AuthUser authUser = new AuthUser(ownerId, "eee@gmail.com", UserRole.OWNER);
+        AuthUser authUser = new AuthUser(ownerId, "eee@gmail.com", "OWNER");
 
         User user = new User();
         ReflectionTestUtils.setField(user, "id", 1L);
         ReflectionTestUtils.setField(user, "email", "eee@gmail.com");
-        ReflectionTestUtils.setField(user, "userRole", UserRole.OWNER);
+        ReflectionTestUtils.setField(user, "userRole",  UserRole.OWNER);
 
         // GIVEN
         given(userRepository.findById(ownerId)).willReturn(Optional.of(user));
@@ -101,6 +178,12 @@ public class GetStoreTest {
         assertEquals(ErrorStatus.STORE_NOT_FOUND.getMessage(),apiException.getMessage());
 
     }
+
+    /**
+     * 3. getStoresByName 메서드 테스트
+     *  (1) 가게명 키워드 검색 조회 성공
+     *  (2) 키워드가 포함된 가게가 없을 경우
+     */
 
     @Test
     void 키워드가_포함된_가게목록을_조회한다() {
@@ -161,11 +244,16 @@ public class GetStoreTest {
 
     }
 
+    /**
+     * 4. getStoresById 메서드 테스트
+     *  (1) 가게 단건 조회 성공
+     *  (2) 조회한 가게가 폐업했을 경우
+     */
     @Test
     void 한가게의_정보를_조회한다() {
         User user = new User();
         ReflectionTestUtils.setField(user, "id", 1L);
-        
+
         StoreRequestDto.Create requestDto = StoreRequestDto.Create.builder()
                 .name("가게명")
                 .address("가게주소")
@@ -177,7 +265,7 @@ public class GetStoreTest {
                 .status("OPEN")
                 .phone("02-123-4567")
                 .build();
-        
+
         LocalTime openTime = LocalTime.parse("10:00");
         LocalTime closeTime = LocalTime.parse("18:00");
 
@@ -247,5 +335,8 @@ public class GetStoreTest {
         // THEN
         assertEquals(ErrorStatus.STORE_SHUT_DOWN.getMessage(), apiException.getMessage());
     }
+
+
+
 
 }

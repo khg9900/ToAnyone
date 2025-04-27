@@ -44,7 +44,7 @@ public class MenuServiceTest {
     void 가게_주인이_메뉴_생성을_정상적으로_하면_성공한다() {
         Long storeId = 1L;
         Long ownerId = 1L;
-        AuthUser authUser = new AuthUser(1L, "kkk@gmail.com", UserRole.OWNER);
+        AuthUser authUser = new AuthUser(1L, "kkk@gmail.com", "OWNER");
 
         Store store = new Store();
 
@@ -67,7 +67,7 @@ public class MenuServiceTest {
         Long ownerId = 1L;
         Long anotherOwnerId = 2L;
 
-        AuthUser authUser = new AuthUser(anotherOwnerId, "kkk@gmail.com", UserRole.OWNER);
+        AuthUser authUser = new AuthUser(anotherOwnerId, "kkk@gmail.com", "OWNER");
         Store store = new Store();
 
         given(storeRepository.findByIdOrElseThrow(storeId)).willReturn(store);
@@ -84,7 +84,7 @@ public class MenuServiceTest {
     void 이미_있는_메뉴는_추가할_수_없다(){
         Long storeId = 1L;
         Long ownerId = 1L;
-        AuthUser authUser = new AuthUser(1L, "kkk@gmail.com", UserRole.OWNER);
+        AuthUser authUser = new AuthUser(1L, "kkk@gmail.com", "OWNER");
         Store store = new Store();
 
         //given
@@ -111,7 +111,7 @@ public class MenuServiceTest {
     void 가게_주인이_정상적으로_존재하는_메뉴를_수정한다(){
         Long storeId = 1L;
         Long ownerId = 1L;
-        AuthUser authUser = new AuthUser(1L, "kkk@gmail.com", UserRole.OWNER);
+        AuthUser authUser = new AuthUser(1L, "kkk@gmail.com", "OWNER");
         Long menuId = 1L;
         Menu menu = new Menu();
 
@@ -131,7 +131,7 @@ public class MenuServiceTest {
         Long ownerId = 1L;
         Long anotherOwnerId = 2L;
 
-        AuthUser authUser = new AuthUser(anotherOwnerId, "kkk@gmail.com", UserRole.OWNER);
+        AuthUser authUser = new AuthUser(anotherOwnerId, "kkk@gmail.com", "OWNER");
 
         given(storeRepository.findOwnerIdByStoreIdOrElseThrow(storeId)).willReturn(ownerId);
 
@@ -146,7 +146,7 @@ public class MenuServiceTest {
     void 없는_메뉴는_수정할_수_없다(){
         Long storeId = 1L;
         Long ownerId = 1L;
-        AuthUser authUser = new AuthUser(1L, "kkk@gmail.com", UserRole.OWNER);
+        AuthUser authUser = new AuthUser(1L, "kkk@gmail.com", "OWNER");
         Long menuId = 1L;
         //given
         given(storeRepository.findOwnerIdByStoreIdOrElseThrow(storeId)).willReturn(ownerId);
@@ -172,7 +172,7 @@ public class MenuServiceTest {
     void 가게_주인이_메뉴를_정상적으로_삭제한다(){
         Long storeId = 1L;
         Long ownerId = 1L;
-        AuthUser authUser = new AuthUser(1L, "kkk@gmail.com", UserRole.OWNER);
+        AuthUser authUser = new AuthUser(1L, "kkk@gmail.com", "OWNER");
         Long menuId = 1L;
         Menu menu = new Menu();
 
@@ -194,7 +194,7 @@ public class MenuServiceTest {
         Long ownerId = 1L;
         Long anotherOwnerId = 2L;
 
-        AuthUser authUser = new AuthUser(anotherOwnerId, "kkk@gmail.com", UserRole.OWNER);
+        AuthUser authUser = new AuthUser(anotherOwnerId, "kkk@gmail.com", "OWNER");
 
         //given
         given(storeRepository.findOwnerIdByStoreIdOrElseThrow(storeId)).willReturn(ownerId);
@@ -212,7 +212,7 @@ public class MenuServiceTest {
     void 없는_메뉴는_삭제할_수_없다(){
         Long storeId = 1L;
         Long ownerId = 1L;
-        AuthUser authUser = new AuthUser(1L, "kkk@gmail.com", UserRole.OWNER);
+        AuthUser authUser = new AuthUser(1L, "kkk@gmail.com", "OWNER");
         Long menuId = 1L;
         //given
         given(storeRepository.findOwnerIdByStoreIdOrElseThrow(storeId)).willReturn(ownerId);
@@ -230,7 +230,7 @@ public class MenuServiceTest {
     void 삭제된_메뉴는_삭제할_수_없다(){
         Long storeId = 1L;
         Long ownerId = 1L;
-        AuthUser authUser = new AuthUser(1L, "kkk@gmail.com", UserRole.OWNER);
+        AuthUser authUser = new AuthUser(1L, "kkk@gmail.com", "OWNER");
         Menu menu = mock(Menu.class);
         //given
         given(storeRepository.findOwnerIdByStoreIdOrElseThrow(storeId)).willReturn(ownerId);
