@@ -25,10 +25,11 @@ public class CartController {
     public final CartService cartService;
 
     @PostMapping
-    public ResponseEntity<ApiResponse<CartResponseDto>> createCart(
+    public ResponseEntity<ApiResponse<CartResponseDto>> addCart(
             @Auth AuthUser authUser, @Valid @RequestBody CartRequestDto cartRequestDto) {
 
-        CartResponseDto cartResponseDto = cartService.createCart(
+
+        CartResponseDto cartResponseDto = cartService.addCart(
                 authUser,cartRequestDto.getStoreId(), cartRequestDto.getMenuId(), cartRequestDto.getQuantity()
         );
 
@@ -40,6 +41,26 @@ public class CartController {
             @Auth AuthUser authUser){
 
         CartItemDto.Response response = cartService.getCartItems(authUser);
+
+        return ApiResponse.onSuccess(SuccessStatus.OK, response);
+    }
+
+
+    @DeleteMapping
+    public ResponseEntity<ApiResponse<CartResponseDto>> clearCart(@Auth AuthUser authUser){
+        CartResponseDto response = cartService.clearCartItems(authUser);
+
+        return ApiResponse.onSuccess(SuccessStatus.OK, response);
+    }
+
+    @PatchMapping("/{storeId}")
+    public ResponseEntity<ApiResponse<CartResponseDto>> updateCart(
+            @Auth AuthUser authUser,
+            @PathVariable Long storeId,
+            @Valid @RequestBody CartItemDto.CartItems cartItemDto
+    ){
+        CartResponseDto response = cartService.updateCartItems(
+                authUser, storeId, cartItemDto.getMenuId(), cartItemDto.getQuantity());
 
         return ApiResponse.onSuccess(SuccessStatus.OK, response);
     }

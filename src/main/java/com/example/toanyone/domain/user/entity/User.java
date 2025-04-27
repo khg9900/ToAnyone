@@ -4,7 +4,6 @@ import com.example.toanyone.domain.user.dto.UserRequestDto;
 import com.example.toanyone.domain.user.enums.Gender;
 import com.example.toanyone.domain.user.enums.UserRole;
 import com.example.toanyone.global.common.entity.BaseEntity;
-import com.example.toanyone.global.common.error.ApiException;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
@@ -17,7 +16,6 @@ import java.time.LocalDate;
 import java.time.Period;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import lombok.Setter;
 
 @Getter
 @Entity

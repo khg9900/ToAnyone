@@ -36,7 +36,7 @@ public class Review extends BaseEntity {
     private User user;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "storeId")
+    @JoinColumn(name = "store_id")
     private Store store;
 
     @Column(columnDefinition = "TEXT")
@@ -61,9 +61,10 @@ public class Review extends BaseEntity {
     /**
      * 생성자 - DTO로부터 엔티티 변환 시 사용
      */
-    public Review(Order order, User user,Integer rating, String content , Boolean visible) {
+    public Review(Order order, User user,Store store,Integer rating, String content , Boolean visible) {
         this.order = order;
         this.user = user;
+        this.store = store;
         this.rating = rating;
         this.content = content;
         this.visible = visible;
