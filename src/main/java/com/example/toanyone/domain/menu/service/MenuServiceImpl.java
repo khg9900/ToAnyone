@@ -24,24 +24,41 @@ public class MenuServiceImpl implements MenuService {
     private final MenuRepository menuRepository;
     private final StoreRepository storeRepository;
 
+    @Transactional
+    public MainCategory toMainCategory(String mainCategory) {
+        return MainCategory.of(mainCategory);
+    }
+    @Transactional
+    public SubCategory toSubCategory(String subCategory) {
+        return SubCategory.of(subCategory);
+    }
+
+
     @Override
     @Transactional
     public MenuDto.Response createMenu(
-            AuthUser authUser, Long storeId, String name, String description, Integer price,
-            MainCategory mainCategory, SubCategory subCategory) {
+            AuthUser authUser, Long storeId, MenuDto.Request dto) {
 
         Store store = storeRepository.findByIdOrElseThrow(storeId);
-        Long ownerId = storeRepository.findOwnerIdByStoreIdOrElseThrow(storeId);
+        Long ownerId = store.getUser().getId();
+
+        if (store.isDeleted()){
+            throw new ApiException(ErrorStatus.STORE_SHUT_DOWN);
+        }
 
         if (!ownerId.equals(authUser.getId())){
             throw new ApiException(ErrorStatus.NOT_STORE_OWNER);
         }
 
-        if (menuRepository.existsByStoreAndName(store, name)) {
+        if (menuRepository.existsByStoreAndName(store, dto.getName())) {
             throw new ApiException(ErrorStatus.MENU_ALREADY_EXISTS);
         }
 
-        Menu createdMenu = new Menu(store, name, description, price ,mainCategory, subCategory);
+        Menu createdMenu = new Menu(store,
+                dto.getName(), dto.getDescription(), dto.getPrice(),
+                toMainCategory(dto.getMainCategory()),
+                toSubCategory(dto.getSubCategory())
+                );
         menuRepository.save(createdMenu);
         log.info("Menu created: {}", createdMenu);
 
@@ -50,19 +67,24 @@ public class MenuServiceImpl implements MenuService {
 
     @Override
     @Transactional
-    public MenuDto.Response updateMenu(AuthUser authUser, Long storeId, Long menuId, String name, String description,
-                                       Integer price, MainCategory mainCategory, SubCategory subCategory) {
+    public MenuDto.Response updateMenu(AuthUser authUser, Long storeId, Long menuId, MenuDto.Request dto) {
 
+        if (storeRepository.findByIdOrElseThrow(storeId).isDeleted()){
+            throw new ApiException(ErrorStatus.STORE_SHUT_DOWN);
+        }
         Long ownerId = storeRepository.findOwnerIdByStoreIdOrElseThrow(storeId);
-        log.info("ownerId: " + ownerId);
 
         if (!ownerId.equals(authUser.getId())){
             throw new ApiException(ErrorStatus.NOT_STORE_OWNER);
         }
 
         Menu menu = menuRepository.findByIdOrElseThrow(menuId);
+        if (menu.isDeleted()){
+            throw new ApiException(ErrorStatus.MENU_ALREADY_DELETED);
+        }
 
-        menu.setMenu(name, description, price, mainCategory, subCategory);
+        menu.setMenu(dto.getName(), dto.getDescription(), dto.getPrice(),
+                toMainCategory(dto.getMainCategory()), toSubCategory(dto.getSubCategory()));
 
         return new MenuDto.Response("메뉴 수정되었습니다");
     }
@@ -73,6 +95,12 @@ public class MenuServiceImpl implements MenuService {
         Long ownerId = storeRepository.findOwnerIdByStoreIdOrElseThrow(storeId);
         if (!ownerId.equals(authUser.getId())){
             throw new ApiException(ErrorStatus.NOT_STORE_OWNER);
+        }
+        if (storeRepository.findByIdOrElseThrow(storeId).isDeleted()){
+            throw new ApiException(ErrorStatus.STORE_SHUT_DOWN);
+        }
+        if (menuRepository.findByIdOrElseThrow(menuId).isDeleted()){
+            throw new ApiException(ErrorStatus.MENU_ALREADY_DELETED);
         }
 
         Menu menu = menuRepository.findByIdOrElseThrow(menuId);

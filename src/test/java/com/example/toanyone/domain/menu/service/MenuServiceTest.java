@@ -44,17 +44,17 @@ public class MenuServiceTest {
     void 가게_주인이_메뉴_생성을_정상적으로_하면_성공한다() {
         Long storeId = 1L;
         Long ownerId = 1L;
-        AuthUser authUser = new AuthUser(1L, "kkk@gmail.com", UserRole.OWNER);
+        AuthUser authUser = new AuthUser(1L, "kkk@gmail.com", "OWNER");
 
         Store store = new Store();
+        MenuDto.Request requestDto = new MenuDto.Request("menu", "description", 1000, "KOREAN", "DRINK");
 
         // given
         given(storeRepository.findByIdOrElseThrow(storeId)).willReturn(store);
         given(storeRepository.findOwnerIdByStoreIdOrElseThrow(storeId)).willReturn(ownerId);
 
         // when
-        MenuDto.Response response = menuService.createMenu(authUser, storeId,
-                "menu", "description", 1000, MainCategory.KOREAN, SubCategory.DRINK);
+        MenuDto.Response response = menuService.createMenu(authUser, storeId,requestDto);
 
         // then
         assertEquals("메뉴 생성되었습니다", response.getMessage());
@@ -67,14 +67,16 @@ public class MenuServiceTest {
         Long ownerId = 1L;
         Long anotherOwnerId = 2L;
 
-        AuthUser authUser = new AuthUser(anotherOwnerId, "kkk@gmail.com", UserRole.OWNER);
+        AuthUser authUser = new AuthUser(anotherOwnerId, "kkk@gmail.com", "OWNER");
         Store store = new Store();
 
         given(storeRepository.findByIdOrElseThrow(storeId)).willReturn(store);
         given(storeRepository.findOwnerIdByStoreIdOrElseThrow(storeId)).willReturn(ownerId);
+        MenuDto.Request requestDto = new MenuDto.Request("menu", "description", 1000, "KOREAN", "DRINK");
+
 
         ApiException apiException = assertThrows(ApiException.class,
-                () -> menuService.createMenu(authUser, storeId,"menu", "description", 1000, MainCategory.KOREAN, SubCategory.DRINK));
+                () -> menuService.createMenu(authUser, storeId,requestDto));
 
         assertEquals("가게의 주인이 아니면 접근할 수 없습니다.", apiException.getMessage());
     }
@@ -84,8 +86,10 @@ public class MenuServiceTest {
     void 이미_있는_메뉴는_추가할_수_없다(){
         Long storeId = 1L;
         Long ownerId = 1L;
-        AuthUser authUser = new AuthUser(1L, "kkk@gmail.com", UserRole.OWNER);
+        AuthUser authUser = new AuthUser(1L, "kkk@gmail.com", "OWNER");
         Store store = new Store();
+        MenuDto.Request requestDto = new MenuDto.Request("menu", "description", 1000, "KOREAN", "DRINK");
+
 
         //given
         given(storeRepository.findByIdOrElseThrow(storeId)).willReturn(store);
@@ -94,7 +98,7 @@ public class MenuServiceTest {
 
         //when
         ApiException apiException = assertThrows(ApiException.class,
-                ()-> menuService.createMenu(authUser, storeId,"menu", "description", 1000, MainCategory.KOREAN, SubCategory.DRINK));
+                ()-> menuService.createMenu(authUser, storeId,requestDto));
 
         //then
         assertEquals("이미 존재하는 메뉴입니다.", apiException.getMessage());
@@ -111,16 +115,18 @@ public class MenuServiceTest {
     void 가게_주인이_정상적으로_존재하는_메뉴를_수정한다(){
         Long storeId = 1L;
         Long ownerId = 1L;
-        AuthUser authUser = new AuthUser(1L, "kkk@gmail.com", UserRole.OWNER);
+        AuthUser authUser = new AuthUser(1L, "kkk@gmail.com", "OWNER");
         Long menuId = 1L;
         Menu menu = new Menu();
+        MenuDto.Request requestDto = new MenuDto.Request("menu", "description", 1000, "KOREAN", "DRINK");
+
 
         //given
         given(storeRepository.findOwnerIdByStoreIdOrElseThrow(storeId)).willReturn(ownerId);
 
         given(menuRepository.findByIdOrElseThrow(menuId)).willReturn(menu);
         //when
-        MenuDto.Response response = menuService.updateMenu(authUser, 1L ,menuId, "menu", "description", 1000, MainCategory.KOREAN, SubCategory.DRINK);
+        MenuDto.Response response = menuService.updateMenu(authUser, 1L ,menuId, requestDto);
         //then
         assertEquals("메뉴 수정되었습니다", response.getMessage());
     }
@@ -131,13 +137,14 @@ public class MenuServiceTest {
         Long ownerId = 1L;
         Long anotherOwnerId = 2L;
 
-        AuthUser authUser = new AuthUser(anotherOwnerId, "kkk@gmail.com", UserRole.OWNER);
+        AuthUser authUser = new AuthUser(anotherOwnerId, "kkk@gmail.com", "OWNER");
+        MenuDto.Request requestDto = new MenuDto.Request("menu", "description", 1000, "KOREAN", "DRINK");
 
         given(storeRepository.findOwnerIdByStoreIdOrElseThrow(storeId)).willReturn(ownerId);
 
 
         ApiException apiException = assertThrows(ApiException.class,
-                () -> menuService.updateMenu(authUser, storeId,1L,"menu", "description", 1000, MainCategory.KOREAN, SubCategory.DRINK));
+                () -> menuService.updateMenu(authUser, storeId,1L,requestDto));
 
         assertEquals("가게의 주인이 아니면 접근할 수 없습니다.", apiException.getMessage());
     }
@@ -146,7 +153,8 @@ public class MenuServiceTest {
     void 없는_메뉴는_수정할_수_없다(){
         Long storeId = 1L;
         Long ownerId = 1L;
-        AuthUser authUser = new AuthUser(1L, "kkk@gmail.com", UserRole.OWNER);
+        AuthUser authUser = new AuthUser(1L, "kkk@gmail.com", "OWNER");
+        MenuDto.Request requestDto = new MenuDto.Request("menu", "description", 1000, "KOREAN", "DRINK");
         Long menuId = 1L;
         //given
         given(storeRepository.findOwnerIdByStoreIdOrElseThrow(storeId)).willReturn(ownerId);
@@ -155,7 +163,7 @@ public class MenuServiceTest {
                 .willThrow(new ApiException(ErrorStatus.MENU_NOT_FOUND));
         //when
         ApiException apiException = assertThrows(ApiException.class,
-                ()-> menuService.updateMenu(authUser, storeId,menuId,"menu", "description", 1000, MainCategory.KOREAN, SubCategory.DRINK));
+                ()-> menuService.updateMenu(authUser, storeId,menuId,requestDto));
         //then
         assertEquals("존재하지 않는 메뉴입니다.", apiException.getMessage());
     }
@@ -172,7 +180,7 @@ public class MenuServiceTest {
     void 가게_주인이_메뉴를_정상적으로_삭제한다(){
         Long storeId = 1L;
         Long ownerId = 1L;
-        AuthUser authUser = new AuthUser(1L, "kkk@gmail.com", UserRole.OWNER);
+        AuthUser authUser = new AuthUser(1L, "kkk@gmail.com", "OWNER");
         Long menuId = 1L;
         Menu menu = new Menu();
 
@@ -194,7 +202,7 @@ public class MenuServiceTest {
         Long ownerId = 1L;
         Long anotherOwnerId = 2L;
 
-        AuthUser authUser = new AuthUser(anotherOwnerId, "kkk@gmail.com", UserRole.OWNER);
+        AuthUser authUser = new AuthUser(anotherOwnerId, "kkk@gmail.com", "OWNER");
 
         //given
         given(storeRepository.findOwnerIdByStoreIdOrElseThrow(storeId)).willReturn(ownerId);
@@ -212,7 +220,7 @@ public class MenuServiceTest {
     void 없는_메뉴는_삭제할_수_없다(){
         Long storeId = 1L;
         Long ownerId = 1L;
-        AuthUser authUser = new AuthUser(1L, "kkk@gmail.com", UserRole.OWNER);
+        AuthUser authUser = new AuthUser(1L, "kkk@gmail.com", "OWNER");
         Long menuId = 1L;
         //given
         given(storeRepository.findOwnerIdByStoreIdOrElseThrow(storeId)).willReturn(ownerId);
@@ -230,7 +238,7 @@ public class MenuServiceTest {
     void 삭제된_메뉴는_삭제할_수_없다(){
         Long storeId = 1L;
         Long ownerId = 1L;
-        AuthUser authUser = new AuthUser(1L, "kkk@gmail.com", UserRole.OWNER);
+        AuthUser authUser = new AuthUser(1L, "kkk@gmail.com", "OWNER");
         Menu menu = mock(Menu.class);
         //given
         given(storeRepository.findOwnerIdByStoreIdOrElseThrow(storeId)).willReturn(ownerId);
