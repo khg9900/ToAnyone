@@ -51,18 +51,15 @@ public class StoreServiceImpl implements StoreService {
         }
 
         // DB 접근 검증
-        User user = userRepository.findById(ownerId).orElseThrow(
-                () -> new ApiException(ErrorStatus.USER_NOT_FOUND));
-
-        if (user.getUserRole() != UserRole.OWNER) {
-            throw new ApiException(ErrorStatus.STORE_NO_PERMISSION);}
-
         int storeCount = storeRepository.countByUserIdAndDeletedFalse(ownerId);
         if (storeCount >= 3) {
             throw new ApiException(ErrorStatus.STORE_MAX_LIMIT_EXCEEDED);}
 
         if (storeRepository.existsByName(dto.getName())) {
             throw new ApiException(ErrorStatus.STORE_ALREADY_EXISTS);}
+
+        User user = userRepository.findById(ownerId).orElseThrow(
+                () -> new ApiException(ErrorStatus.USER_NOT_FOUND));
 
         Store newStore = new Store(user, dto, status, openTime, closeTime);
         storeRepository.save(newStore);
