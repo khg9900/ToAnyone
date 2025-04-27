@@ -198,7 +198,6 @@ public class ReviewServiceImpl implements ReviewService {
         return new ReviewResponseDto("리뷰가 성공적으로 삭제되었습니다.");
     }
 
-
 //        hardDelete
 //    delete : 한행=로우 하나만 지우는거
 //    drop : 테이블 자체를 지우는거

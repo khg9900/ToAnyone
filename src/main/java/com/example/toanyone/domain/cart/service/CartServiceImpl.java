@@ -36,25 +36,44 @@ public class CartServiceImpl implements CartService {
     @Override
     @Transactional
     public CartResponseDto addCart(AuthUser authUser, Long storeId , Long menuId, Integer quantity) {
-//여기서 추가하고 update는 수량만 수정 가능..
-        User user = userRepository.findById(authUser.getId())
-                .orElseThrow(() -> new ApiException(ErrorStatus.USER_NOT_FOUND));
-        Store store = storeRepository.findByIdOrElseThrow(storeId);
-        Menu menu = menuRepository.findByIdOrElseThrow(menuId);
 
-        if (store.getId().equals(menu.getStore().getId())) {
+        // 가게 폐업 여부 판별
+        if (storeRepository.getDeletedById(storeId)) {
+            throw new ApiException(ErrorStatus.STORE_SHUT_DOWN);
+        }
+
+        // 메뉴 삭제 여부 판별
+        if (menuRepository.getDeletedById(menuId)) {
+            throw new ApiException(ErrorStatus.MENU_ALREADY_DELETED);
+        }
+
+        // 선택한 가게에 해당하는 메뉴가 있는지 확인
+        if (!menuRepository.existsByIdAndStoreId(menuId, storeId)) {
             throw new ApiException(ErrorStatus.MENU_IS_NOT_IN_STORE);
         }
 
-        Cart cart = cartRepository.findByUserId(user.getId())
-                .orElseGet(() -> cartRepository.save(new Cart(user, store, 0)));
+        Cart cart;
 
-        int price = menu.getPrice();
+        // 첫 번째 생성일 경우
+        if (!cartRepository.existsByUserId(authUser.getId())) {
 
-        cart.setTotalPrice(price, quantity);
+            User user = userRepository.findById(authUser.getId())
+                .orElseThrow(() -> new ApiException(ErrorStatus.USER_NOT_FOUND));
+            Store store = storeRepository.findByIdOrElseThrow(storeId);
 
-        CartItem cartItem = new CartItem(cart, menu, quantity, price);
+            cart = new Cart(user, store, 0);
+        } else {
+            // 두 번째 이후
+            cart = cartRepository.findByUserIdOrElseThrow(authUser.getId());
+        }
 
+        Menu menu = menuRepository.findByIdOrElseThrow(menuId);
+
+        cart.setTotalPrice(menu.getPrice(), quantity);
+
+        CartItem cartItem = new CartItem(cart, menu, quantity, menu.getPrice());
+
+        cartRepository.save(cart);
         cartItemRepository.save(cartItem);
 
         return new CartResponseDto("장바구니에 추가되었습니다");

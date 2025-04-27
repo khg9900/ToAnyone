@@ -29,7 +29,6 @@ public enum ErrorStatus implements BaseErrorCode {
     INVALID_PASSWORD(HttpStatus.UNAUTHORIZED, "3005", "비밀번호가 올바르지 않습니다"),
     PASSWORD_SAME_AS_CURRENT(HttpStatus.UNAUTHORIZED, "3006", "새 비밀번호는 현재 비밀번호와 동일할 수 없습니다"),
     USER_ALREADY_DELETED(HttpStatus.GONE, "3007", "이미 탈퇴한 회원입니다."),
-
     OWNER_HAS_ACTIVE_STORE(HttpStatus.CONFLICT, "3003", "운영 중인 가게가 존재하여 회원 탈퇴가 불가합니다."),
 
     // 4000: menu 에러코드
@@ -40,15 +39,13 @@ public enum ErrorStatus implements BaseErrorCode {
     INVALID_MAIN_CATEGORY(HttpStatus.NOT_FOUND, "4005", "존재하지 않는 메인 카테고리입니다"),
     INVALID_SUB_CATEGORY(HttpStatus.NOT_FOUND, "4005", "존재하지 않는 서브 카테고리입니다"),
 
-
-
     // 5000: Store 에러코드
     STORE_NO_PERMISSION(HttpStatus.FORBIDDEN,"5001","가게 생성 권한이 없습니다."),
     STORE_MAX_LIMIT_EXCEEDED(HttpStatus.BAD_REQUEST,"5002","가게는 최대 3개까지 등록 가능합니다."),
     STORE_ALREADY_EXISTS(HttpStatus.BAD_REQUEST,"5003","이미 존재하는 가게이름입니다."),
     STORE_NOT_FOUND(HttpStatus.NOT_FOUND,"5004","생성된 가게가 없습니다."),
     STORE_SEARCH_NO_MATCH(HttpStatus.NOT_FOUND,"5005","검색한 단어가 포함된 가게명이 존재하지 않습니다."),
-    STORE_SHUT_DOWN(HttpStatus.BAD_REQUEST, "5006", "폐업된 가게입니다."),
+    STORE_SHUT_DOWN(HttpStatus.BAD_REQUEST, "5006", "폐업한 가게입니다."),
     STORE_CLOSED(HttpStatus.BAD_REQUEST, "5007", "영업 종료된 가게입니다."),
     STORE_FORBIDDEN(HttpStatus.FORBIDDEN, "5008", "가게 접근 권한이 없습니다."),
     STORE_INVALID_STATUS(HttpStatus.BAD_REQUEST, "5009", "OPEN, SOLD_OUT, TEMP_CLOSED, CLOSE 중 하나를 선택해주세요."),
