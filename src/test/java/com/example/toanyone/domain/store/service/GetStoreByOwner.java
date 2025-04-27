@@ -1,9 +1,7 @@
 package com.example.toanyone.domain.store.service;
 
-import com.example.toanyone.domain.store.dto.StoreRequestDto;
 import com.example.toanyone.domain.store.dto.StoreResponseDto;
 import com.example.toanyone.domain.store.entity.Store;
-import com.example.toanyone.domain.store.enums.Status;
 import com.example.toanyone.domain.store.repository.StoreRepository;
 import com.example.toanyone.domain.user.entity.User;
 import com.example.toanyone.domain.user.enums.UserRole;
@@ -17,7 +15,6 @@ import org.mockito.Mock;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.util.ReflectionTestUtils;
 
-import java.time.LocalTime;
 import java.util.List;
 import java.util.Optional;
 
