@@ -1,5 +1,6 @@
 package com.example.toanyone.global.config;
 
+import com.example.toanyone.global.auth.error.CustomAccessDeniedHandler;
 import com.example.toanyone.global.auth.error.CustomAuthenticationEntryPoint;
 import com.example.toanyone.global.auth.jwt.JwtFilter;
 import com.example.toanyone.global.auth.jwt.JwtUtil;
@@ -20,6 +21,7 @@ public class SecurityConfig { // Spring Security 설정을 커스터마이징하
 
     private final JwtUtil jwtUtil;
     private final CustomAuthenticationEntryPoint customAuthenticationEntryPoint;
+    private final CustomAccessDeniedHandler customAccessDeniedHandler;
 
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
@@ -32,9 +34,10 @@ public class SecurityConfig { // Spring Security 설정을 커스터마이징하
             .sessionManagement(session -> session
                 .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
             )
-            // 인증 정보가 없을 때 에러 처리
+            // 인증/인가 에러 처리
             .exceptionHandling(exception -> exception
-                .authenticationEntryPoint(customAuthenticationEntryPoint) // 여기 추가!
+                .authenticationEntryPoint(customAuthenticationEntryPoint) // 인증
+                .accessDeniedHandler(customAccessDeniedHandler) // 인가
             )
             // 인증/인가 URL 설정
             .authorizeHttpRequests(auth -> auth

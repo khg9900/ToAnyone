@@ -19,7 +19,7 @@ public enum ErrorStatus implements BaseErrorCode {
     TOKEN_REQUIRED(HttpStatus.BAD_REQUEST, "2007", "JWT 토큰이 필요합니다."),
     REFRESH_TOKEN_REQUIRED(HttpStatus.UNAUTHORIZED, "2008", "refresh 토큰이 필요합니다."),
     INVALID_JWT_TYPE(HttpStatus.BAD_REQUEST, "2009", "유효하지 않은 JWT 토큰 타입입니다."),
-
+    OWNER_ACCESS_DENIED(HttpStatus.FORBIDDEN, "2010", "OWNER 권한이 필요합니다."),
 
     // 3000: user 에러 코드
     USER_NOT_FOUND(HttpStatus.NOT_FOUND, "3001","고객 정보가 없습니다."),

@@ -60,7 +60,7 @@ public class UserServiceImpl implements UserService {
         }
 
         // 새 비밀번호 검증
-        if (!passwordEncoder.matches(changePassword.getNewPassword(), user.getPassword())) {
+        if (passwordEncoder.matches(changePassword.getNewPassword(), user.getPassword())) {
             throw new ApiException(PASSWORD_SAME_AS_CURRENT);
         }
 
