@@ -138,7 +138,9 @@ public class MenuServiceTest {
         Long anotherOwnerId = 2L;
 
         AuthUser authUser = new AuthUser(anotherOwnerId, "kkk@gmail.com", "OWNER");
+      
         MenuDto.Request requestDto = new MenuDto.Request("menu", "description", 1000, "KOREAN", "DRINK");
+
 
         given(storeRepository.findOwnerIdByStoreIdOrElseThrow(storeId)).willReturn(ownerId);
 
@@ -154,7 +156,9 @@ public class MenuServiceTest {
         Long storeId = 1L;
         Long ownerId = 1L;
         AuthUser authUser = new AuthUser(1L, "kkk@gmail.com", "OWNER");
+
         MenuDto.Request requestDto = new MenuDto.Request("menu", "description", 1000, "KOREAN", "DRINK");
+
         Long menuId = 1L;
         //given
         given(storeRepository.findOwnerIdByStoreIdOrElseThrow(storeId)).willReturn(ownerId);
