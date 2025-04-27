@@ -24,13 +24,6 @@ public class MenuServiceImpl implements MenuService {
     private final MenuRepository menuRepository;
     private final StoreRepository storeRepository;
 
-    //문자열로 받은 카테고리 Enum 타입으로 변경
-    public MainCategory toMainCategory(String mainCategory) {
-        return MainCategory.of(mainCategory);
-    }
-    public SubCategory toSubCategory(String subCategory) {
-        return SubCategory.of(subCategory);
-    }
 
 
     @Override
@@ -58,8 +51,8 @@ public class MenuServiceImpl implements MenuService {
 
         Menu createdMenu = new Menu(store,
                 dto.getName(), dto.getDescription(), dto.getPrice(),
-                toMainCategory(dto.getMainCategory()),
-                toSubCategory(dto.getSubCategory())
+                MainCategory.of(dto.getMainCategory()),
+                SubCategory.of(dto.getSubCategory())
                 );
         menuRepository.save(createdMenu);
 
@@ -93,7 +86,7 @@ public class MenuServiceImpl implements MenuService {
         }
 
         menu.setMenu(dto.getName(), dto.getDescription(), dto.getPrice(),
-                toMainCategory(dto.getMainCategory()), toSubCategory(dto.getSubCategory()));
+                MainCategory.of(dto.getMainCategory()), SubCategory.of(dto.getSubCategory()));
 
         return new MenuDto.Response("메뉴 수정되었습니다");
     }
