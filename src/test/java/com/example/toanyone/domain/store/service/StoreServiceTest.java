@@ -47,13 +47,12 @@ public class StoreServiceTest {
 
     @Test
     void 가게_생성_성공() {
-
         Long ownerId = 1L;
         User user = new User();
         ReflectionTestUtils.setField(user, "id", 1L);
         ReflectionTestUtils.setField(user, "userRole", UserRole.OWNER);
 
-        StoreRequestDto.Create reqest = StoreRequestDto.Create.builder()
+        StoreRequestDto.Create request = StoreRequestDto.Create.builder()
                 .name("가게이름")
                 .address("주소")
                 .openTime("11:00")
@@ -61,17 +60,17 @@ public class StoreServiceTest {
                 .deliveryFee(3000)
                 .minOrderPrice(10000)
                 .notice("공지")
-                .status(String.valueOf(Status.OPEN))
+                .status("OPEN")
                 .phone("02-123-4567")
                 .build();
 
         //GIVEN
         given(userRepository.findById(ownerId)).willReturn(Optional.of(user));
         given(storeRepository.countByUserIdAndDeletedFalse(ownerId)).willReturn(1);
-        given(storeRepository.existsByName(reqest.getName())).willReturn(false);
+        given(storeRepository.existsByName(request.getName())).willReturn(false);
 
         //WHEN
-        StoreResponseDto.Complete responseDto = storeService.createStore(ownerId, reqest);
+        StoreResponseDto.Complete responseDto = storeService.createStore(ownerId, request);
 
         //THEN
         assertEquals("가게가 생성되었습니다.", responseDto.getMessage());
@@ -86,7 +85,7 @@ public class StoreServiceTest {
         ReflectionTestUtils.setField(user, "id", 1L);
         ReflectionTestUtils.setField(user, "userRole", UserRole.OWNER);
 
-        StoreRequestDto.Create reqest = StoreRequestDto.Create.builder()
+        StoreRequestDto.Create request = StoreRequestDto.Create.builder()
                 .name("가게이름")
                 .address("주소")
                 .openTime("11:00")
@@ -94,7 +93,7 @@ public class StoreServiceTest {
                 .deliveryFee(3000)
                 .minOrderPrice(10000)
                 .notice("공지")
-                .status(String.valueOf(Status.OPEN))
+                .status("OPEN")
                 .phone("02-123-4567")
                 .build();
 
@@ -103,7 +102,7 @@ public class StoreServiceTest {
         given(storeRepository.countByUserIdAndDeletedFalse(ownerId)).willReturn(3);
 
         //WHEN
-        ApiException apiException = assertThrows(ApiException.class, () -> storeService.createStore(ownerId, reqest));
+        ApiException apiException = assertThrows(ApiException.class, () -> storeService.createStore(ownerId, request));
 
         //THEN
         assertEquals("가게는 최대 3개까지 등록 가능합니다.", apiException.getMessage());
@@ -269,7 +268,7 @@ public class StoreServiceTest {
         LocalTime openTime = LocalTime.parse("10:00");
         LocalTime closeTime = LocalTime.parse("18:00");
 
-        Store store = new Store(user, requestDto, Status.OPEN,openTime, closeTime);
+        Store store = new Store(user, requestDto);
         Menu menu1 = new Menu(store, "메뉴1", "소개1", 5000, MainCategory.KOREAN, SubCategory.MAIN);
         ReflectionTestUtils.setField(menu1, "id", 1L);
         Menu menu2 = new Menu(store, "메뉴2", "소개2", 5000, MainCategory.CHINESE, SubCategory.SIDE);
