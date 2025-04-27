@@ -19,6 +19,15 @@ import org.springframework.web.bind.annotation.*;
 public class MenuController {
     private final MenuService menuService;
 
+    /*
+    1. createMenu
+      : 사용자 정보, store_id, 생성할 메뉴의 정보를 받아 menuService로 전달
+    2. updateMenu
+      : 사용자 정보, store_id, menu_id, 수정할 메뉴의 정보를 받아 menuService로 전달
+    3. deleteMenu
+      : 사용자 정보, store_id, menu_id를 받아 menuService로 전달
+     */
+
     @PostMapping("/{storeId}/menus")
     public ResponseEntity<ApiResponse<MenuDto.Response>> createMenu(
             @Auth AuthUser authUser,

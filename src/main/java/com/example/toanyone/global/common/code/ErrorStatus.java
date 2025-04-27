@@ -10,11 +10,26 @@ import org.springframework.http.HttpStatus;
 public enum ErrorStatus implements BaseErrorCode {
 
     // 2000: auth 에러 코드
-    TOKEN_INVALID(HttpStatus.UNAUTHORIZED, "2001", "잘못된 토큰입니다."),
+    ACCESS_TOKEN_REQUIRED(HttpStatus.UNAUTHORIZED, "2001", "access 토큰이 필요합니다."),
+    INVALID_JWT_CLAIMS(HttpStatus.BAD_REQUEST, "2002", "JWT claims 정보가 유효하지 않습니다."),
+    INVALID_JWT_SIGNATURE(HttpStatus.UNAUTHORIZED, "2003", "유효하지 않는 JWT 서명입니다."),
+    EXPIRED_JWT_TOKEN(HttpStatus.UNAUTHORIZED, "2004", "만료된 JWT 토큰입니다."),
+    UNSUPPORTED_JWT_TOKEN(HttpStatus.BAD_REQUEST, "2005", "지원되지 않는 JWT 토큰입니다."),
+    INVALID_JWT_TOKEN(HttpStatus.BAD_REQUEST, "2006", "유효하지 않은 JWT 토큰입니다."),
+    TOKEN_REQUIRED(HttpStatus.BAD_REQUEST, "2007", "JWT 토큰이 필요합니다."),
+    REFRESH_TOKEN_REQUIRED(HttpStatus.UNAUTHORIZED, "2008", "refresh 토큰이 필요합니다."),
+    INVALID_JWT_TYPE(HttpStatus.BAD_REQUEST, "2009", "유효하지 않은 JWT 토큰 타입입니다."),
+    OWNER_ACCESS_DENIED(HttpStatus.FORBIDDEN, "2010", "OWNER 권한이 필요합니다."),
 
     // 3000: user 에러 코드
     USER_NOT_FOUND(HttpStatus.NOT_FOUND, "3001","고객 정보가 없습니다."),
-    INVALID_PASSWORD(HttpStatus.UNAUTHORIZED, "3002", "비밀번호가 올바르지 않습니다"),
+    EMAIL_ALREADY_EXISTS(HttpStatus.CONFLICT, "3002","이미 가입된 이메일입니다."),
+    NICKNAME_ALREADY_EXISTS(HttpStatus.CONFLICT, "3003","사용중인 닉네임입니다."),
+    PHONE_ALREADY_EXISTS(HttpStatus.CONFLICT, "3004","이미 가입된 전화번호입니다."),
+    INVALID_PASSWORD(HttpStatus.UNAUTHORIZED, "3005", "비밀번호가 올바르지 않습니다"),
+    PASSWORD_SAME_AS_CURRENT(HttpStatus.UNAUTHORIZED, "3006", "새 비밀번호는 현재 비밀번호와 동일할 수 없습니다"),
+    USER_ALREADY_DELETED(HttpStatus.GONE, "3007", "이미 탈퇴한 회원입니다."),
+
     OWNER_HAS_ACTIVE_STORE(HttpStatus.CONFLICT, "3003", "운영 중인 가게가 존재하여 회원 탈퇴가 불가합니다."),
 
     // 4000: menu 에러코드
@@ -22,6 +37,8 @@ public enum ErrorStatus implements BaseErrorCode {
     MENU_ALREADY_DELETED(HttpStatus.BAD_REQUEST, "4002", "이미 삭제된 메뉴입니다."),
     MENU_NOT_FOUND(HttpStatus.NOT_FOUND, "4003","존재하지 않는 메뉴입니다."),
     MENU_IS_NOT_IN_STORE(HttpStatus.NOT_FOUND, "4004","해당 가게에 존재하지 않는 메뉴입니다" ),
+    INVALID_MAIN_CATEGORY(HttpStatus.NOT_FOUND, "4005", "존재하지 않는 메인 카테고리입니다"),
+    INVALID_SUB_CATEGORY(HttpStatus.NOT_FOUND, "4005", "존재하지 않는 서브 카테고리입니다"),
 
 
 
@@ -63,7 +80,7 @@ public enum ErrorStatus implements BaseErrorCode {
     ORDER_ACCESS_DENIED_BY_NON_OWNER(HttpStatus.FORBIDDEN, "8005", "해당 가게의 사장님만 접근할 수 있습니다."),
     ORDER_INVALID_STATUS_CHANGE(HttpStatus.BAD_REQUEST, "8006", "주문 상태 변경 순서가 올바르지 않습니다."),
 
-    ;
+;
 
     private final HttpStatus httpStatus;
     private final String code;

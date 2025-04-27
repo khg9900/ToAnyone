@@ -3,6 +3,8 @@ package com.example.toanyone.domain.order.service;
 import com.example.toanyone.domain.cart.entity.Cart;
 import com.example.toanyone.domain.cart.repository.CartRepository;
 import com.example.toanyone.domain.cart.service.CartService;
+import com.example.toanyone.domain.menu.entity.Menu;
+import com.example.toanyone.domain.menu.repository.MenuRepository;
 import com.example.toanyone.domain.order.dto.OrderDto;
 import com.example.toanyone.domain.order.entity.Order;
 import com.example.toanyone.domain.order.entity.OrderItem;
@@ -32,6 +34,7 @@ public class OrderServiceImpl implements OrderService {
     private final CartRepository cartRepository;
     private final StoreRepository storeRepository;
     private final UserRepository userRepository;
+    private final MenuRepository menuRepository;
 
     /*
          주문 생성 메서드
@@ -87,7 +90,19 @@ public class OrderServiceImpl implements OrderService {
         orderRepository.save(order); // 주문 저장
 
         // 7. 장바구니 내 메뉴들을 주문 항목(OrderItem)으로 변환 후 저장
-        List<OrderItem> orderItems = cart.toOrderItems(order); // 장바구니에서 주문 항목 리스트 생성
+        List<OrderItem> orderItems = cart.getCartItems().stream()
+                .map(cartItem -> {
+                    Long menuId = cartItem.getMenu().getId();
+                    Menu menu = menuRepository.findById(menuId)
+                            .orElseThrow(() -> new ApiException(ErrorStatus.MENU_NOT_FOUND));
+                    return OrderItem.builder()
+                            .order(order)
+                            .menu(menu)
+                            .quantity(cartItem.getQuantity())
+                            .menuPrice(cartItem.getMenu_price())
+                            .build();
+                })
+                .toList();  // Java 16 이상
         for (OrderItem item : orderItems) {
             orderItemRepository.save(item); // 하나씩 저장
         }
@@ -97,9 +112,10 @@ public class OrderServiceImpl implements OrderService {
 
         // 9. 생성된 주문 정보를 응답 DTO로 변환해서 반환
         return new OrderDto.CreateResponse(
-                order.getId(), // 주문 ID
-                order.getCreatedAt(), // 생성 시각
-                order.getStatus().name() // 주문 상태 문자열
+                order.getStore().getId(),   // storeId (가게 ID)
+                order.getId(),              // orderId (주문 ID)
+                order.getCreatedAt(),       // createdAt (생성 시간)
+                order.getStatus().name()    // status (주문 상태)
         );
     }
 
@@ -169,7 +185,7 @@ public class OrderServiceImpl implements OrderService {
     // 사장님 - 주문 상태 변경
     @Override
     @Transactional
-    public void updateOrderStatus(AuthUser authUser, Long orderId, OrderDto.StatusUpdateRequest request) {
+    public OrderDto.StatusUpdateResponse updateOrderStatus(AuthUser authUser, Long orderId, OrderDto.StatusUpdateRequest request) {
         // 1. 주문 조회
         Order order = orderRepository.findById(orderId)
                 .orElseThrow(() -> new ApiException(ErrorStatus.ORDER_NOT_FOUND));
@@ -183,17 +199,20 @@ public class OrderServiceImpl implements OrderService {
         }
 
         // 4. 새로운 주문 상태로 업데이트
-        // (1) 문자열로 받은 걸 enum으로 변환
         OrderStatus newStatus = OrderStatus.valueOf(request.getStatus());
 
-        // (2) 현재 상태에서 가능한지 검증
         if (!order.getStatus().isValidNextStatus(newStatus)) {
             throw new ApiException(ErrorStatus.ORDER_INVALID_STATUS_CHANGE);
         }
 
-        // (3) 검증 통과하면 상태 변경
         order.changeStatus(newStatus);
 
+        // ✨ 여기서 상태변경 결과 DTO 생성해서 return
+        return OrderDto.StatusUpdateResponse.builder()
+                .storeId(order.getStore().getId())
+                .orderId(order.getId())
+                .updatedStatus(order.getStatus().name())
+                .build();
     }
 
 }

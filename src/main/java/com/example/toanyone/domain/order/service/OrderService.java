@@ -18,7 +18,7 @@ public interface OrderService {
     List<OrderDto.UserOrderHistoryResponse> getOrdersByUser(AuthUser authUser);
 
     // 사장님 - 주문 상태 변경
-    void updateOrderStatus(AuthUser authUser, Long orderId, OrderDto.StatusUpdateRequest request);
+    OrderDto.StatusUpdateResponse updateOrderStatus(AuthUser authUser, Long orderId, OrderDto.StatusUpdateRequest request);
 
 
 }

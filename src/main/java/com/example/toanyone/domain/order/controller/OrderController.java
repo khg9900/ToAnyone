@@ -52,18 +52,17 @@ public class OrderController {
     }
 
     // 주문 상태 변경 (사장님만)
+
     @PatchMapping("/owner/orders/{orderId}")
     public ResponseEntity<ApiResponse<OrderDto.StatusUpdateResponse>> updateOrderStatus(
             @Auth AuthUser authUser,
             @PathVariable Long orderId,
             @RequestBody @Valid OrderDto.StatusUpdateRequest request
     ) {
-        orderService.updateOrderStatus(authUser, orderId, request);
-        OrderDto.StatusUpdateResponse response = new OrderDto.StatusUpdateResponse("주문 상태가 변경되었습니다.");
+        // 1. 서비스 호출해서 결과 response 받아옴
+        OrderDto.StatusUpdateResponse response = orderService.updateOrderStatus(authUser, orderId, request);
+
+        // 2. 받아온 response 그대로 return
         return ApiResponse.onSuccess(SuccessStatus.OK, response);
-
     }
-
-
-
 }
