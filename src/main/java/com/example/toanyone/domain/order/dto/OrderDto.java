@@ -119,6 +119,7 @@ public class OrderDto {
         public StatusUpdateResponse(String message) {
             this.message = message;
         }
+        private Long storeId;
         // 변경된 주문 ID
         private Long orderId;
         // 변경 후 주문 상태

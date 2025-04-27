@@ -185,7 +185,7 @@ public class OrderServiceImpl implements OrderService {
     // 사장님 - 주문 상태 변경
     @Override
     @Transactional
-    public void updateOrderStatus(AuthUser authUser, Long orderId, OrderDto.StatusUpdateRequest request) {
+    public OrderDto.StatusUpdateResponse updateOrderStatus(AuthUser authUser, Long orderId, OrderDto.StatusUpdateRequest request) {
         // 1. 주문 조회
         Order order = orderRepository.findById(orderId)
                 .orElseThrow(() -> new ApiException(ErrorStatus.ORDER_NOT_FOUND));
@@ -199,17 +199,20 @@ public class OrderServiceImpl implements OrderService {
         }
 
         // 4. 새로운 주문 상태로 업데이트
-        // (1) 문자열로 받은 걸 enum으로 변환
         OrderStatus newStatus = OrderStatus.valueOf(request.getStatus());
 
-        // (2) 현재 상태에서 가능한지 검증
         if (!order.getStatus().isValidNextStatus(newStatus)) {
             throw new ApiException(ErrorStatus.ORDER_INVALID_STATUS_CHANGE);
         }
 
-        // (3) 검증 통과하면 상태 변경
         order.changeStatus(newStatus);
 
+        // ✨ 여기서 상태변경 결과 DTO 생성해서 return
+        return OrderDto.StatusUpdateResponse.builder()
+                .storeId(order.getStore().getId())
+                .orderId(order.getId())
+                .updatedStatus(order.getStatus().name())
+                .build();
     }
 
 }
