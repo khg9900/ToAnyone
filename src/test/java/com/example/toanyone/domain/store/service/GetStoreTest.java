@@ -1,7 +1,9 @@
 package com.example.toanyone.domain.store.service;
 
+import com.example.toanyone.domain.store.dto.StoreRequestDto;
 import com.example.toanyone.domain.store.dto.StoreResponseDto;
 import com.example.toanyone.domain.store.entity.Store;
+import com.example.toanyone.domain.store.enums.Status;
 import com.example.toanyone.domain.store.repository.StoreRepository;
 import com.example.toanyone.domain.user.entity.User;
 import com.example.toanyone.domain.user.enums.UserRole;
@@ -16,9 +18,11 @@ import org.mockito.Mock;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.util.ReflectionTestUtils;
 
+import java.time.LocalTime;
 import java.util.List;
 import java.util.Optional;
 
+import static org.assertj.core.api.SoftAssertions.assertSoftly;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.BDDMockito.given;
@@ -116,7 +120,6 @@ public class GetStoreTest {
         // GIVEN
         given(storeRepository.findByNameContainingAndDeletedFalse(keyword)).willReturn(stores);
 
-
         // WHEN
         List<StoreResponseDto.GetAll> response = storeService.getStoresByName(keyword);
 
@@ -152,6 +155,71 @@ public class GetStoreTest {
 
         // THEN
         assertEquals(ErrorStatus.STORE_SEARCH_NO_MATCH.getMessage(), apiException.getMessage());
+
+    }
+
+    @Test
+    void 한가게의_정보를_조회한다() {
+        User user = new User();
+        ReflectionTestUtils.setField(user, "id", 1L);
+        
+        StoreRequestDto.Create requestDto = StoreRequestDto.Create.builder()
+                .name("가게명")
+                .address("가게주소")
+                .openTime("10:00")
+                .closeTime("18:00")
+                .deliveryFee(3000)
+                .minOrderPrice(10000)
+                .notice("가게공지")
+                .status("OPEN")
+                .phone("02-123-4567")
+                .build();
+        
+        LocalTime openTime = LocalTime.parse("10:00");
+        LocalTime closeTime = LocalTime.parse("18:00");
+
+        Store store = new Store(user, requestDto, Status.OPEN,openTime, closeTime);
+        ReflectionTestUtils.setField(store, "id", 1L);
+
+        // GIVEN
+        given(storeRepository.findByIdOrElseThrow(1L)).willReturn(store);
+
+        // WHEN
+        StoreResponseDto.GetById response = storeService.getStoreById(1L);
+
+        // THEN
+        assertSoftly(softly -> {
+            softly.assertThat(response.getStoreId()).isEqualTo(1L);
+            softly.assertThat(response.getOwnerId()).isEqualTo(1L);
+            softly.assertThat(response.getName()).isEqualTo("가게명");
+            softly.assertThat(response.getAddress()).isEqualTo("가게주소");
+            softly.assertThat(response.getOpenTime()).isEqualTo(LocalTime.parse("10:00"));
+            softly.assertThat(response.getCloseTime()).isEqualTo(LocalTime.parse("18:00"));
+            softly.assertThat(response.getDeliveryFee()).isEqualTo(3000);
+            softly.assertThat(response.getMinOrderPrice()).isEqualTo(10000);
+            softly.assertThat(response.getNotice()).isEqualTo("가게공지");
+            softly.assertThat(response.getStatus()).isEqualTo(Status.OPEN);
+            softly.assertThat(response.getPhone()).isEqualTo("02-123-4567");
+
+        });
+
+//        // given
+//        StoreResponseDto.GetById response = storeService.getStoreById(1L);
+//
+//        // then
+//        assertSoftly(softly -> {
+//            softly.assertThat(response.getStoreId()).isEqualTo(1L);
+//            softly.assertThat(response.getOwnerId()).isEqualTo(1L);
+//            softly.assertThat(response.getName()).isEqualTo("가게명");
+//            softly.assertThat(response.getAddress()).isEqualTo("가게주소");
+//            softly.assertThat(response.getOpenTime()).isEqualTo(LocalTime.parse("10:00"));
+//            softly.assertThat(response.getCloseTime()).isEqualTo(LocalTime.parse("18:00"));
+//            softly.assertThat(response.getDeliveryFee()).isEqualTo(3000);
+//            softly.assertThat(response.getMinOrderPrice()).isEqualTo(10000);
+//            softly.assertThat(response.getNotice()).isEqualTo("가게공지");
+//            softly.assertThat(response.getStatus()).isEqualTo(Status.OPEN);
+//            softly.assertThat(response.getPhone()).isEqualTo("02-123-4567");
+//        });
 
     }
 
