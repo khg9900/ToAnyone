@@ -1,8 +1,6 @@
 package com.example.toanyone.domain.menu.controller;
 
 import com.example.toanyone.domain.menu.dto.MenuDto;
-import com.example.toanyone.domain.menu.enums.MainCategory;
-import com.example.toanyone.domain.menu.enums.SubCategory;
 import com.example.toanyone.domain.menu.service.MenuService;
 import com.example.toanyone.global.auth.annotation.Auth;
 import com.example.toanyone.global.auth.dto.AuthUser;
@@ -34,17 +32,8 @@ public class MenuController {
             @PathVariable Long storeId,
             @Valid @RequestBody MenuDto.Request requestDto) {
 
-        MainCategory mainCategory = MainCategory.of(requestDto.getMainCategory());
-        SubCategory subCategory = SubCategory.of(requestDto.getSubCategory());
-
         MenuDto.Response response = menuService.createMenu(
-                authUser,
-                storeId,
-                requestDto.getName(),
-                requestDto.getDescription(),
-                requestDto.getPrice(),
-                mainCategory,
-                subCategory);
+                authUser,storeId, requestDto);
 
         return ApiResponse.onSuccess(SuccessStatus.CREATED, response);
     }
@@ -55,19 +44,9 @@ public class MenuController {
             @PathVariable Long storeId,
             @PathVariable Long menuId,
             @RequestBody MenuDto.Request requestDto) {
-        MainCategory mainCategory = MainCategory.of(requestDto.getMainCategory());
-        SubCategory subCategory = SubCategory.of(requestDto.getSubCategory());
 
         MenuDto.Response response = menuService.updateMenu(
-                authUser,
-                storeId,
-                menuId,
-                requestDto.getName(),
-                requestDto.getDescription(),
-                requestDto.getPrice(),
-                mainCategory,
-                subCategory
-        );
+                authUser, storeId, menuId, requestDto);
 
         return ApiResponse.onSuccess(SuccessStatus.OK, response);
     }

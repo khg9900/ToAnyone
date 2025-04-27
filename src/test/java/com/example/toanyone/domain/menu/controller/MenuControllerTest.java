@@ -42,20 +42,11 @@ public class MenuControllerTest {
         );
         MenuDto.Response expectedResponse = new MenuDto.Response("메뉴가 생성되었습니다!");
 
-        given(menuService.createMenu(
-                authUser,
-                storeId,
-                requestDto.getName(),
-                requestDto.getDescription(),
-                requestDto.getPrice(),
-                MainCategory.KOREAN,
-                SubCategory.DRINK
-        )).willReturn(expectedResponse);
+        given(menuService.createMenu(authUser, storeId,requestDto)).willReturn(expectedResponse);
 
         // when
         ResponseEntity<ApiResponse<MenuDto.Response>> response =
                 menuController.createMenu(authUser, storeId, requestDto);
-
 
         //then
         assertEquals("생성 완료", response.getBody().getMessage());
@@ -108,16 +99,7 @@ public class MenuControllerTest {
         Long menuId = 1L;
 
         MenuDto.Response expectedResponse = new MenuDto.Response("메뉴 수정되었습니다");
-        given(menuService.updateMenu(
-                authUser,
-                storeId,
-                menuId,
-                requestDto.getName(),
-                requestDto.getDescription(),
-                requestDto.getPrice(),
-                MainCategory.KOREAN,
-                SubCategory.DRINK
-        )).willReturn(expectedResponse);
+        given(menuService.updateMenu(authUser, storeId,menuId, requestDto)).willReturn(expectedResponse);
 
         ResponseEntity<ApiResponse<MenuDto.Response>> response =
                 menuController.updateMenu(authUser, storeId,
