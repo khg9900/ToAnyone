@@ -141,6 +141,7 @@ public class StoreServiceTest {
         given(userRepository.findById(ownerId)).willReturn(Optional.of(user));
         given(storeRepository.countByUserIdAndDeletedFalse(1L)).willReturn(2);
         given(storeRepository.findByUserIdAndDeletedFalse(1L)).willReturn(stores);
+        given(storeRepository.existsByUserIdAndDeletedFalse(1L)).willReturn(true);
 
         // WHEN
         List<StoreResponseDto.GetAll> response = storeService.getStoresByOwner(ownerId);
