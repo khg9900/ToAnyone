@@ -21,6 +21,7 @@ public enum ErrorStatus implements BaseErrorCode {
     MENU_ALREADY_EXISTS(HttpStatus.CONFLICT,"4001","이미 존재하는 메뉴입니다."),
     MENU_ALREADY_DELETED(HttpStatus.BAD_REQUEST, "4002", "이미 삭제된 메뉴입니다."),
     MENU_NOT_FOUND(HttpStatus.NOT_FOUND, "4003","존재하지 않는 메뉴입니다."),
+    MENU_IS_NOT_IN_STORE(HttpStatus.NOT_FOUND, "4004","해당 가게에 존재하지 않는 메뉴입니다" ),
 
 
 
@@ -59,7 +60,9 @@ public enum ErrorStatus implements BaseErrorCode {
     ORDER_STORE_CLOSED(HttpStatus.BAD_REQUEST, "8003", "가게가 영업 중이 아닙니다."),
     ORDER_INVALID_USER(HttpStatus.FORBIDDEN, "8004", "해당 주문에 대한 권한이 없습니다."),
     ORDER_ACCESS_DENIED_BY_NON_OWNER(HttpStatus.FORBIDDEN, "8005", "해당 가게의 사장님만 접근할 수 있습니다."),
-    ORDER_INVALID_STATUS_CHANGE(HttpStatus.BAD_REQUEST, "8006", "주문 상태 변경 순서가 올바르지 않습니다.");
+    ORDER_INVALID_STATUS_CHANGE(HttpStatus.BAD_REQUEST, "8006", "주문 상태 변경 순서가 올바르지 않습니다."),
+
+    ;
 
     private final HttpStatus httpStatus;
     private final String code;
