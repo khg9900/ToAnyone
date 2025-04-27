@@ -71,7 +71,7 @@ public class GetStoreTest {
     }
 
     @Test
-    void 내가_운영중인가게가_0개일경우() {
+    void 내가_운영중인가게가_없다() {
         Long ownerId = 1L;
         AuthUser authUser = new AuthUser(ownerId, "eee@gmail.com", UserRole.OWNER);
 
@@ -95,7 +95,41 @@ public class GetStoreTest {
     }
 
     @Test
-    void 가게명_키워드로_검색() {
+    void 키워드가_포함된_가게목록을_조회한다() {
+        Store store1 = new Store();
+        ReflectionTestUtils.setField(store1, "id", 1L);
+        ReflectionTestUtils.setField(store1, "name", "치킨1");
+
+        Store store2 = new Store();
+        ReflectionTestUtils.setField(store2, "id", 2L);
+        ReflectionTestUtils.setField(store2, "name", "피자2");
+
+        Store store3 = new Store();
+        ReflectionTestUtils.setField(store3, "id", 3L);
+        ReflectionTestUtils.setField(store3, "name", "치킨3");
+
+        List<Store> stores = List.of(store1, store3);
+
+        String keyword = "치킨";
+
+        // GIVEN
+        given(storeRepository.findByNameContainingAndDeletedFalse(keyword)).willReturn(stores);
+
+
+        // WHEN
+        List<StoreResponseDto.GetAll> response = storeService.getStoresByName(keyword);
+
+        // THEN
+        assertEquals(2, response.size());
+        assertEquals(store1.getId(), response.get(0).getStoreId());
+        assertEquals(store1.getName(), response.get(0).getName());
+        assertEquals(store3.getId(), response.get(1).getStoreId());
+        assertEquals(store3.getName(), response.get(1).getName());
+
+    }
+
+    @Test
+    void 키워드가_포함된_가게명이_없다() {
         Store store1 = new Store();
         ReflectionTestUtils.setField(store1, "id", 1L);
         ReflectionTestUtils.setField(store1, "name", "치킨1");
