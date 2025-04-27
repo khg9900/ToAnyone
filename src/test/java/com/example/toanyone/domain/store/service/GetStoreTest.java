@@ -98,15 +98,15 @@ public class GetStoreTest {
     void 키워드가_포함된_가게목록을_조회한다() {
         Store store1 = new Store();
         ReflectionTestUtils.setField(store1, "id", 1L);
-        ReflectionTestUtils.setField(store1, "name", "치킨1");
+        ReflectionTestUtils.setField(store1, "name", "치킨가게1");
 
         Store store2 = new Store();
         ReflectionTestUtils.setField(store2, "id", 2L);
-        ReflectionTestUtils.setField(store2, "name", "피자2");
+        ReflectionTestUtils.setField(store2, "name", "피자가게2");
 
         Store store3 = new Store();
         ReflectionTestUtils.setField(store3, "id", 3L);
-        ReflectionTestUtils.setField(store3, "name", "치킨3");
+        ReflectionTestUtils.setField(store3, "name", "치킨가게3");
 
         List<Store> stores = List.of(store1, store3);
 
@@ -132,35 +132,26 @@ public class GetStoreTest {
     void 키워드가_포함된_가게명이_없다() {
         Store store1 = new Store();
         ReflectionTestUtils.setField(store1, "id", 1L);
-        ReflectionTestUtils.setField(store1, "name", "치킨1");
+        ReflectionTestUtils.setField(store1, "name", "치킨가게");
 
         Store store2 = new Store();
         ReflectionTestUtils.setField(store2, "id", 2L);
-        ReflectionTestUtils.setField(store2, "name", "피자2");
+        ReflectionTestUtils.setField(store2, "name", "피자가게");
 
-        Store store3 = new Store();
-        ReflectionTestUtils.setField(store3, "id", 3L);
-        ReflectionTestUtils.setField(store3, "name", "치킨3");
+        List<Store> stores = List.of();
 
-        List<Store> stores = List.of(store1, store3);
-
-        String keyword = "치킨";
+        String keyword = "김밥";
 
         // GIVEN
         given(storeRepository.findByNameContainingAndDeletedFalse(keyword)).willReturn(stores);
 
-
         // WHEN
-        List<StoreResponseDto.GetAll> response = storeService.getStoresByName(keyword);
+        ApiException apiException = assertThrows(ApiException.class,
+                () -> storeService.getStoresByName(keyword));
 
         // THEN
-        assertEquals(2, response.size());
-        assertEquals(store1.getId(), response.get(0).getStoreId());
-        assertEquals(store1.getName(), response.get(0).getName());
-        assertEquals(store3.getId(), response.get(1).getStoreId());
-        assertEquals(store3.getName(), response.get(1).getName());
+        assertEquals("검색한 단어가 포함된 가게명이 존재하지 않습니다.", apiException.getMessage());
 
     }
-
 
 }
