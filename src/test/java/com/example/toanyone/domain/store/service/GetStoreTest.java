@@ -228,4 +228,24 @@ public class GetStoreTest {
 
     }
 
+    @Test
+    void 조회한_가게가_폐업했다() {
+        User user = new User();
+        ReflectionTestUtils.setField(user, "id", 1L);
+
+        Store store = new Store();
+        ReflectionTestUtils.setField(store, "id", 1L);
+        ReflectionTestUtils.setField(store, "deleted", true);
+
+        // GIVEN
+        given(storeRepository.findByIdOrElseThrow(1L)).willReturn(store);
+
+        // WHEN
+        ApiException apiException = assertThrows(ApiException.class,
+                () ->storeService.getStoreById(1L));
+
+        // THEN
+        assertEquals(ErrorStatus.STORE_SHUT_DOWN.getMessage(), apiException.getMessage());
+    }
+
 }
