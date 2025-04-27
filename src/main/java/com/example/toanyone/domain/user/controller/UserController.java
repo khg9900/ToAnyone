@@ -29,13 +29,13 @@ public class UserController {
         return ApiResponse.onSuccess(SuccessStatus.OK, userService.getUserInfo(authUser.getId()));
     }
 
-    @PatchMapping
+    @PatchMapping("/profile")
     public ResponseEntity<ApiResponse<String>> updateUserInfo(@Auth AuthUser authUser, @RequestBody UserRequestDto.Update updateInfo) {
         userService.updateUserInfo(authUser.getId(), updateInfo);
         return ApiResponse.onSuccess(SuccessStatus.OK, "유저 정보를 수정했습니다.");
     }
 
-    @PatchMapping
+    @PatchMapping("/password")
     public ResponseEntity<ApiResponse<String>> changePassword(@Auth AuthUser authUser, @Valid @RequestBody UserRequestDto.ChangePassword changePassword) {
         userService.changePassword(authUser.getId(), changePassword);
         return ApiResponse.onSuccess(SuccessStatus.OK, "비밀번호를 변경했습니다.");

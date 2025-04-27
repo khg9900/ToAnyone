@@ -14,6 +14,7 @@ import com.example.toanyone.domain.user.repository.UserRepository;
 import com.example.toanyone.global.auth.dto.AuthRequestDto;
 import com.example.toanyone.global.auth.dto.AuthRequestDto.Signup;
 import com.example.toanyone.global.auth.dto.AuthResponseDto;
+import com.example.toanyone.global.auth.entity.Refresh;
 import com.example.toanyone.global.auth.jwt.JwtUtil;
 import com.example.toanyone.global.auth.repository.RefreshRepository;
 import com.example.toanyone.global.common.error.ApiException;
@@ -104,13 +105,13 @@ public class AuthServiceImpl implements AuthService {
 
         // 헤더에서 토큰 가져오기 (검증은 Filter 에서 완료)
         String jwt = request.getHeader("Authorization");
-        String currentToken = jwtUtil.substringToken(jwt);
 
         // 로그인 유저 정보로 DB에 저장된 Refresh 토큰을 찾기
-        String existingToken = refreshRepository.findRefreshTokenByUserId(userId);
+        Refresh refresh = refreshRepository.findByUserId(userId);
+        String existingToken = refresh.getRefreshToken();
 
         // 일치 여부 확인
-        if (!currentToken.equals(existingToken)) {
+        if (!jwt.equals(existingToken)) {
             throw new ApiException(INVALID_JWT_TOKEN);
         }
 
@@ -122,7 +123,7 @@ public class AuthServiceImpl implements AuthService {
         String newRefresh = jwtUtil.createToken("refresh", userId, user.getEmail(), user.getUserRole());
 
         // DB에 저장된 기존 refresh token 삭제 후 저장
-        refreshRepository.deleteByRefreshToken(jwt);
+        refreshRepository.deleteByUserId(userId);
         jwtUtil.saveRefreshToken(userId, newRefresh);
 
         return new AuthResponseDto.CreateToken(newAccess, newRefresh);
@@ -131,10 +132,10 @@ public class AuthServiceImpl implements AuthService {
     public String logout(Long userId) {
 
         // 로그인 정보로 DB 에서 refresh Token 찾기
-        String currentToken = refreshRepository.findRefreshTokenByUserId(userId);
+        Refresh refresh = refreshRepository.findByUserId(userId);
 
         // 토큰 삭제
-        refreshRepository.deleteByRefreshToken(currentToken);
+        refreshRepository.deleteByUserId(userId);
 
         return "로그아웃 완료";
     }

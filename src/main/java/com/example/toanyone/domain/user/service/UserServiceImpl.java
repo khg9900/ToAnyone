@@ -80,7 +80,7 @@ public class UserServiceImpl implements UserService {
         }
 
         // 사장님은 회원 정보를 삭제하기 전 운영중인 가게가 없어야 합니다.
-        if (authUser.getUserRole().equals(UserRole.OWNER)) {
+        if (user.getUserRole().equals(UserRole.OWNER)) {
             // 운영중인 가게 확인
             int countStore = storeRepository.countByUserIdAndDeletedFalse(authUser.getId());
             // 회원 탈퇴 불가

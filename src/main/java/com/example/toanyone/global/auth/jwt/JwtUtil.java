@@ -88,6 +88,12 @@ public class JwtUtil {
     // refresh 토큰 저장
     @Transactional
     public void saveRefreshToken(long userId, String token) {
+
+        // 저장된 토큰이 있다면 삭제
+        if (refreshRepository.existsByUserId(userId)) {
+            refreshRepository.deleteByUserId(userId);
+        }
+
         Date date = new Date(System.currentTimeMillis() + REFRESH_TOKEN_TIME);
         refreshRepository.save(new Refresh(userId, token, date.toString()));
     }
