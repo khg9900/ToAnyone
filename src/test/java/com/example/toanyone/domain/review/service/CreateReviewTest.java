@@ -56,7 +56,7 @@ class CreateReviewTest {
         Long userId = 1L;
         Long storeId = 1L;
         Long orderId = 1L;
-        AuthUser authUser = new AuthUser(userId, "user@test.com", UserRole.USER.name());
+        AuthUser authUser = new AuthUser(userId, "user@test.com", "USER");
 
         User user = new User("user@test.com", "password123", "홍길동", UserRole.USER, "nickname", "010-1234-5678", "서울시 강남구", "FEMALE", "2000-01-01");
         ReflectionTestUtils.setField(user, "id", userId);
@@ -91,7 +91,7 @@ class CreateReviewTest {
         Long userId = 1L;
         Long storeId = 1L;
         Long orderId = 1L;
-        AuthUser authUser = new AuthUser(userId, "user@test.com", UserRole.USER.name());
+        AuthUser authUser = new AuthUser(userId, "user@test.com", "USER");
 
         User user = new User("user@test.com", "password123", "홍길동", UserRole.USER, "nickname", "010-1234-5678", "서울시 강남구", "FEMALE", "2000-01-01");
         ReflectionTestUtils.setField(user, "id", userId);
@@ -113,7 +113,7 @@ class CreateReviewTest {
     @Test
     void 리뷰_전체조회_성공() {
         Long storeId = 1L;
-        AuthUser authUser = new AuthUser(1L, "user@test.com", UserRole.USER.name());
+        AuthUser authUser = new AuthUser(1L, "user@test.com", "USER");
 
         // Given
         given(reviewRepository.findAllByStoreId(anyLong(), any(Pageable.class)))
@@ -130,7 +130,7 @@ class CreateReviewTest {
     void 잘못된_별점_조회_시_예외발생() {
         // Given
         Long storeId = 1L;
-        AuthUser authUser = new AuthUser(1L, "user@test.com", UserRole.USER.name());
+        AuthUser authUser = new AuthUser(1L, "user@test.com", "USER");
 
         List<Integer> invalidRating = List.of(0, 6);  // 잘못된 별점
 
@@ -148,7 +148,7 @@ class CreateReviewTest {
         Long storeId = 1L;
         Long reviewId = 1L;
 
-        AuthUser authUser = new AuthUser(userId, "user@test.com", UserRole.USER.name());
+        AuthUser authUser = new AuthUser(userId, "user@test.com", "USER");
 
         User user = new User("user@test.com", "password123", "홍길동", UserRole.USER, "nickname", "010-1234-5678", "서울시 강남구", "FEMALE", "2000-01-01");
         ReflectionTestUtils.setField(user, "id", userId);
@@ -179,7 +179,7 @@ class CreateReviewTest {
         Long storeId = 1L;
         Long reviewId = 1L;
 
-        AuthUser authUser = new AuthUser(userId, "user@test.com", UserRole.USER.name());
+        AuthUser authUser = new AuthUser(userId, "user@test.com", "USER");
 
         User anotherUser = new User("another@test.com", "password123", "홍길순", UserRole.USER, "anotherNick", "010-1111-2222", "서울시 강남구", "FEMALE", "2000-01-01");
         ReflectionTestUtils.setField(anotherUser, "id", anotherUserId);
@@ -209,7 +209,7 @@ class CreateReviewTest {
         Long storeId = 1L;
         Long reviewId = 1L;
 
-        AuthUser authUser = new AuthUser(userId, "user@test.com", UserRole.USER.name());
+        AuthUser authUser = new AuthUser(userId, "user@test.com", "USER");
 
         User user = new User("user@test.com", "password123", "홍길동", UserRole.USER, "nickname", "010-1234-5678", "서울시 강남구", "FEMALE", "2000-01-01");
         ReflectionTestUtils.setField(user, "id", userId);
@@ -242,7 +242,7 @@ class CreateReviewTest {
         Long storeId = 1L;
         Long reviewId = 1L;
 
-        AuthUser authUser = new AuthUser(userId, "user@test.com", UserRole.USER.name());
+        AuthUser authUser = new AuthUser(userId, "user@test.com", "USER");
 
         User anotherUser = new User("another@test.com", "password123", "홍길순", UserRole.USER, "anotherNick", "010-1111-2222", "서울시 강남구", "FEMALE", "2000-01-01");
         ReflectionTestUtils.setField(anotherUser, "id", anotherUserId);
