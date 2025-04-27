@@ -25,6 +25,14 @@ public class MenuServiceImpl implements MenuService {
     private final StoreRepository storeRepository;
 
 
+    public void storeValidation(Long storeId, Long userId){
+        if (storeRepository.findByIdOrElseThrow(storeId).isDeleted()){
+            throw new ApiException(ErrorStatus.STORE_SHUT_DOWN);
+        }
+        if (!storeRepository.findByIdOrElseThrow(userId).getUser().getId().equals(userId)){
+            throw new ApiException(ErrorStatus.NOT_STORE_OWNER);
+        }
+    }
 
     @Override
     @Transactional
@@ -32,17 +40,9 @@ public class MenuServiceImpl implements MenuService {
             AuthUser authUser, Long storeId, MenuDto.Request dto) {
 
         Store store = storeRepository.findByIdOrElseThrow(storeId);
-        Long ownerId = store.getUser().getId();
 
-        //가게가 이미 삭제된 상태일 때
-        if (store.isDeleted()){
-            throw new ApiException(ErrorStatus.STORE_SHUT_DOWN);
-        }
-
-        //가게 주인이 아닐 때
-        if (!ownerId.equals(authUser.getId())){
-            throw new ApiException(ErrorStatus.NOT_STORE_OWNER);
-        }
+        //가게가 이미 삭제된 상태이거나 주인이 아닐 때
+        storeValidation(storeId, authUser.getId());
 
         //메뉴가 이미 존재할 때
         if (menuRepository.existsByStoreAndName(store, dto.getName())) {
@@ -59,16 +59,7 @@ public class MenuServiceImpl implements MenuService {
     @Transactional
     public MenuDto.Response updateMenu(AuthUser authUser, Long storeId, Long menuId, MenuDto.Request dto) {
 
-        //가게 삭제 여부
-        if (storeRepository.findByIdOrElseThrow(storeId).isDeleted()){
-            throw new ApiException(ErrorStatus.STORE_SHUT_DOWN);
-        }
-
-        Long ownerId = storeRepository.findOwnerIdByStoreIdOrElseThrow(storeId);
-        //가게의 주인이 아닐 때
-        if (!ownerId.equals(authUser.getId())){
-            throw new ApiException(ErrorStatus.NOT_STORE_OWNER);
-        }
+        storeValidation(storeId, authUser.getId());
 
         Menu menu = menuRepository.findByIdOrElseThrow(menuId);
 
@@ -89,15 +80,8 @@ public class MenuServiceImpl implements MenuService {
     @Override
     @Transactional
     public MenuDto.Response deleteMenu(AuthUser authUser, Long storeId, Long menuId) {
-        Long ownerId = storeRepository.findOwnerIdByStoreIdOrElseThrow(storeId);
-        //가게의 주인이 아닐 떄
-        if (!ownerId.equals(authUser.getId())){
-            throw new ApiException(ErrorStatus.NOT_STORE_OWNER);
-        }
-        //이미 삭제된 가게일 때
-        if (storeRepository.findByIdOrElseThrow(storeId).isDeleted()){
-            throw new ApiException(ErrorStatus.STORE_SHUT_DOWN);
-        }
+
+        storeValidation(storeId, authUser.getId());
 
         Menu menu = menuRepository.findByIdOrElseThrow(menuId);
 
