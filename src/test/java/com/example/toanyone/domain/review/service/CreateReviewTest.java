@@ -47,20 +47,20 @@ class CreateReviewTest {
         Long storeId = 1L;
         Long orderId = 1L;
 
-        AuthUser authUser = new AuthUser(userId, "user@test.com", UserRole.USER);
+        AuthUser authUser = new AuthUser(userId, "user@test.com", "USER");
 
         User user = new User(
-                "eeeee@gmail.com",
-                "1234Aaa.",
-                "이름",
-                UserRole.USER,
-                "별명",
-                "010-1234-1234",
-                "주소",
-                Gender.FEMALE,
-                LocalDate.of(2000, 1, 1),
-                26
+                "eeeee@gmail.com",     // email
+                "1234Aaa.",            // password
+                "이름",                // name
+                UserRole.USER,         // userRole
+                "별명",                 // nickname
+                "010-1234-1234",        // phone
+                "서울시 강남구",         // address
+                "FEMALE",              // gender (String으로, "FEMALE" 또는 "MALE")
+                "2000-01-01"           // birth (String으로, "yyyy-MM-dd" 형식)
         );
+
         ReflectionTestUtils.setField(user, "id", userId);
 
         Store store = new Store();
@@ -87,6 +87,39 @@ class CreateReviewTest {
         assertEquals("리뷰가 작성되었습니다.", result.getMessage());
     }
 
+    @Test
+    void 주문이_없는_경우_리뷰_생성_실패() {
+        // Given
+        Long userId = 1L;
+        Long storeId = 1L;
+        Long orderId = 1L;
 
+        AuthUser authUser = new AuthUser(userId, "user@test.com", UserRole.USER.name());
 
+        User user = new User(
+                "eeeee@gmail.com",     // email
+                "1234Aaa.",            // password
+                "이름",                // name
+                UserRole.USER,         // userRole
+                "별명",                 // nickname
+                "010-1234-1234",        // phone
+                "주소",                 // address
+                "2000",                 // birthYear (String)
+                "01"                    // birthMonth (String)
+        );
+
+        ReflectionTestUtils.setField(user, "id", userId);
+
+        ReviewCreateRequestDto requestDto = new ReviewCreateRequestDto(5, "처음 주문했는데 맛있네요 또 또 또 시킬게요", true);
+
+        given(userRepository.findById(userId)).willReturn(Optional.of(user));
+        given(orderRepository.findReviewableOrder(orderId, userId)).willReturn(Optional.empty());
+
+        // When
+        ApiException exception = assertThrows(ApiException.class,
+                () -> reviewService.createReview(storeId, orderId, authUser, requestDto));
+
+        // Then
+        assertEquals("리뷰 작성 조건을 만족하지 않는 주문입니다.", exception.getMessage());
+    }
 }
