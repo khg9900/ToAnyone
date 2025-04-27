@@ -55,8 +55,8 @@ public class StoreServiceImpl implements StoreService {
     @Override
     public List<StoreResponseDto.GetAll> getStoresByOwner(Long ownerId) {
 
-        int storeCount = storeRepository.countByUserIdAndDeletedFalse(ownerId);
-        if(storeCount == 0) {
+        boolean exists = storeRepository.existsByUserIdAndDeletedFalse(ownerId);
+        if(!exists) {
             throw new ApiException(ErrorStatus.STORE_NOT_FOUND);}
 
         List<Store> stores = storeRepository.findByUserIdAndDeletedFalse(ownerId);
