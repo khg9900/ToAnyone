@@ -36,5 +36,7 @@ public interface StoreRepository extends JpaRepository<Store, Long> {
                 ()-> new ApiException(ErrorStatus.STORE_NOT_FOUND));
     }
 
+    boolean existsByUserIdAndDeletedFalse(Long ownerId);
+
 
 }
