@@ -49,11 +49,7 @@ public class MenuServiceImpl implements MenuService {
             throw new ApiException(ErrorStatus.MENU_ALREADY_EXISTS);
         }
 
-        Menu createdMenu = new Menu(store,
-                dto.getName(), dto.getDescription(), dto.getPrice(),
-                MainCategory.of(dto.getMainCategory()),
-                SubCategory.of(dto.getSubCategory())
-                );
+        Menu createdMenu = new Menu(store, dto);
         menuRepository.save(createdMenu);
 
         return new MenuDto.Response("메뉴 생성되었습니다");
@@ -85,8 +81,7 @@ public class MenuServiceImpl implements MenuService {
             throw new ApiException(ErrorStatus.MENU_ALREADY_DELETED);
         }
 
-        menu.setMenu(dto.getName(), dto.getDescription(), dto.getPrice(),
-                MainCategory.of(dto.getMainCategory()), SubCategory.of(dto.getSubCategory()));
+        menu.setMenu(dto);
 
         return new MenuDto.Response("메뉴 수정되었습니다");
     }
