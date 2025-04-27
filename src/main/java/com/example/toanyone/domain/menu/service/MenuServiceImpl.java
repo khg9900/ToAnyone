@@ -24,11 +24,10 @@ public class MenuServiceImpl implements MenuService {
     private final MenuRepository menuRepository;
     private final StoreRepository storeRepository;
 
-    @Transactional
+    //문자열로 받은 카테고리 Enum 타입으로 변경
     public MainCategory toMainCategory(String mainCategory) {
         return MainCategory.of(mainCategory);
     }
-    @Transactional
     public SubCategory toSubCategory(String subCategory) {
         return SubCategory.of(subCategory);
     }
@@ -42,14 +41,17 @@ public class MenuServiceImpl implements MenuService {
         Store store = storeRepository.findByIdOrElseThrow(storeId);
         Long ownerId = store.getUser().getId();
 
+        //가게가 이미 삭제된 상태일 때
         if (store.isDeleted()){
             throw new ApiException(ErrorStatus.STORE_SHUT_DOWN);
         }
 
+        //가게 주인이 아닐 때
         if (!ownerId.equals(authUser.getId())){
             throw new ApiException(ErrorStatus.NOT_STORE_OWNER);
         }
 
+        //메뉴가 이미 존재할 때
         if (menuRepository.existsByStoreAndName(store, dto.getName())) {
             throw new ApiException(ErrorStatus.MENU_ALREADY_EXISTS);
         }
@@ -60,7 +62,6 @@ public class MenuServiceImpl implements MenuService {
                 toSubCategory(dto.getSubCategory())
                 );
         menuRepository.save(createdMenu);
-        log.info("Menu created: {}", createdMenu);
 
         return new MenuDto.Response("메뉴 생성되었습니다");
     }
@@ -69,16 +70,24 @@ public class MenuServiceImpl implements MenuService {
     @Transactional
     public MenuDto.Response updateMenu(AuthUser authUser, Long storeId, Long menuId, MenuDto.Request dto) {
 
+        //가게 삭제 여부
         if (storeRepository.findByIdOrElseThrow(storeId).isDeleted()){
             throw new ApiException(ErrorStatus.STORE_SHUT_DOWN);
         }
-        Long ownerId = storeRepository.findOwnerIdByStoreIdOrElseThrow(storeId);
 
+        Long ownerId = storeRepository.findOwnerIdByStoreIdOrElseThrow(storeId);
+        //가게의 주인이 아닐 때
         if (!ownerId.equals(authUser.getId())){
             throw new ApiException(ErrorStatus.NOT_STORE_OWNER);
         }
 
         Menu menu = menuRepository.findByIdOrElseThrow(menuId);
+
+        //해당 가게의 메뉴가 아닐 때
+        if (!menu.getStore().getId().equals(storeId)){
+            throw new ApiException(ErrorStatus.MENU_IS_NOT_IN_STORE);
+        }
+        //삭제된 메뉴일 때
         if (menu.isDeleted()){
             throw new ApiException(ErrorStatus.MENU_ALREADY_DELETED);
         }
@@ -93,20 +102,26 @@ public class MenuServiceImpl implements MenuService {
     @Transactional
     public MenuDto.Response deleteMenu(AuthUser authUser, Long storeId, Long menuId) {
         Long ownerId = storeRepository.findOwnerIdByStoreIdOrElseThrow(storeId);
+        //가게의 주인이 아닐 떄
         if (!ownerId.equals(authUser.getId())){
             throw new ApiException(ErrorStatus.NOT_STORE_OWNER);
         }
+        //이미 삭제된 가게일 때
         if (storeRepository.findByIdOrElseThrow(storeId).isDeleted()){
             throw new ApiException(ErrorStatus.STORE_SHUT_DOWN);
         }
-        if (menuRepository.findByIdOrElseThrow(menuId).isDeleted()){
-            throw new ApiException(ErrorStatus.MENU_ALREADY_DELETED);
-        }
 
         Menu menu = menuRepository.findByIdOrElseThrow(menuId);
+
+        //해당 가게의 메뉴가 아닐 때
+        if (!menu.getStore().getId().equals(storeId)){
+            throw new ApiException(ErrorStatus.MENU_IS_NOT_IN_STORE);
+        }
+        //메뉴가 이미 삭제 상태일 때
         if (menu.getDeleted()){
             throw new ApiException(ErrorStatus.MENU_ALREADY_DELETED);
         }
+
         menu.softDelete();
         return new MenuDto.Response("메뉴 삭제되었습니다");
     }

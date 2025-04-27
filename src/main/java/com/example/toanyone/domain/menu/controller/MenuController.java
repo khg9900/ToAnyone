@@ -1,8 +1,6 @@
 package com.example.toanyone.domain.menu.controller;
 
 import com.example.toanyone.domain.menu.dto.MenuDto;
-import com.example.toanyone.domain.menu.enums.MainCategory;
-import com.example.toanyone.domain.menu.enums.SubCategory;
 import com.example.toanyone.domain.menu.service.MenuService;
 import com.example.toanyone.global.auth.annotation.Auth;
 import com.example.toanyone.global.auth.dto.AuthUser;

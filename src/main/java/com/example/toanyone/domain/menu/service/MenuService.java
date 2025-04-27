@@ -1,8 +1,6 @@
 package com.example.toanyone.domain.menu.service;
 
 import com.example.toanyone.domain.menu.dto.MenuDto;
-import com.example.toanyone.domain.menu.enums.MainCategory;
-import com.example.toanyone.domain.menu.enums.SubCategory;
 import com.example.toanyone.global.auth.dto.AuthUser;
 import org.springframework.stereotype.Service;
 
