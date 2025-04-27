@@ -1,21 +1,28 @@
 package com.example.toanyone.domain.store.service;
 
+import com.example.toanyone.domain.menu.repository.MenuRepository;
 import com.example.toanyone.domain.store.dto.StoreRequestDto;
 import com.example.toanyone.domain.store.dto.StoreResponseDto;
 import com.example.toanyone.domain.store.entity.Store;
+import com.example.toanyone.domain.store.enums.Status;
 import com.example.toanyone.domain.store.repository.StoreRepository;
 import com.example.toanyone.domain.user.entity.User;
 import com.example.toanyone.domain.user.enums.UserRole;
 import com.example.toanyone.domain.user.repository.UserRepository;
+import com.example.toanyone.global.auth.dto.AuthUser;
 import com.example.toanyone.global.common.code.ErrorStatus;
 import com.example.toanyone.global.common.error.ApiException;
+import com.example.toanyone.global.config.PasswordEncoder;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalTime;
+import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeParseException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -23,13 +30,27 @@ public class StoreServiceImpl implements StoreService {
 
     public final StoreRepository storeRepository;
     public final UserRepository userRepository;
+    private final PasswordEncoder passwordEncoder;
 
     /**
-     * 가게 생성(Service)
+     * 가게 생성
      */
     @Override
     public StoreResponseDto.Complete createStore(Long ownerId, StoreRequestDto.Create dto) {
 
+        // Dto 데이터 타입 변환 검증
+        Status status = Status.of(dto.getStatus());
+        LocalTime openTime;
+        LocalTime closeTime;
+
+        try {
+            openTime = LocalTime.parse(dto.getOpenTime(), DateTimeFormatter.ofPattern("HH:mm"));
+            closeTime = LocalTime.parse(dto.getCloseTime(), DateTimeFormatter.ofPattern("HH:mm"));
+        } catch (DateTimeParseException e) {
+            throw new ApiException(ErrorStatus.INVALID_TIME_RANGE);
+        }
+
+        // DB 접근 검증
         User user = userRepository.findById(ownerId).orElseThrow(
                 () -> new ApiException(ErrorStatus.USER_NOT_FOUND));
 
@@ -43,7 +64,7 @@ public class StoreServiceImpl implements StoreService {
         if (storeRepository.existsByName(dto.getName())) {
             throw new ApiException(ErrorStatus.STORE_ALREADY_EXISTS);}
 
-        Store newStore = new Store(user, dto);
+        Store newStore = new Store(user, dto, status, openTime, closeTime);
         storeRepository.save(newStore);
 
         return new StoreResponseDto.Complete("가게가 생성되었습니다.");
@@ -100,6 +121,76 @@ public class StoreServiceImpl implements StoreService {
         }
 
         return new StoreResponseDto.GetById(store);
+    }
+
+    /**
+     * 가게 정보 수정
+     */
+    @Override
+    @Transactional
+    public StoreResponseDto.Complete updateStore(AuthUser authUser, Long storeId, StoreRequestDto.Update dto) {
+
+        // Dto 데이터 타입 변환 검증
+        Status status = null;
+        LocalTime openTime = null;
+        LocalTime closeTime = null;
+
+        if(dto.getStatus() != null) {
+            status = Status.of(dto.getStatus());
+        }
+
+        if(dto.getOpenTime() != null) {
+            try {
+                openTime = LocalTime.parse(dto.getOpenTime(), DateTimeFormatter.ofPattern("HH:mm"));
+            } catch (DateTimeParseException e) {
+                throw new ApiException(ErrorStatus.INVALID_TIME_RANGE);
+            }
+        }
+
+        if(dto.getCloseTime() != null) {
+            try {
+                closeTime = LocalTime.parse(dto.getCloseTime(), DateTimeFormatter.ofPattern("HH:mm"));
+            } catch (DateTimeParseException e) {
+                throw new ApiException(ErrorStatus.INVALID_TIME_RANGE);
+            }
+        }
+
+        // DB 접근 검증
+        Store store = storeRepository.findByIdOrElseThrow(storeId);
+
+        if(!authUser.getId().equals(store.getUser().getId())) {
+            throw new ApiException(ErrorStatus.STORE_FORBIDDEN);}
+
+        if(store.getDeleted()) {
+            throw new ApiException(ErrorStatus.STORE_SHUT_DOWN);}
+
+        store.update(dto, status, openTime, closeTime);
+
+        return new StoreResponseDto.Complete("정보가 수정되었습니다.");
+    }
+
+    /**
+     * 가게 폐업처리(soft delete)
+     */
+    @Override
+    @Transactional
+    public StoreResponseDto.Complete deleteStore(AuthUser authUser, Long storeId, StoreRequestDto.Delete dto) {
+        Optional<User> user = userRepository.findById(authUser.getId());
+
+        if(!passwordEncoder.matches(dto.getPassword(), user.get().getPassword())) {
+            throw new ApiException(ErrorStatus.INVALID_PASSWORD);};
+
+        Store store = storeRepository.findByIdOrElseThrow(storeId);
+
+        if(!authUser.getId().equals(store.getUser().getId())) {
+            throw new ApiException(ErrorStatus.STORE_FORBIDDEN);
+        }
+
+        if(store.getDeleted()) {
+            throw new ApiException(ErrorStatus.STORE_ALREADY_DELETED);}
+
+        store.softDelete();
+        return new StoreResponseDto.Complete("가게가 폐업 처리되었습니다.");
     }
 
 
