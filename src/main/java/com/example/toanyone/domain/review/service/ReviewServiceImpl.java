@@ -183,10 +183,19 @@ public class ReviewServiceImpl implements ReviewService {
             throw new ApiException(ErrorStatus.REVIEW_STORE_MISMATCH);
         }
 
+        // 리뷰 댓글 존재하는지 확인
+        if(!(review.getReply().getId() ==null)){
+            review.getReply().softDelete();
+        }
+
+        // 삭제된 리뷰 일 때
+        if(review.getDeleted() == true){
+            throw new ApiException(ErrorStatus.REVIEW_ALREADY_DELETED);
+        }
+
         review.softDelete();
 
         return new ReviewResponseDto("리뷰가 성공적으로 삭제되었습니다.");
-
     }
 
 
