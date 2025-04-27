@@ -7,12 +7,14 @@ import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
 
 /**
  * 리뷰 생성 요청 DTO
  * */
 @Getter
+@AllArgsConstructor
 public class ReviewCreateRequestDto {
 
     @Min(1)
@@ -24,4 +26,5 @@ public class ReviewCreateRequestDto {
     private String content;
 
     private Boolean visible = true;
+
 }
