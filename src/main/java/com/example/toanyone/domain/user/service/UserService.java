@@ -8,7 +8,9 @@ public interface UserService {
 
     UserResponseDto.Get getUserInfo(Long authUserId);
 
-    void updateUserInfo(Long authUserId, UserRequestDto .Update updateInfo);
+    void updateUserInfo(Long authUserId, UserRequestDto.Update updateInfo);
+
+    void changePassword(Long authUserId, UserRequestDto.ChangePassword changePassword);
 
     void deleteUserInfo(AuthUser authUser, UserRequestDto.Delete password);
 

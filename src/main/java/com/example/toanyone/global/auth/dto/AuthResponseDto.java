@@ -6,25 +6,22 @@ import lombok.Getter;
 public class AuthResponseDto {
 
     @Getter
+    @AllArgsConstructor
     public static class CreateToken {
-
-        private final String bearerToken;
-
-        public CreateToken(String bearerToken) {
-            this.bearerToken = bearerToken;
-        }
-
+        private final String accessToken;
+        private final String refreshToken;
     }
 
     @Getter
+    @AllArgsConstructor
     public static class Signout {
-
         private String message;
+    }
 
-        public Signout(String message) {
-            this.message = message;
-        }
-
+    @Getter
+    @AllArgsConstructor
+    public static class Reissue {
+        private String newAccessToken;
     }
 
 }

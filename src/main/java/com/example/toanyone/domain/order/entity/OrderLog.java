@@ -1,38 +1,33 @@
 package com.example.toanyone.domain.order.entity;
 
-import com.example.toanyone.domain.store.entity.Store;
 import jakarta.persistence.*;
-import lombok.*;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
 
-@Entity
 @Getter
-@NoArgsConstructor(access = AccessLevel.PROTECTED)
-@AllArgsConstructor
-@Builder
+@NoArgsConstructor
+@Entity
+@Table(name = "order_log")
 public class OrderLog {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "store_id")
-    private Store store;
+    private LocalDateTime logTime; // 요청 시각 (직접 추가)
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "order_id")
-    private Order order;
+    private Long storeId;
 
-    private LocalDateTime logTime;
+    private Long orderId;
 
-    @Lob
-    private String logMessage;
+    private String action; // CREATE_ORDER, UPDATE_ORDER_STATUS 등
 
-    @PrePersist
-    public void setLogTime() {
+    public OrderLog(Long storeId, Long orderId, String action) {
         this.logTime = LocalDateTime.now();
+        this.storeId = storeId;
+        this.orderId = orderId;
+        this.action = action;
     }
-
 }

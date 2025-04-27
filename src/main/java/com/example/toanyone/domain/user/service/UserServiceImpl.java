@@ -6,6 +6,7 @@ import com.example.toanyone.domain.cart.entity.Cart;
 import com.example.toanyone.domain.cart.repository.CartRepository;
 import com.example.toanyone.domain.store.repository.StoreRepository;
 import com.example.toanyone.domain.user.dto.UserRequestDto;
+import com.example.toanyone.domain.user.dto.UserRequestDto.ChangePassword;
 import com.example.toanyone.domain.user.dto.UserResponseDto;
 import com.example.toanyone.domain.user.dto.UserResponseDto.Get;
 import com.example.toanyone.domain.user.entity.User;
@@ -48,6 +49,26 @@ public class UserServiceImpl implements UserService {
 
     @Override
     @Transactional
+    public void changePassword(Long authUserId, ChangePassword changePassword) {
+
+        User user = userRepository.findById(authUserId)
+            .orElseThrow(() -> new ApiException(USER_NOT_FOUND));
+
+        // 비밀번호 일치여부 확인
+        if (!passwordEncoder.matches(changePassword.getOldPassword(), user.getPassword())) {
+            throw new ApiException(INVALID_PASSWORD);
+        }
+
+        // 새 비밀번호 검증
+        if (passwordEncoder.matches(changePassword.getNewPassword(), user.getPassword())) {
+            throw new ApiException(PASSWORD_SAME_AS_CURRENT);
+        }
+
+        user.changePassword(passwordEncoder.encode(changePassword.getNewPassword()));
+    }
+
+    @Override
+    @Transactional
     public void deleteUserInfo(AuthUser authUser, UserRequestDto.Delete password) {
 
         User user = userRepository.findById(authUser.getId())
@@ -59,7 +80,7 @@ public class UserServiceImpl implements UserService {
         }
 
         // 사장님은 회원 정보를 삭제하기 전 운영중인 가게가 없어야 합니다.
-        if (authUser.getUserRole().equals(UserRole.OWNER)) {
+        if (user.getUserRole().equals(UserRole.OWNER)) {
             // 운영중인 가게 확인
             int countStore = storeRepository.countByUserIdAndDeletedFalse(authUser.getId());
             // 회원 탈퇴 불가

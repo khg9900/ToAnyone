@@ -60,6 +60,7 @@ public class OrderDto {
     @Getter
     @AllArgsConstructor
     public static class CreateResponse {
+        private Long storeId;
         private Long orderId;
         private LocalDateTime createdAt;
         private String status;
@@ -118,6 +119,7 @@ public class OrderDto {
         public StatusUpdateResponse(String message) {
             this.message = message;
         }
+        private Long storeId;
         // 변경된 주문 ID
         private Long orderId;
         // 변경 후 주문 상태

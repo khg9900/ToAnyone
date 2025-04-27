@@ -1,5 +1,6 @@
 package com.example.toanyone.domain.menu.entity;
 
+import com.example.toanyone.domain.menu.dto.MenuDto;
 import com.example.toanyone.domain.menu.enums.MainCategory;
 import com.example.toanyone.domain.menu.enums.SubCategory;
 import com.example.toanyone.domain.store.entity.Store;
@@ -37,22 +38,21 @@ public class Menu extends BaseEntity {
     @Enumerated(EnumType.STRING)
     private SubCategory subCategory;
 
-    public Menu(Store store, String name, String description, Integer price ,MainCategory mainCategory, SubCategory subCategory) {
+    public Menu(Store store, MenuDto.Request request) {
         this.store = store;
-        this.name = name;
-        this.description = description;
-        this.price = price;
-        this.mainCategory = mainCategory;
-        this.subCategory = subCategory;
+        this.name = request.getName();
+        this.description =request.getDescription();
+        this.price = request.getPrice();
+        this.mainCategory = MainCategory.of(request.getMainCategory());
+        this.subCategory = SubCategory.of(request.getSubCategory());
     }
 
-    public void setMenu(String name, String description, Integer price,
-                           MainCategory mainCategory, SubCategory subCategory) {
-        this.name = name;
-        this.description = description;
-        this.price = price;
-        this.mainCategory = mainCategory;
-        this.subCategory = subCategory;
+    public void setMenu(MenuDto.Request request) {
+        this.name = request.getName();
+        this.description = request.getDescription();
+        this.price = request.getPrice();
+        this.mainCategory = MainCategory.of(request.getMainCategory());
+        this.subCategory = SubCategory.of(request.getSubCategory());
     }
 
 }
