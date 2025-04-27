@@ -12,9 +12,9 @@ public class OrderLogService {
 
     private final OrderLogRepository orderLogRepository;
 
-    @Transactional
     public void saveLog(Long storeId, Long orderId, String action) {
         OrderLog log = new OrderLog(storeId, orderId, action);
         orderLogRepository.save(log);
     }
 }
+
