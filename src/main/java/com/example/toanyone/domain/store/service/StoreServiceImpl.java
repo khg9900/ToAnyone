@@ -38,18 +38,6 @@ public class StoreServiceImpl implements StoreService {
     @Override
     public StoreResponseDto.Complete createStore(Long ownerId, StoreRequestDto.Create dto) {
 
-        // Dto 데이터 타입 변환 검증
-        Status status = Status.of(dto.getStatus());
-        LocalTime openTime;
-        LocalTime closeTime;
-
-        try {
-            openTime = LocalTime.parse(dto.getOpenTime(), DateTimeFormatter.ofPattern("HH:mm"));
-            closeTime = LocalTime.parse(dto.getCloseTime(), DateTimeFormatter.ofPattern("HH:mm"));
-        } catch (DateTimeParseException e) {
-            throw new ApiException(ErrorStatus.INVALID_TIME_RANGE);
-        }
-
         // DB 접근 검증
         int storeCount = storeRepository.countByUserIdAndDeletedFalse(ownerId);
         if (storeCount >= 3) {
@@ -61,7 +49,7 @@ public class StoreServiceImpl implements StoreService {
         User user = userRepository.findById(ownerId).orElseThrow(
                 () -> new ApiException(ErrorStatus.USER_NOT_FOUND));
 
-        Store newStore = new Store(user, dto, status, openTime, closeTime);
+        Store newStore = new Store(user, dto);
         storeRepository.save(newStore);
 
         return new StoreResponseDto.Complete("가게가 생성되었습니다.");
