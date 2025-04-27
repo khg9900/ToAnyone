@@ -9,6 +9,7 @@ import com.example.toanyone.domain.user.entity.User;
 import com.example.toanyone.domain.user.enums.UserRole;
 import com.example.toanyone.domain.user.repository.UserRepository;
 import com.example.toanyone.global.auth.dto.AuthUser;
+import com.example.toanyone.global.common.error.ApiException;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -21,6 +22,7 @@ import java.util.List;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.BDDMockito.given;
 
 @ExtendWith(SpringExtension.class)
@@ -70,4 +72,30 @@ public class GetStoreByOwner {
         assertEquals(store2.getName(), response.get(1).getName());
 
     }
+
+    @Test
+    void 내가_운영중인가게가_0개일경우() {
+        Long ownerId = 1L;
+        AuthUser authUser = new AuthUser(ownerId, "eee@gmail.com", UserRole.OWNER);
+
+        User user = new User();
+        ReflectionTestUtils.setField(user, "id", 1L);
+        ReflectionTestUtils.setField(user, "email", "eee@gmail.com");
+        ReflectionTestUtils.setField(user, "userRole", UserRole.OWNER);
+
+        // GIVEN
+        given(userRepository.findById(ownerId)).willReturn(Optional.of(user));
+        given(storeRepository.countByUserIdAndDeletedFalse(1L)).willReturn(0);
+        given(storeRepository.findByUserIdAndDeletedFalse(1L)).willReturn(null);
+
+        // WHEN
+        ApiException apiException = assertThrows(ApiException.class,
+                () -> storeService.getStoresByOwner(ownerId));
+
+        // THEN
+        assertEquals("생성된 가게가 없습니다.",apiException.getMessage());
+
+    }
+
+
 }
