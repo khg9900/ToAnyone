@@ -143,7 +143,6 @@ class CreateReviewTest {
 
     @Test
     void 리뷰_수정_성공() {
-        // Given
         Long userId = 1L;
         Long storeId = 1L;
         Long reviewId = 1L;
@@ -162,6 +161,7 @@ class CreateReviewTest {
 
         ReviewCreateRequestDto updateRequest = new ReviewCreateRequestDto(4, "리뷰 수정합니다!", true);
 
+        // Given
         given(reviewRepository.findById(reviewId)).willReturn(Optional.of(review));
 
         // When
@@ -173,7 +173,6 @@ class CreateReviewTest {
 
     @Test
     void 리뷰_수정_실패_작성자가_아님() {
-        // Given
         Long userId = 1L;
         Long anotherUserId = 2L;
         Long storeId = 1L;
@@ -193,6 +192,7 @@ class CreateReviewTest {
 
         ReviewCreateRequestDto updateRequest = new ReviewCreateRequestDto(4, "리뷰 수정합니다!", true);
 
+        // Given
         given(reviewRepository.findById(reviewId)).willReturn(Optional.of(review));
 
         // When & Then
@@ -204,7 +204,6 @@ class CreateReviewTest {
 
     @Test
     void 리뷰_삭제_성공() {
-        // Given
         Long userId = 1L;
         Long storeId = 1L;
         Long reviewId = 1L;
@@ -225,6 +224,7 @@ class CreateReviewTest {
         ReflectionTestUtils.setField(reply, "id", 1L);
         ReflectionTestUtils.setField(review, "reply", reply);
 
+        // Given
         given(reviewRepository.findById(reviewId)).willReturn(Optional.of(review));
 
         // When
@@ -236,7 +236,6 @@ class CreateReviewTest {
 
     @Test
     void 리뷰_삭제_실패_작성자가_아님() {
-        // Given
         Long userId = 1L;
         Long anotherUserId = 2L;
         Long storeId = 1L;
@@ -254,6 +253,7 @@ class CreateReviewTest {
         ReflectionTestUtils.setField(review, "user", anotherUser); // 다른 유저로 세팅
         ReflectionTestUtils.setField(review, "store", store);
 
+        // Given
         given(reviewRepository.findById(reviewId)).willReturn(Optional.of(review));
 
         // When & Then

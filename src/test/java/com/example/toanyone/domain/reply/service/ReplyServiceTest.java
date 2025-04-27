@@ -38,7 +38,6 @@ public class ReplyServiceTest {
 
     @Test
     void 댓글_생성_성공() {
-        // Given
         Long ownerId = 1L;
         Long storeId = 1L;
         Long reviewId = 1L;
@@ -54,6 +53,7 @@ public class ReplyServiceTest {
 
         ReplyRequestDto requestDto = new ReplyRequestDto("감사합니다!");
 
+        // Given
         given(userRepository.findById(ownerId)).willReturn(Optional.of(owner));
         given(reviewRepository.findById(reviewId)).willReturn(Optional.of(review));
 
@@ -66,14 +66,14 @@ public class ReplyServiceTest {
 
     @Test
     void 댓글_생성_실패_이미_댓글존재() {
-        // Given
+
         Long ownerId = 1L;
         Long storeId = 1L;
         Long reviewId = 1L;
 
         AuthUser authUser = new AuthUser(ownerId, "owner@test.com", "OWNER");
 
-        User owner = new User("owner@test.com", "password123", "사장님", UserRole.OWNER, "nickname", "010-1234-5678", "서울시 강남구", "MALE", "1990-01-01");
+        User owner = new User();
         ReflectionTestUtils.setField(owner, "id", ownerId);
 
         Review review = new Review();
@@ -86,6 +86,7 @@ public class ReplyServiceTest {
 
         ReplyRequestDto requestDto = new ReplyRequestDto("감사합니다!");
 
+        // Given
         given(userRepository.findById(ownerId)).willReturn(Optional.of(owner));
         given(reviewRepository.findById(reviewId)).willReturn(Optional.of(review));
 
@@ -98,7 +99,6 @@ public class ReplyServiceTest {
 
     @Test
     void 댓글_수정_성공() {
-        // Given
         Long ownerId = 1L;
         Long storeId = 1L;
         Long reviewId = 1L;
@@ -119,6 +119,7 @@ public class ReplyServiceTest {
 
         ReplyRequestDto updateRequest = new ReplyRequestDto("수정된 댓글입니다!");
 
+        // Given
         given(userRepository.findById(ownerId)).willReturn(Optional.of(owner));
         given(reviewRepository.findById(reviewId)).willReturn(Optional.of(review));
 
@@ -131,7 +132,6 @@ public class ReplyServiceTest {
 
     @Test
     void 댓글_삭제_성공() {
-        // Given
         Long ownerId = 1L;
         Long storeId = 1L;
         Long reviewId = 1L;
@@ -151,6 +151,7 @@ public class ReplyServiceTest {
         ReflectionTestUtils.setField(reply, "deleted", false);
         ReflectionTestUtils.setField(review, "reply", reply);
 
+        // Given
         given(userRepository.findById(ownerId)).willReturn(Optional.of(owner));
         given(reviewRepository.findById(reviewId)).willReturn(Optional.of(review));
 
