@@ -60,6 +60,7 @@ public class OrderDto {
     @Getter
     @AllArgsConstructor
     public static class CreateResponse {
+        private Long storeId;
         private Long orderId;
         private LocalDateTime createdAt;
         private String status;

@@ -112,9 +112,10 @@ public class OrderServiceImpl implements OrderService {
 
         // 9. 생성된 주문 정보를 응답 DTO로 변환해서 반환
         return new OrderDto.CreateResponse(
-                order.getId(), // 주문 ID
-                order.getCreatedAt(), // 생성 시각
-                order.getStatus().name() // 주문 상태 문자열
+                order.getStore().getId(),   // storeId (가게 ID)
+                order.getId(),              // orderId (주문 ID)
+                order.getCreatedAt(),       // createdAt (생성 시간)
+                order.getStatus().name()    // status (주문 상태)
         );
     }
 

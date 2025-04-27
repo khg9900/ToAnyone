@@ -1,38 +1,29 @@
 package com.example.toanyone.domain.order.entity;
 
-import com.example.toanyone.domain.store.entity.Store;
+import com.example.toanyone.global.common.entity.BaseEntity;
 import jakarta.persistence.*;
-import lombok.*;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
 
-import java.time.LocalDateTime;
-
-@Entity
 @Getter
-@NoArgsConstructor(access = AccessLevel.PROTECTED)
-@AllArgsConstructor
-@Builder
-public class OrderLog {
+@Entity
+@NoArgsConstructor
+@Table(name = "order_log")
+public class OrderLog extends BaseEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "store_id")
-    private Store store;
+    private Long storeId;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "order_id")
-    private Order order;
+    private Long orderId;
 
-    private LocalDateTime logTime;
+    private String action; // CREATE_ORDER, UPDATE_ORDER_STATUS 등
 
-    @Lob
-    private String logMessage;
-
-    @PrePersist
-    public void setLogTime() {
-        this.logTime = LocalDateTime.now();
+    public OrderLog(Long storeId, Long orderId, String action) {
+        this.storeId = storeId;
+        this.orderId = orderId;
+        this.action = action;
     }
-
 }
