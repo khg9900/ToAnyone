@@ -16,10 +16,7 @@ public interface CartService {
 
     CartItemDto.Response getCartItems(AuthUser authUser);
 
-    CartResponseDto clearCartItems(AuthUser authUser);
-
-    //고승표 추가
-    CartResponseDto clearCartItems(User user); // 오버로딩용
+    CartResponseDto clearCartItems(Long userId);
 
     CartResponseDto updateCartItems(AuthUser authUser, Long storeId,
                                     Long menuId, Integer quantity);

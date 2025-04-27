@@ -93,8 +93,8 @@ public class OrderServiceImpl implements OrderService {
         List<OrderItem> orderItems = cart.getCartItems().stream()
                 .map(cartItem -> {
                     Long menuId = cartItem.getMenu().getId();
-                    Menu menu = menuRepository.findById(menuId)
-                            .orElseThrow(() -> new ApiException(ErrorStatus.MENU_NOT_FOUND));
+                    Menu menu = menuRepository.findById(menuId).orElseThrow(() -> new ApiException(ErrorStatus.MENU_NOT_FOUND));
+
                     return OrderItem.builder()
                             .order(order)
                             .menu(menu)
@@ -108,7 +108,7 @@ public class OrderServiceImpl implements OrderService {
         }
 
         // 8. 장바구니 비우기 (주문 완료 시 초기화)
-        cartService.clearCartItems(user);
+        cartService.clearCartItems(user.getId());
 
         // 9. 생성된 주문 정보를 응답 DTO로 변환해서 반환
         return new OrderDto.CreateResponse(
