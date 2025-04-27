@@ -43,4 +43,17 @@ public class ReplyController {
         ReplyResponseDto responseDto = replyService.updateReply(storeId, reviewId, authUser, requestDto);
         return ApiResponse.onSuccess(SuccessStatus.OK, responseDto);
     }
+
+    /**
+     *
+     * 댓글 삭제
+     */
+    @DeleteMapping("/{storeId}/reviews/{reviewId}/reply")
+    public ResponseEntity<ApiResponse<ReplyResponseDto>> replyDelete(@PathVariable Long storeId,
+                                                                     @PathVariable Long reviewId,
+                                                                     @Auth AuthUser authUser) {
+        ReplyResponseDto responseDto =  replyService.deleteReply(storeId,reviewId,authUser);
+        return ApiResponse.onSuccess(SuccessStatus.OK, responseDto);
+    }
+
 }

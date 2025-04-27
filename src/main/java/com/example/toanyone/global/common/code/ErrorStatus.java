@@ -63,6 +63,7 @@ public enum ErrorStatus implements BaseErrorCode {
     REVIEW_STORE_MISMATCH(HttpStatus.BAD_REQUEST, "6006", "해당 가게의 리뷰가 아닙니다."),
     REPLY_ALREADY_EXISTS(HttpStatus.BAD_REQUEST, "6007", "이미 댓글이 존재합니다."),
     REPLY_NOT_FOUND(HttpStatus.NOT_FOUND, "6008", "해당 댓글이 존재하지 않습니다."),
+    REVIEW_ALREADY_DELETED(HttpStatus.BAD_REQUEST, "6009", "이미 삭제된 리뷰입니다."),
 
     //7000 : cart 에러코드
     CART_ITEMS_NOT_FOUND(HttpStatus.NOT_FOUND, "7001", "장바구니에서 해당 품목을 찾을 수 없습니다."),
