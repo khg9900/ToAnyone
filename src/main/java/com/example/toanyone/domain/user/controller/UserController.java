@@ -7,6 +7,7 @@ import com.example.toanyone.global.auth.annotation.Auth;
 import com.example.toanyone.global.auth.dto.AuthUser;
 import com.example.toanyone.global.common.code.SuccessStatus;
 import com.example.toanyone.global.common.response.ApiResponse;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -24,9 +25,7 @@ public class UserController {
     private final UserService userService;
 
     @GetMapping
-    public ResponseEntity<ApiResponse<UserResponseDto.Get>> getUserInfo(
-        @Auth AuthUser authUser
-    ) {
+    public ResponseEntity<ApiResponse<UserResponseDto.Get>> getUserInfo(@Auth AuthUser authUser) {
         return ApiResponse.onSuccess(SuccessStatus.OK, userService.getUserInfo(authUser.getId()));
     }
 
@@ -34,6 +33,12 @@ public class UserController {
     public ResponseEntity<ApiResponse<String>> updateUserInfo(@Auth AuthUser authUser, @RequestBody UserRequestDto.Update updateInfo) {
         userService.updateUserInfo(authUser.getId(), updateInfo);
         return ApiResponse.onSuccess(SuccessStatus.OK, "유저 정보를 수정했습니다.");
+    }
+
+    @PatchMapping
+    public ResponseEntity<ApiResponse<String>> changePassword(@Auth AuthUser authUser, @Valid @RequestBody UserRequestDto.ChangePassword changePassword) {
+        userService.changePassword(authUser.getId(), changePassword);
+        return ApiResponse.onSuccess(SuccessStatus.OK, "비밀번호를 변경했습니다.");
     }
 
     @DeleteMapping

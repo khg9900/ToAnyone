@@ -23,7 +23,6 @@ public class  AuthRequestDto {
         private String username;
         @NotBlank
         private String nickname;
-        @NotBlank
         @Email
         private String email;
         @NotBlank

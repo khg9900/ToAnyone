@@ -15,6 +15,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
 
 @Slf4j(topic = "JwtUtil")
@@ -25,7 +26,7 @@ public class JwtUtil {
     private final RefreshRepository refreshRepository;
 
     private static final String BEARER_PREFIX = "Bearer ";
-    private static final long ACCESS_TOKEN_TIME = 60 * 10 * 1000L; // 10분
+    private static final long ACCESS_TOKEN_TIME = 6 * 10 * 1000L; // 10분
     private static final long REFRESH_TOKEN_TIME = 24 * 60 * 10 * 1000L; // 24시간
 
     @Value("${jwt.secret.key}")
@@ -84,21 +85,10 @@ public class JwtUtil {
             .before(new Date());
     }
 
-    // 토큰 종류 확인
-    public String getTokenCategory(String token) {
-        return Jwts.parserBuilder()
-            .setSigningKey(key)
-            .build()
-            .parseClaimsJws(token)
-            .getBody()
-            .get("category", String.class);
-    }
-
     // refresh 토큰 저장
+    @Transactional
     public void saveRefreshToken(long userId, String token) {
-
         Date date = new Date(System.currentTimeMillis() + REFRESH_TOKEN_TIME);
-
         refreshRepository.save(new Refresh(userId, token, date.toString()));
     }
 

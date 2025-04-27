@@ -23,7 +23,7 @@ public class AuthController {
     private final AuthService authService;
 
     @PostMapping("/auth/signup")
-    public ResponseEntity<ApiResponse<String>>  signup(@Valid @RequestBody AuthRequestDto.Signup signupRequest) {
+    public ResponseEntity<ApiResponse<String>>  signup(@RequestBody @Valid AuthRequestDto.Signup signupRequest) {
         return ApiResponse.onSuccess(SuccessStatus.CREATED, authService.signup(signupRequest));
     }
 
@@ -33,8 +33,8 @@ public class AuthController {
     }
 
     @PostMapping("/auth/reissue")
-    public ResponseEntity<ApiResponse<AuthResponseDto.CreateToken>> reissue(HttpServletRequest request) {
-        return ApiResponse.onSuccess(SuccessStatus.OK, authService.reissue(request));
+    public ResponseEntity<ApiResponse<AuthResponseDto.CreateToken>> reissue(@Auth AuthUser authUser, HttpServletRequest request) {
+        return ApiResponse.onSuccess(SuccessStatus.OK, authService.reissue(authUser.getId(), request));
     }
 
     @PostMapping("/auth/logout")

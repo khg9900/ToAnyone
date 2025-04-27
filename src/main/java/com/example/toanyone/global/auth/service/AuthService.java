@@ -11,7 +11,7 @@ public interface AuthService {
 
     AuthResponseDto.CreateToken login(AuthRequestDto.Login signinRequest);
 
-    AuthResponseDto.CreateToken reissue(HttpServletRequest request);
+    AuthResponseDto.CreateToken reissue(Long userId, HttpServletRequest request);
 
     String logout(Long userId);
 }

@@ -4,6 +4,7 @@ import com.example.toanyone.domain.user.dto.UserRequestDto;
 import com.example.toanyone.domain.user.enums.Gender;
 import com.example.toanyone.domain.user.enums.UserRole;
 import com.example.toanyone.global.common.entity.BaseEntity;
+import com.example.toanyone.global.common.error.ApiException;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
@@ -81,6 +82,10 @@ public class User extends BaseEntity {
             this.address = updateInfo.getAddress();
         }
 
+    }
+
+    public void changePassword(String newPassword) {
+        this.password = newPassword;
     }
 
 }

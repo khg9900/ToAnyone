@@ -1,8 +1,12 @@
 package com.example.toanyone.global.auth.service;
 
 
-import static com.example.toanyone.global.common.code.ErrorStatus.EXPIRED_JWT_TOKEN;
-import static com.example.toanyone.global.common.code.ErrorStatus.TOKEN_INVALID;
+import static com.example.toanyone.global.common.code.ErrorStatus.EMAIL_ALREADY_EXISTS;
+import static com.example.toanyone.global.common.code.ErrorStatus.INVALID_JWT_TOKEN;
+import static com.example.toanyone.global.common.code.ErrorStatus.NICKNAME_ALREADY_EXISTS;
+import static com.example.toanyone.global.common.code.ErrorStatus.PHONE_ALREADY_EXISTS;
+import static com.example.toanyone.global.common.code.ErrorStatus.USER_ALREADY_DELETED;
+import static com.example.toanyone.global.common.code.ErrorStatus.USER_NOT_FOUND;
 
 import com.example.toanyone.domain.user.entity.User;
 import com.example.toanyone.domain.user.enums.UserRole;
@@ -34,12 +38,21 @@ public class AuthServiceImpl implements AuthService {
 
         // 이메일 중복 체크
         if (userRepository.existsByEmail(signupRequest.getEmail())) {
-            throw new RuntimeException("이미 존재하는 이메일입니다.");
+            throw new ApiException(EMAIL_ALREADY_EXISTS);
+        }
+        // 닉네임 중복 체크
+        if (userRepository.existsByNickname(signupRequest.getNickname())) {
+            throw new ApiException(NICKNAME_ALREADY_EXISTS);
+        }
+        // 전화번호 중복 체크
+        if (userRepository.existsByPhone(signupRequest.getPhone())) {
+            throw new ApiException(PHONE_ALREADY_EXISTS);
         }
 
         // 비밀번호 암호화
         String encodedPassword = passwordEncoder.encode(signupRequest.getPassword());
 
+        // User 객체 생성
         User user = new User(
             signupRequest.getEmail(),
             encodedPassword,
@@ -63,11 +76,11 @@ public class AuthServiceImpl implements AuthService {
 
         // 가입여부 확인
         User user = userRepository.findByEmail(signinRequest.getEmail()).orElseThrow(
-            () -> new RuntimeException("가입되지 않은 유저입니다."));
+            () -> new ApiException(USER_NOT_FOUND));
 
         // 탈퇴한 회원인지 확인
         if (user.isDeleted()) {
-            throw new RuntimeException("탈퇴한 회원입니다.");
+            throw new ApiException(USER_ALREADY_DELETED);
         }
 
         // 비밀번호 검증
@@ -79,7 +92,7 @@ public class AuthServiceImpl implements AuthService {
         String access = jwtUtil.createToken("access", user.getId(), user.getEmail(), user.getUserRole());
         String refresh = jwtUtil.createToken("refresh", user.getId(), user.getEmail(), user.getUserRole());
 
-        // refreshToken 저장
+        // refreshToken DB에 저장
         jwtUtil.saveRefreshToken(user.getId(), refresh);
 
         return new AuthResponseDto.CreateToken(access, refresh);
@@ -87,32 +100,29 @@ public class AuthServiceImpl implements AuthService {
 
     @Transactional
     @Override
-    public AuthResponseDto.CreateToken reissue(HttpServletRequest request) {
+    public AuthResponseDto.CreateToken reissue(Long userId, HttpServletRequest request) {
 
+        // 헤더에서 토큰 가져오기 (검증은 Filter 에서 완료)
         String jwt = request.getHeader("Authorization");
-        String token = jwtUtil.substringToken(jwt);
+        String currentToken = jwtUtil.substringToken(jwt);
 
-        // 토큰 만료 여부 확인
-        if (jwtUtil.isExpired(token)) {
-            throw new ApiException(EXPIRED_JWT_TOKEN);
-        }
+        // 로그인 유저 정보로 DB에 저장된 Refresh 토큰을 찾기
+        String existingToken = refreshRepository.findRefreshTokenByUserId(userId);
 
-        // 토큰 타입 & DB 저장 여부 확인
-        if (!jwtUtil.getTokenCategory(token).equals("refresh") || !jwtUtil.isExpired(token)) {
-            throw new ApiException(TOKEN_INVALID);
+        // 일치 여부 확인
+        if (!currentToken.equals(existingToken)) {
+            throw new ApiException(INVALID_JWT_TOKEN);
         }
 
         // 유저 정보 조회
-        long userId = Long.parseLong(jwtUtil.extractClaims(token).getSubject());
-        String email = jwtUtil.extractClaims(token).get("email", String.class);
-        UserRole userRole = UserRole.of(jwtUtil.extractClaims(token).get("userRole", String.class));
+        User user = userRepository.findById(userId).orElseThrow(() -> new ApiException(USER_NOT_FOUND));
 
         // 토큰 재발급
-        String newAccess = jwtUtil.createToken("access", userId, email, userRole);
-        String newRefresh = jwtUtil.createToken("refresh", userId, email, userRole);
+        String newAccess = jwtUtil.createToken("access", userId, user.getEmail(), user.getUserRole());
+        String newRefresh = jwtUtil.createToken("refresh", userId, user.getEmail(), user.getUserRole());
 
         // DB에 저장된 기존 refresh token 삭제 후 저장
-        refreshRepository.deleteByRefresh(jwt);
+        refreshRepository.deleteByRefreshToken(jwt);
         jwtUtil.saveRefreshToken(userId, newRefresh);
 
         return new AuthResponseDto.CreateToken(newAccess, newRefresh);
@@ -120,8 +130,11 @@ public class AuthServiceImpl implements AuthService {
 
     public String logout(Long userId) {
 
-        String refreshToken = refreshRepository.getRefreshToken(userId);
-        refreshRepository.deleteByRefresh(refreshToken);
+        // 로그인 정보로 DB 에서 refresh Token 찾기
+        String currentToken = refreshRepository.findRefreshTokenByUserId(userId);
+
+        // 토큰 삭제
+        refreshRepository.deleteByRefreshToken(currentToken);
 
         return "로그아웃 완료";
     }

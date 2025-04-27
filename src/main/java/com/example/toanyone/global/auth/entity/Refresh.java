@@ -18,13 +18,13 @@ public class Refresh {
 
     private Long userId;
 
-    private String refresh;
+    private String refreshToken;
 
     private String expiration;
 
-    public Refresh(Long userId, String refresh, String expiration) {
+    public Refresh(Long userId, String refreshToken, String expiration) {
         this.userId = userId;
-        this.refresh = refresh;
+        this.refreshToken = refreshToken;
         this.expiration = expiration;
     }
 }
