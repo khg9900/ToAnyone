@@ -7,6 +7,7 @@ import com.example.toanyone.domain.user.entity.User;
 import com.example.toanyone.domain.user.enums.UserRole;
 import com.example.toanyone.domain.user.repository.UserRepository;
 import com.example.toanyone.global.auth.dto.AuthUser;
+import com.example.toanyone.global.common.code.ErrorStatus;
 import com.example.toanyone.global.common.error.ApiException;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -90,7 +91,7 @@ public class GetStoreTest {
                 () -> storeService.getStoresByOwner(ownerId));
 
         // THEN
-        assertEquals("생성된 가게가 없습니다.",apiException.getMessage());
+        assertEquals(ErrorStatus.STORE_NOT_FOUND.getMessage(),apiException.getMessage());
 
     }
 
@@ -150,7 +151,7 @@ public class GetStoreTest {
                 () -> storeService.getStoresByName(keyword));
 
         // THEN
-        assertEquals("검색한 단어가 포함된 가게명이 존재하지 않습니다.", apiException.getMessage());
+        assertEquals(ErrorStatus.STORE_SEARCH_NO_MATCH.getMessage(), apiException.getMessage());
 
     }
 
