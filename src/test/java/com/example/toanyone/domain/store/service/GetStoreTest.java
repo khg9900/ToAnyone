@@ -1,5 +1,8 @@
 package com.example.toanyone.domain.store.service;
 
+import com.example.toanyone.domain.menu.entity.Menu;
+import com.example.toanyone.domain.menu.enums.MainCategory;
+import com.example.toanyone.domain.menu.enums.SubCategory;
 import com.example.toanyone.domain.store.dto.StoreRequestDto;
 import com.example.toanyone.domain.store.dto.StoreResponseDto;
 import com.example.toanyone.domain.store.entity.Store;
@@ -179,7 +182,15 @@ public class GetStoreTest {
         LocalTime closeTime = LocalTime.parse("18:00");
 
         Store store = new Store(user, requestDto, Status.OPEN,openTime, closeTime);
+        Menu menu1 = new Menu(store, "메뉴1", "소개1", 5000, MainCategory.KOREAN, SubCategory.MAIN);
+        ReflectionTestUtils.setField(menu1, "id", 1L);
+        Menu menu2 = new Menu(store, "메뉴2", "소개2", 5000, MainCategory.CHINESE, SubCategory.SIDE);
+        ReflectionTestUtils.setField(menu2, "id", 2L);
+
+        List<Menu> menus = List.of(menu1, menu2);
+
         ReflectionTestUtils.setField(store, "id", 1L);
+        ReflectionTestUtils.setField(store, "menus", menus);
 
         // GIVEN
         given(storeRepository.findByIdOrElseThrow(1L)).willReturn(store);
@@ -200,26 +211,20 @@ public class GetStoreTest {
             softly.assertThat(response.getNotice()).isEqualTo("가게공지");
             softly.assertThat(response.getStatus()).isEqualTo(Status.OPEN);
             softly.assertThat(response.getPhone()).isEqualTo("02-123-4567");
+            softly.assertThat(response.getMenus().get(0).getMenuId()).isEqualTo(1L);
+            softly.assertThat(response.getMenus().get(0).getMenuName()).isEqualTo("메뉴1");
+            softly.assertThat(response.getMenus().get(0).getPrice()).isEqualTo(5000);
+            softly.assertThat(response.getMenus().get(0).getDescription()).isEqualTo("소개1");
+            softly.assertThat(response.getMenus().get(0).getMainCategory()).isEqualTo(MainCategory.KOREAN);
+            softly.assertThat(response.getMenus().get(0).getSubCategory()).isEqualTo(SubCategory.MAIN);
+            softly.assertThat(response.getMenus().get(1).getMenuId()).isEqualTo(2L);
+            softly.assertThat(response.getMenus().get(1).getMenuName()).isEqualTo("메뉴2");
+            softly.assertThat(response.getMenus().get(1).getPrice()).isEqualTo(5000);
+            softly.assertThat(response.getMenus().get(1).getDescription()).isEqualTo("소개2");
+            softly.assertThat(response.getMenus().get(1).getMainCategory()).isEqualTo(MainCategory.CHINESE);
+            softly.assertThat(response.getMenus().get(1).getSubCategory()).isEqualTo(SubCategory.SIDE);
 
         });
-
-//        // given
-//        StoreResponseDto.GetById response = storeService.getStoreById(1L);
-//
-//        // then
-//        assertSoftly(softly -> {
-//            softly.assertThat(response.getStoreId()).isEqualTo(1L);
-//            softly.assertThat(response.getOwnerId()).isEqualTo(1L);
-//            softly.assertThat(response.getName()).isEqualTo("가게명");
-//            softly.assertThat(response.getAddress()).isEqualTo("가게주소");
-//            softly.assertThat(response.getOpenTime()).isEqualTo(LocalTime.parse("10:00"));
-//            softly.assertThat(response.getCloseTime()).isEqualTo(LocalTime.parse("18:00"));
-//            softly.assertThat(response.getDeliveryFee()).isEqualTo(3000);
-//            softly.assertThat(response.getMinOrderPrice()).isEqualTo(10000);
-//            softly.assertThat(response.getNotice()).isEqualTo("가게공지");
-//            softly.assertThat(response.getStatus()).isEqualTo(Status.OPEN);
-//            softly.assertThat(response.getPhone()).isEqualTo("02-123-4567");
-//        });
 
     }
 
