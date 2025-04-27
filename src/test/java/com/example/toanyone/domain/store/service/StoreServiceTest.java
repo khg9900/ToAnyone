@@ -265,9 +265,6 @@ public class StoreServiceTest {
                 .phone("02-123-4567")
                 .build();
 
-        LocalTime openTime = LocalTime.parse("10:00");
-        LocalTime closeTime = LocalTime.parse("18:00");
-
         Store store = new Store(user, requestDto);
         Menu menu1 = new Menu(store, "메뉴1", "소개1", 5000, MainCategory.KOREAN, SubCategory.MAIN);
         ReflectionTestUtils.setField(menu1, "id", 1L);
