@@ -13,6 +13,7 @@ public class MenuDto {
 
     @Getter
     @NoArgsConstructor
+    @AllArgsConstructor
     public static class Request {
         @NotBlank(message = "메뉴 이름 입력은 입력은 필수입니다")
         private String name;
