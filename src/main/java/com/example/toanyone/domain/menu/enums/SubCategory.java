@@ -1,5 +1,8 @@
 package com.example.toanyone.domain.menu.enums;
 
+import com.example.toanyone.global.common.code.ErrorStatus;
+import com.example.toanyone.global.common.error.ApiException;
+
 import java.util.Arrays;
 
 public enum SubCategory {
@@ -11,6 +14,6 @@ public enum SubCategory {
         return Arrays.stream(SubCategory.values())
                 .filter(r -> r.name().equalsIgnoreCase(subCategory))
                 .findFirst()
-                .orElseThrow(() -> new RuntimeException("유효하지 않은 세부 카테고리"));
+                .orElseThrow(() -> new ApiException(ErrorStatus.INVALID_SUB_CATEGORY));
     }
 }
