@@ -103,14 +103,17 @@ public class CartServiceTest {
 
         // when
         cartService.addCart(authUser, storeId, menuId, 2); // 메뉴 2개 추가
+/*
+  ArgumentCaptor : 특정 메서드가 호출될 때 전달된 인자를 캡처 → 나중에 해당 인자에 대해 검증하거나 테스트할 수 있게 해줌
 
+ */
         // then
         ArgumentCaptor<Cart> cartCaptor = ArgumentCaptor.forClass(Cart.class);  // Cart 객체 캡처
         verify(cartRepository).save(cartCaptor.capture());  // cartRepository.save() 호출 시 캡처
 
         // 캡처된 Cart 객체를 검증
         Cart capturedCart = cartCaptor.getValue();
-        assertNotNull(capturedCart);  // Cart 객체가 null이 아닌지 확인
+        assertNotNull(capturedCart);
         assertEquals(cart.getUser(), capturedCart.getUser());  // 사용자 정보가 동일한지 확인
         assertEquals(cart.getStore(), capturedCart.getStore());  // 가게 정보가 동일한지 확인
         assertEquals(2000, capturedCart.getTotalPrice());  // 총 가격이 올바르게 계산되었는지 확인
