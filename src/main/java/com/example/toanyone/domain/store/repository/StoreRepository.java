@@ -39,5 +39,7 @@ public interface StoreRepository extends JpaRepository<Store, Long> {
     @Query("SELECT s.deleted FROM Store s WHERE s.id = :id")
     Boolean getDeletedById(@Param("id") Long id);
 
+    boolean existsByUserIdAndDeletedFalse(Long ownerId);
+
 
 }

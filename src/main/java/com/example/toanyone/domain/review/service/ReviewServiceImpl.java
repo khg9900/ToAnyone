@@ -189,7 +189,7 @@ public class ReviewServiceImpl implements ReviewService {
         }
 
         // 삭제된 리뷰 일 때
-        if(review.getDeleted() == true){
+        if(review.getDeleted()){
             throw new ApiException(ErrorStatus.REVIEW_ALREADY_DELETED);
         }
 
@@ -197,6 +197,9 @@ public class ReviewServiceImpl implements ReviewService {
 
         return new ReviewResponseDto("리뷰가 성공적으로 삭제되었습니다.");
     }
+
+
+//    public 페이징 함수 처리
 
 //        hardDelete
 //    delete : 한행=로우 하나만 지우는거
@@ -208,7 +211,7 @@ public class ReviewServiceImpl implements ReviewService {
 //
 //            Review review = reviewRepostiory.findbyid(id);
 //            review.softDelete()
-//
+// 리뷰 조회 순서
 //    테스트 코드
 //            통합테스트 (sprigboot) , 단위테스트 (mock)
 //    통합테스트는 : 진짜 db 정보 불러와서 해야하는데 -> test db 만들어서

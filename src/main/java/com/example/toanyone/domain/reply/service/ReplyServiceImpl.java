@@ -126,5 +126,7 @@ public class ReplyServiceImpl implements ReplyService {
 
         return new ReplyResponseDto("댓글이 정상적으로 삭제되었습니다.");
     }
+    // 위에 검증 로직들 함수로
+
 
 }
