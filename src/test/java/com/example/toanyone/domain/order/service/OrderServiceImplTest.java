@@ -43,22 +43,16 @@ class OrderServiceImplTest {
 
     @Mock
     private OrderRepository orderRepository;
-
     @Mock
     private OrderItemRepository orderItemRepository;
-
     @Mock
     private CartService cartService;
-
     @Mock
     private CartRepository cartRepository;
-
     @Mock
     private StoreRepository storeRepository;
-
     @Mock
     private UserRepository userRepository;
-
     @Mock
     private MenuRepository menuRepository;
 
@@ -66,6 +60,52 @@ class OrderServiceImplTest {
     void setUp() {
         MockitoAnnotations.openMocks(this);
     }
+
+    //
+    //  공통 Fixture 메서드
+    //
+
+    private User createUser(Long id, String email, String password, UserRole role) {
+        User user = new User();
+        ReflectionTestUtils.setField(user, "id", id);
+        ReflectionTestUtils.setField(user, "email", email);
+        ReflectionTestUtils.setField(user, "password", password);
+        ReflectionTestUtils.setField(user, "userRole", role);
+        return user;
+    }
+
+    private Store createStore(User owner, Long id, Status status, int minOrderPrice, int deliveryFee) {
+        Store store = new Store();
+        ReflectionTestUtils.setField(store, "user", owner);
+        ReflectionTestUtils.setField(store, "status", status);
+        ReflectionTestUtils.setField(store, "openTime", LocalTime.of(9, 0));
+        ReflectionTestUtils.setField(store, "closeTime", LocalTime.of(22, 0));
+        ReflectionTestUtils.setField(store, "id", id);
+        ReflectionTestUtils.setField(store, "minOrderPrice", minOrderPrice);
+        ReflectionTestUtils.setField(store, "deliveryFee", deliveryFee);
+        return store;
+    }
+
+    private Menu createMenu(Store store, Long id, String name, int price) {
+        Menu menu = new Menu();
+        ReflectionTestUtils.setField(menu, "store", store);
+        ReflectionTestUtils.setField(menu, "name", name);
+        ReflectionTestUtils.setField(menu, "price", price);
+        ReflectionTestUtils.setField(menu, "id", id);
+        return menu;
+    }
+
+    private Cart createCart(User user, Store store, int totalPrice) {
+        return new Cart(user, store, totalPrice);
+    }
+
+    private CartItem createCartItem(Cart cart, Menu menu, int quantity) {
+        return new CartItem(cart, menu, quantity, menu.getPrice());
+    }
+
+    //
+    //  테스트 시작
+    //
 
     @Nested
     @DisplayName("주문 생성 (createOrder)")
@@ -77,30 +117,12 @@ class OrderServiceImplTest {
             // given
             AuthUser authUser = new AuthUser(1L, "user@example.com", "USER");
 
-            User user = new User();
-            ReflectionTestUtils.setField(user, "id", 1L);
-            ReflectionTestUtils.setField(user, "email", "user@example.com");
-            ReflectionTestUtils.setField(user, "password", "password");
-            ReflectionTestUtils.setField(user, "userRole", UserRole.USER);
+            User user = createUser(1L, "user@example.com", "password", UserRole.USER);
+            Store store = createStore(user, 100L, Status.OPEN, 5000, 3000);
+            Menu menu = createMenu(store, 200L, "김치찌개", 10000);
 
-            Store store = new Store();
-            ReflectionTestUtils.setField(store, "user", user);
-            ReflectionTestUtils.setField(store, "status", Status.OPEN);
-            ReflectionTestUtils.setField(store, "openTime", LocalTime.of(9, 0));
-            ReflectionTestUtils.setField(store, "closeTime", LocalTime.of(22, 0));
-            ReflectionTestUtils.setField(store, "id", 100L); // storeId 세팅
-            ReflectionTestUtils.setField(store, "minOrderPrice", 5000);
-
-            Menu menu = new Menu();
-            ReflectionTestUtils.setField(menu, "store", store);
-            ReflectionTestUtils.setField(menu, "name", "김치찌개");
-            ReflectionTestUtils.setField(menu, "description", "맛있는 김치찌개");
-            ReflectionTestUtils.setField(menu, "price", 10000);
-            ReflectionTestUtils.setField(menu, "id", 200L); // menuId 세팅
-            ReflectionTestUtils.setField(store, "deliveryFee", 3000);
-
-            Cart cart = new Cart(user, store, 0);
-            CartItem cartItem = new CartItem(cart, menu, 2, 10000);
+            Cart cart = createCart(user, store, 0);
+            CartItem cartItem = createCartItem(cart, menu, 2);
             cart.getCartItems().add(cartItem);
 
             ReflectionTestUtils.setField(cart, "totalPrice", cartItem.getMenu_price() * cartItem.getQuantity());
@@ -108,7 +130,11 @@ class OrderServiceImplTest {
             when(userRepository.findById(1L)).thenReturn(Optional.of(user));
             when(cartRepository.findByUserIdOrElseThrow(1L)).thenReturn(cart);
             when(storeRepository.findById(store.getId())).thenReturn(Optional.of(store));
-            when(menuRepository.findById(menu.getId())).thenReturn(Optional.of(menu));
+            when(menuRepository.findAllById(anyList()))
+                    .thenReturn(cart.getCartItems().stream()
+                            .map(CartItem::getMenu)
+                            .toList());
+
             when(orderRepository.save(any(Order.class))).thenAnswer(invocation -> invocation.getArgument(0));
             when(orderItemRepository.save(any(OrderItem.class))).thenAnswer(invocation -> invocation.getArgument(0));
 
@@ -120,6 +146,7 @@ class OrderServiceImplTest {
             assertThat(response.getStoreId()).isEqualTo(store.getId());
             assertThat(response.getStatus()).isEqualTo(OrderStatus.WAITING.name());
         }
+
     }
 
     @Nested
@@ -129,28 +156,16 @@ class OrderServiceImplTest {
         @Test
         @DisplayName("가게가 마감 상태라 주문 실패")
         void createOrderFailBecauseStoreClosed() {
-            // given
             AuthUser authUser = new AuthUser(1L, "user@example.com", "USER");
 
-            User user = new User();
-            ReflectionTestUtils.setField(user, "id", 1L);
-
-            Store store = new Store();
-            ReflectionTestUtils.setField(store, "user", user);
-            ReflectionTestUtils.setField(store, "status", Status.CLOSED); // 가게 닫힘
-            ReflectionTestUtils.setField(store, "openTime", LocalTime.of(9, 0));
-            ReflectionTestUtils.setField(store, "closeTime", LocalTime.of(22, 0));
-            ReflectionTestUtils.setField(store, "id", 100L);
-            ReflectionTestUtils.setField(store, "minOrderPrice", 5000);
-            ReflectionTestUtils.setField(store, "deliveryFee", 3000);
-
-            Cart cart = new Cart(user, store, 10000);
+            User user = createUser(1L, "user@example.com", "password", UserRole.USER);
+            Store store = createStore(user, 100L, Status.CLOSED, 5000, 3000);
+            Cart cart = createCart(user, store, 10000);
 
             when(userRepository.findById(1L)).thenReturn(Optional.of(user));
             when(cartRepository.findByUserIdOrElseThrow(1L)).thenReturn(cart);
             when(storeRepository.findById(store.getId())).thenReturn(Optional.of(store));
 
-            // when & then
             assertThatThrownBy(() -> orderService.createOrder(authUser))
                     .isInstanceOf(ApiException.class)
                     .hasMessageContaining("가게가 영업 중이 아닙니다.");
@@ -159,28 +174,16 @@ class OrderServiceImplTest {
         @Test
         @DisplayName("최소 주문 금액을 만족하지 못해 주문 실패")
         void createOrderFailBecauseMinOrderPriceNotMet() {
-            // given
             AuthUser authUser = new AuthUser(1L, "user@example.com", "USER");
 
-            User user = new User();
-            ReflectionTestUtils.setField(user, "id", 1L);
-
-            Store store = new Store();
-            ReflectionTestUtils.setField(store, "user", user);
-            ReflectionTestUtils.setField(store, "status", Status.OPEN);
-            ReflectionTestUtils.setField(store, "openTime", LocalTime.of(9, 0));
-            ReflectionTestUtils.setField(store, "closeTime", LocalTime.of(22, 0));
-            ReflectionTestUtils.setField(store, "id", 100L);
-            ReflectionTestUtils.setField(store, "minOrderPrice", 20000); // 최소 주문 금액 설정
-            ReflectionTestUtils.setField(store, "deliveryFee", 3000);
-
-            Cart cart = new Cart(user, store, 10000); // 10000원 장바구니
+            User user = createUser(1L, "user@example.com", "password", UserRole.USER);
+            Store store = createStore(user, 100L, Status.OPEN, 20000, 3000); // 최소 주문 금액 20000원
+            Cart cart = createCart(user, store, 10000); // 장바구니 총 금액 10000원
 
             when(userRepository.findById(1L)).thenReturn(Optional.of(user));
             when(cartRepository.findByUserIdOrElseThrow(1L)).thenReturn(cart);
             when(storeRepository.findById(store.getId())).thenReturn(Optional.of(store));
 
-            // when & then
             assertThatThrownBy(() -> orderService.createOrder(authUser))
                     .isInstanceOf(ApiException.class)
                     .hasMessageContaining("최소 주문 금액을 만족해야 합니다");
@@ -194,18 +197,11 @@ class OrderServiceImplTest {
         @Test
         @DisplayName("주문 상태 변경 성공")
         void updateOrderStatusSuccess() {
-            // given
             AuthUser authUser = new AuthUser(1L, "owner@example.com", "OWNER");
 
-            User owner = new User();
-            ReflectionTestUtils.setField(owner, "id", 1L);
-
-            Store store = new Store();
-            ReflectionTestUtils.setField(store, "id", 100L);
-            ReflectionTestUtils.setField(store, "user", owner);
-
-            User customer = new User();
-            ReflectionTestUtils.setField(customer, "id", 2L);
+            User owner = createUser(1L, "owner@example.com", "password", UserRole.OWNER);
+            Store store = createStore(owner, 100L, Status.OPEN, 5000, 3000);
+            User customer = createUser(2L, "customer@example.com", "password", UserRole.USER);
 
             Order order = Order.builder()
                     .store(store)
@@ -222,10 +218,8 @@ class OrderServiceImplTest {
                     .status(OrderStatus.COOKING.name())
                     .build();
 
-            // when
             OrderDto.StatusUpdateResponse response = orderService.updateOrderStatus(authUser, order.getId(), request);
 
-            // then
             assertThat(response.getOrderId()).isEqualTo(order.getId());
             assertThat(response.getUpdatedStatus()).isEqualTo(OrderStatus.COOKING.name());
         }
@@ -233,23 +227,16 @@ class OrderServiceImplTest {
         @Test
         @DisplayName("주문 상태 변경 실패 - 잘못된 요청 (변경할 수 없는 상태)")
         void updateOrderStatusInvalidTransition() {
-            // given
             AuthUser authUser = new AuthUser(1L, "owner@example.com", "OWNER");
 
-            User owner = new User();
-            ReflectionTestUtils.setField(owner, "id", 1L);
-
-            Store store = new Store();
-            ReflectionTestUtils.setField(store, "id", 100L);
-            ReflectionTestUtils.setField(store, "user", owner);
-
-            User customer = new User();
-            ReflectionTestUtils.setField(customer, "id", 2L);
+            User owner = createUser(1L, "owner@example.com", "password", UserRole.OWNER);
+            Store store = createStore(owner, 100L, Status.OPEN, 5000, 3000);
+            User customer = createUser(2L, "customer@example.com", "password", UserRole.USER);
 
             Order order = Order.builder()
                     .store(store)
                     .user(customer)
-                    .status(OrderStatus.DELIVERING) // 이미 배달중
+                    .status(OrderStatus.DELIVERING) // 이미 배달 중
                     .totalPrice(15000)
                     .deliveryFee(3000)
                     .build();
@@ -258,10 +245,9 @@ class OrderServiceImplTest {
             when(orderRepository.findById(order.getId())).thenReturn(Optional.of(order));
 
             OrderDto.StatusUpdateRequest request = OrderDto.StatusUpdateRequest.builder()
-                    .status(OrderStatus.COOKING.name()) // cooking -> waiting 불가
+                    .status(OrderStatus.COOKING.name()) // 잘못된 상태 이동
                     .build();
 
-            // when & then
             assertThatThrownBy(() -> orderService.updateOrderStatus(authUser, order.getId(), request))
                     .isInstanceOf(ApiException.class)
                     .hasMessageContaining("주문 상태 변경 순서가 올바르지 않습니다.");
@@ -275,30 +261,24 @@ class OrderServiceImplTest {
         @Test
         @DisplayName("주문 내역 조회 성공")
         void getUserOrderHistorySuccess() {
-            // given
             AuthUser authUser = new AuthUser(1L, "user@example.com", "USER");
 
-            User user = new User();
-            ReflectionTestUtils.setField(user, "id", 1L);
+            User user = createUser(1L, "user@example.com", "password", UserRole.USER);
 
             when(userRepository.findById(1L)).thenReturn(Optional.of(user));
 
-            // when
             var result = orderService.getOrdersByUser(authUser);
 
-            // then
             assertThat(result).isNotNull();
         }
 
         @Test
         @DisplayName("주문 내역 조회 실패 - 유저 없음")
         void getUserOrderHistoryFail_UserNotFound() {
-            // given
             AuthUser authUser = new AuthUser(999L, "notfound@example.com", "USER");
 
             when(userRepository.findById(999L)).thenReturn(Optional.empty());
 
-            // when & then
             assertThatThrownBy(() -> orderService.getOrdersByUser(authUser))
                     .isInstanceOf(ApiException.class)
                     .hasMessageContaining("고객 정보가 없습니다.");
@@ -312,36 +292,26 @@ class OrderServiceImplTest {
         @Test
         @DisplayName("가게 주문 목록 조회 성공")
         void getStoreOrdersSuccess() {
-            // given
             AuthUser authUser = new AuthUser(1L, "owner@example.com", "OWNER");
 
-            User user = new User();
-            ReflectionTestUtils.setField(user, "id", 1L);
+            User owner = createUser(1L, "owner@example.com", "password", UserRole.OWNER);
+            Store store = createStore(owner, 100L, Status.OPEN, 5000, 3000);
 
-            Store store = new Store();
-            ReflectionTestUtils.setField(store, "id", 100L);
-            ReflectionTestUtils.setField(store, "user", user); // ⭐ user 세팅 추가
-
-            when(userRepository.findById(authUser.getId())).thenReturn(Optional.of(user));
+            when(userRepository.findById(authUser.getId())).thenReturn(Optional.of(owner));
             when(storeRepository.findById(store.getId())).thenReturn(Optional.of(store));
 
-            // when
             var result = orderService.getOrdersByStore(authUser, store.getId());
 
-            // then
             assertThat(result).isNotNull();
         }
-
 
         @Test
         @DisplayName("가게 주문 목록 조회 실패 - 가게 없음")
         void getStoreOrdersFail_StoreNotFound() {
-            // given
             AuthUser authUser = new AuthUser(1L, "owner@example.com", "OWNER");
 
             when(storeRepository.findById(999L)).thenReturn(Optional.empty());
 
-            // when & then
             assertThatThrownBy(() -> orderService.getOrdersByStore(authUser, 999L))
                     .isInstanceOf(ApiException.class)
                     .hasMessageContaining("고객 정보가 없습니다.");

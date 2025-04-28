@@ -3,6 +3,7 @@ package com.example.toanyone.domain.order.controller;
 import com.example.toanyone.domain.order.dto.OrderDto;
 import com.example.toanyone.domain.order.service.OrderService;
 import com.example.toanyone.global.auth.dto.AuthUser;
+import com.example.toanyone.global.auth.jwt.JwtUtil;
 import com.example.toanyone.global.common.code.ErrorStatus;
 import com.example.toanyone.global.common.response.ApiResponse;
 import com.example.toanyone.global.common.error.ApiException;
@@ -15,8 +16,6 @@ import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
-
-import java.util.List;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
@@ -31,6 +30,9 @@ class OrderControllerTest {
 
     @MockBean
     private OrderService orderService;
+
+    @MockBean
+    private JwtUtil jwtUtil; // JwtUtil 빈을 MockBean으로 추가
 
     private final ObjectMapper objectMapper = new ObjectMapper();
 
