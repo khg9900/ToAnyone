@@ -4,6 +4,7 @@ import com.example.toanyone.domain.menu.entity.Menu;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.Where;
 
 @Getter
 @Entity

@@ -22,7 +22,9 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Map;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -89,12 +91,27 @@ public class OrderServiceImpl implements OrderService {
 
         orderRepository.save(order); // 주문 저장
 
-        // 7. 장바구니 내 메뉴들을 주문 항목(OrderItem)으로 변환 후 저장
+        // 7. 장바구니 내 메뉴들을 주문 항목(OrderItem)으로 변환 후 저장(리펙토링 완료)
+
+        // 1. 장바구니 메뉴 ID 리스트 추출
+        List<Long> menuIds = cart.getCartItems().stream()
+                .map(cartItem -> cartItem.getMenu().getId())
+                .toList();
+
+        // 2. 메뉴를 한 번에 조회
+        List<Menu> menus = menuRepository.findAllById(menuIds);
+
+        // 3. 메뉴를 Map으로 변환 (menuId -> Menu 객체)
+        Map<Long, Menu> menuMap = menus.stream()
+                .collect(Collectors.toMap(Menu::getId, menu -> menu));
+
+        // 4. 주문 항목(OrderItem) 생성
         List<OrderItem> orderItems = cart.getCartItems().stream()
                 .map(cartItem -> {
-                    Long menuId = cartItem.getMenu().getId();
-                    Menu menu = menuRepository.findById(menuId).orElseThrow(() -> new ApiException(ErrorStatus.MENU_NOT_FOUND));
-
+                    Menu menu = menuMap.get(cartItem.getMenu().getId());
+                    if (menu == null) {
+                        throw new ApiException(ErrorStatus.MENU_NOT_FOUND);
+                    }
                     return OrderItem.builder()
                             .order(order)
                             .menu(menu)
@@ -102,10 +119,10 @@ public class OrderServiceImpl implements OrderService {
                             .menuPrice(cartItem.getMenu_price())
                             .build();
                 })
-                .toList();  // Java 16 이상
-        for (OrderItem item : orderItems) {
-            orderItemRepository.save(item); // 하나씩 저장
-        }
+                .toList();
+
+        // 5. 주문 항목을 한 번에 저장
+        orderItemRepository.saveAll(orderItems);
 
         // 8. 장바구니 비우기 (주문 완료 시 초기화)
         cartService.clearCartItems(user.getId());
