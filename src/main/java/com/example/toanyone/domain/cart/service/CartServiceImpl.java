@@ -1,7 +1,6 @@
 package com.example.toanyone.domain.cart.service;
 
 import com.example.toanyone.domain.cart.dto.CartItemDto;
-import com.example.toanyone.domain.cart.dto.CartResponseDto;
 import com.example.toanyone.domain.cart.entity.Cart;
 import com.example.toanyone.domain.cart.entity.CartItem;
 import com.example.toanyone.domain.cart.repository.CartItemRepository;
@@ -35,7 +34,7 @@ public class CartServiceImpl implements CartService {
 
     @Override
     @Transactional
-    public CartResponseDto addCart(AuthUser authUser, Long storeId , Long menuId, Integer quantity) {
+    public void addCart(AuthUser authUser, Long storeId , Long menuId, Integer quantity) {
 
         // 가게 폐업 여부 판별
         if (storeRepository.getDeletedById(storeId)) {
@@ -75,8 +74,6 @@ public class CartServiceImpl implements CartService {
 
         cartRepository.save(cart);
         cartItemRepository.save(cartItem);
-
-        return new CartResponseDto("장바구니에 추가되었습니다");
     }
 
     @Override
@@ -108,15 +105,14 @@ public class CartServiceImpl implements CartService {
     // orderservice에서 user로 받을 수 있게
     @Override
     @Transactional
-    public CartResponseDto clearCartItems(Long userId) {
+    public void clearCartItems(Long userId) {
         Cart cart = cartRepository.findByUserIdOrElseThrow(userId);
         cartRepository.delete(cart);
-        return new CartResponseDto("장바구니가 비워졌습니다");
     }
 
     @Override
     @Transactional
-    public CartResponseDto updateCartItems(AuthUser authUser, Long storeId, Long menuId, Integer quantity) {
+    public void updateCartItems(AuthUser authUser, Long storeId, Long menuId, Integer quantity) {
         Cart cart = cartRepository.findByUserIdOrElseThrow(authUser.getId());
         CartItem cartItem = cartItemRepository.findByMenuIdAndCartOrElseThrow(menuId, cart);
 
@@ -124,16 +120,12 @@ public class CartServiceImpl implements CartService {
         if (changedQuantity<0){
             throw new ApiException(ErrorStatus.CART_ITEM_QUANTITY_UNDERFLOW);
         }
-        if (changedQuantity ==0) {
+        if (changedQuantity == 0) {
             cartItemRepository.delete(cartItem);
             cart.changeTotalPrice();
-            return new CartResponseDto("해당 품목을 삭제합니다");
+            return;
         }
         cartItem.setCartItemQuantity(changedQuantity);
         cart.changeTotalPrice();
-
-        return new CartResponseDto("품목의 수량 변경이 완료되었습니다.");
     }
-
-
 }

@@ -12,16 +12,4 @@ public class AuthResponseDto {
         private final String refreshToken;
     }
 
-    @Getter
-    @AllArgsConstructor
-    public static class Signout {
-        private String message;
-    }
-
-    @Getter
-    @AllArgsConstructor
-    public static class Reissue {
-        private String newAccessToken;
-    }
-
 }

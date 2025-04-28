@@ -1,14 +1,11 @@
 package com.example.toanyone.domain.review.service;
 
 import com.example.toanyone.domain.order.entity.Order;
-import com.example.toanyone.domain.order.enums.OrderStatus;
 import com.example.toanyone.domain.order.repository.OrderRepository;
 import com.example.toanyone.domain.reply.dto.ReplyDto;
 import com.example.toanyone.domain.reply.entity.Reply;
-import com.example.toanyone.domain.reply.repository.ReplyRepository;
 import com.example.toanyone.domain.review.dto.ReviewCheckResponseDto;
 import com.example.toanyone.domain.review.dto.ReviewCreateRequestDto;
-import com.example.toanyone.domain.review.dto.ReviewResponseDto;
 import com.example.toanyone.domain.review.entity.Review;
 import com.example.toanyone.domain.review.repository.ReviewRepository;
 import com.example.toanyone.domain.store.entity.Store;
@@ -25,11 +22,8 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
-import java.sql.Timestamp;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -44,7 +38,7 @@ public class ReviewServiceImpl implements ReviewService {
      * */
     @Override
     @Transactional
-    public ReviewResponseDto createReview(Long storeId, Long orderId, AuthUser authUser, ReviewCreateRequestDto request){
+    public void createReview(Long storeId, Long orderId, AuthUser authUser, ReviewCreateRequestDto request){
 
         // 가게 일치 여부 검증
         Order order = orderRepository.findReviewableOrder(orderId, authUser.getId())
@@ -58,9 +52,7 @@ public class ReviewServiceImpl implements ReviewService {
         User user = userRepository.findById(authUser.getId())
                 .orElseThrow(()-> new ApiException(ErrorStatus.USER_NOT_FOUND));
 
-
         Store store = order.getStore();
-
 
         Review review = new Review(
                 order,
@@ -72,8 +64,6 @@ public class ReviewServiceImpl implements ReviewService {
         );
 
         reviewRepository.save(review);
-
-        return new ReviewResponseDto("리뷰가 작성되었습니다.");
     }
 
     /**
@@ -108,7 +98,7 @@ public class ReviewServiceImpl implements ReviewService {
      * */
     @Override
     @Transactional
-    public ReviewResponseDto updateReview(Long storeId, Long reviewId, AuthUser authUser, ReviewCreateRequestDto requestDto) {
+    public void updateReview(Long storeId, Long reviewId, AuthUser authUser, ReviewCreateRequestDto requestDto) {
 
         Review review = reviewRepository.findById(reviewId)
                 .orElseThrow(() -> new ApiException(ErrorStatus.REVIEW_NOT_FOUND));
@@ -122,9 +112,6 @@ public class ReviewServiceImpl implements ReviewService {
         }
 
         review.update(requestDto.getRating(),requestDto.getContent(),requestDto.getVisible());
-
-        return new ReviewResponseDto("리뷰가 성공적으로 수정되었습니다.");
-
     }
 
     /**
@@ -132,7 +119,7 @@ public class ReviewServiceImpl implements ReviewService {
      * */
     @Override
     @Transactional
-    public ReviewResponseDto deleteReview(Long storeId, Long reviewId, AuthUser authUser) {
+    public void deleteReview(Long storeId, Long reviewId, AuthUser authUser) {
 
         Review review = reviewRepository.findById(reviewId)
                 .orElseThrow(() -> new ApiException(ErrorStatus.REVIEW_NOT_FOUND));
@@ -157,13 +144,11 @@ public class ReviewServiceImpl implements ReviewService {
         }
 
         review.softDelete();
-
-        return new ReviewResponseDto("리뷰가 성공적으로 삭제되었습니다.");
     }
 
 
     // 페이징 함수 처리
-// 페이징 처리 로직을 분리하여 중복 제거
+    // 페이징 처리 로직을 분리하여 중복 제거
     private Page<ReviewCheckResponseDto> convertToResponseDtoPage(Page<Review> reviewPage, Pageable pageable) {
         List<ReviewCheckResponseDto> response = new ArrayList<>();
         for (Review review : reviewPage.getContent()) {

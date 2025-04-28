@@ -35,7 +35,7 @@ public class AuthServiceImpl implements AuthService {
 
     @Transactional
     @Override
-    public String signup(Signup signupRequest) {
+    public void signup(Signup signupRequest) {
 
         // 이메일 중복 체크
         if (userRepository.existsByEmail(signupRequest.getEmail())) {
@@ -67,8 +67,6 @@ public class AuthServiceImpl implements AuthService {
         );
 
         userRepository.save(user);
-
-        return "회원가입 성공";
     }
 
     @Transactional
@@ -129,15 +127,13 @@ public class AuthServiceImpl implements AuthService {
         return new AuthResponseDto.CreateToken(newAccess, newRefresh);
     }
 
-    public String logout(Long userId) {
+    public void logout(Long userId) {
 
         // 로그인 정보로 DB 에서 refresh Token 찾기
         Refresh refresh = refreshRepository.findByUserId(userId);
 
         // 토큰 삭제
         refreshRepository.deleteByUserId(userId);
-
-        return "로그아웃 완료";
     }
 
 }

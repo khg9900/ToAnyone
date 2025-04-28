@@ -7,11 +7,11 @@ import jakarta.servlet.http.HttpServletResponse;
 
 public interface AuthService {
 
-    String signup(AuthRequestDto.Signup signupRequest);
+    void signup(AuthRequestDto.Signup signupRequest);
 
     AuthResponseDto.CreateToken login(AuthRequestDto.Login signinRequest);
 
     AuthResponseDto.CreateToken reissue(Long userId, HttpServletRequest request);
 
-    String logout(Long userId);
+    void logout(Long userId);
 }

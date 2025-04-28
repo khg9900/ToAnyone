@@ -19,7 +19,6 @@ public class StoreResponseDto {
     public static class GetAll {
         private final Long storeId;
         private final String name;
-
     }
 
     // 메뉴 단건 조회
@@ -66,18 +65,7 @@ public class StoreResponseDto {
 
                 menuList.add(dto);
             }
-
             this.menus = menuList;
-        }
-    }
-
-    // 요청 성공
-    @Getter
-    public static class Complete {
-        private final String message;
-
-        public Complete(String message) {
-            this.message = message;
         }
     }
 }
