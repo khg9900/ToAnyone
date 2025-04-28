@@ -21,6 +21,7 @@ import com.example.toanyone.global.common.code.ErrorStatus;
 import com.example.toanyone.global.common.error.ApiException;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.ArgumentCaptor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
@@ -77,6 +78,46 @@ public class CartServiceTest {
         verify(cartItemRepository).save(any(CartItem.class));
         assertEquals(12000, cart.getTotalPrice()); // (10000 + 1000*2 = 12000)
     }
+
+    @Test
+    void 장바구니_생성과_메뉴_추가를_성공() {
+        // given
+        Long storeId = 1L;
+        Long menuId = 1L;
+        Long userId = 1L;
+        AuthUser authUser = new AuthUser(userId, "kkk@gmail.com", "OWNER");
+
+        Store store = mock(Store.class);
+        Menu menu = new Menu(store, new MenuDto.Request("originMenu", "description", 1000, "KOREAN", "DRINK"));
+        ReflectionTestUtils.setField(menu, "id", menuId);
+
+        User user = mock(User.class);
+        Cart cart = new Cart(user, store, 0);  // Cart 객체 생성
+
+        // Mocking repository behavior
+        given(cartRepository.existsByUserId(userId)).willReturn(false); // 첫 번째 생성이므로 false 반환
+        given(userRepository.findById(authUser.getId())).willReturn(Optional.of(user));
+        given(storeRepository.findByIdOrElseThrow(storeId)).willReturn(store);
+        given(menuRepository.findByIdOrElseThrow(menuId)).willReturn(menu);
+        given(menuRepository.existsByIdAndStoreId(menuId, storeId)).willReturn(true);
+
+        // when
+        cartService.addCart(authUser, storeId, menuId, 2); // 메뉴 2개 추가
+
+        // then
+        ArgumentCaptor<Cart> cartCaptor = ArgumentCaptor.forClass(Cart.class);  // Cart 객체 캡처
+        verify(cartRepository).save(cartCaptor.capture());  // cartRepository.save() 호출 시 캡처
+
+        // 캡처된 Cart 객체를 검증
+        Cart capturedCart = cartCaptor.getValue();
+        assertNotNull(capturedCart);  // Cart 객체가 null이 아닌지 확인
+        assertEquals(cart.getUser(), capturedCart.getUser());  // 사용자 정보가 동일한지 확인
+        assertEquals(cart.getStore(), capturedCart.getStore());  // 가게 정보가 동일한지 확인
+        assertEquals(2000, capturedCart.getTotalPrice());  // 총 가격이 올바르게 계산되었는지 확인
+
+        verify(cartItemRepository).save(any(CartItem.class));  // CartItem이 저장되는지 확인
+    }
+
 
     @Test
     void 가게_폐업으로_인한_메뉴_추가_실패() {
@@ -144,6 +185,7 @@ public class CartServiceTest {
 
         assertEquals(ErrorStatus.USER_NOT_FOUND, exception.getErrorCode());
     }
+
 
     /*
     2. 장바구니에 들어있는 메뉴들 가져오기
