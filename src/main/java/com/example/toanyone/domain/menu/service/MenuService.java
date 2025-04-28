@@ -7,9 +7,9 @@ import org.springframework.stereotype.Service;
 @Service
 public interface MenuService {
 
-    MenuDto.Response createMenu(AuthUser authUser, Long storeId, MenuDto.Request requestDto);
+    void createMenu(AuthUser authUser, Long storeId, MenuDto.Request requestDto);
 
-    MenuDto.Response updateMenu(AuthUser authUser, Long storeId, Long menuId, MenuDto.Request requestDto);
+    void updateMenu(AuthUser authUser, Long storeId, Long menuId, MenuDto.Request requestDto);
 
-    MenuDto.Response deleteMenu(AuthUser authUser, Long storeId, Long menuId);
+    void deleteMenu(AuthUser authUser, Long storeId, Long menuId);
 }

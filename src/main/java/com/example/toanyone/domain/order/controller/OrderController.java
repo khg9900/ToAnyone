@@ -28,7 +28,7 @@ public class OrderController {
             @Auth AuthUser authUser
     ) {
         OrderDto.CreateResponse response = orderService.createOrder(authUser);
-        return ApiResponse.onSuccess(SuccessStatus.CREATED, response);
+        return ApiResponse.onSuccess(SuccessStatus.ORDER_CREATED, response);
     }
 
 
@@ -39,7 +39,7 @@ public class OrderController {
             @PathVariable Long storeId
     ) {
         List<OrderDto.OwnerOrderListResponse> response = orderService.getOrdersByStore(authUser, storeId);
-        return ApiResponse.onSuccess(SuccessStatus.OK, response);
+        return ApiResponse.onSuccess(SuccessStatus.STORE_ORDERS_FETCHED, response);
     }
 
 
@@ -48,7 +48,7 @@ public class OrderController {
     public ResponseEntity<ApiResponse<List<OrderDto.UserOrderHistoryResponse>>> getUserOrders(
             @Auth AuthUser authUser) {
         List<OrderDto.UserOrderHistoryResponse> response = orderService.getOrdersByUser(authUser);
-        return ApiResponse.onSuccess(SuccessStatus.OK, response);
+        return ApiResponse.onSuccess(SuccessStatus.USER_ORDERS_FETCHED, response);
     }
 
     // 주문 상태 변경 (사장님만)
@@ -59,10 +59,7 @@ public class OrderController {
             @PathVariable Long orderId,
             @RequestBody @Valid OrderDto.StatusUpdateRequest request
     ) {
-        // 1. 서비스 호출해서 결과 response 받아옴
         OrderDto.StatusUpdateResponse response = orderService.updateOrderStatus(authUser, orderId, request);
-
-        // 2. 받아온 response 그대로 return
-        return ApiResponse.onSuccess(SuccessStatus.OK, response);
+        return ApiResponse.onSuccess(SuccessStatus.ORDER_STATUS_UPDATED, response);
     }
 }

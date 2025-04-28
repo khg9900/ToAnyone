@@ -4,6 +4,7 @@ import com.example.toanyone.domain.store.dto.StoreRequestDto;
 import com.example.toanyone.domain.store.dto.StoreResponseDto;
 import com.example.toanyone.domain.store.entity.Store;
 import com.example.toanyone.domain.store.repository.StoreRepository;
+import com.example.toanyone.domain.user.dto.UserResponseDto.Complete;
 import com.example.toanyone.domain.user.entity.User;
 import com.example.toanyone.domain.user.repository.UserRepository;
 import com.example.toanyone.global.auth.dto.AuthUser;
@@ -30,7 +31,7 @@ public class StoreServiceImpl implements StoreService {
      * 가게 생성
      */
     @Override
-    public StoreResponseDto.Complete createStore(Long ownerId, StoreRequestDto.Create dto) {
+    public void createStore(Long ownerId, StoreRequestDto.Create dto) {
 
         // DB 접근 검증
         int storeCount = storeRepository.countByUserIdAndDeletedFalse(ownerId);
@@ -45,8 +46,6 @@ public class StoreServiceImpl implements StoreService {
 
         Store newStore = new Store(user, dto);
         storeRepository.save(newStore);
-
-        return new StoreResponseDto.Complete("가게가 생성되었습니다.");
     }
 
     /**
@@ -106,7 +105,7 @@ public class StoreServiceImpl implements StoreService {
      */
     @Override
     @Transactional
-    public StoreResponseDto.Complete updateStore(AuthUser authUser, Long storeId, StoreRequestDto.Update dto) {
+    public void updateStore(AuthUser authUser, Long storeId, StoreRequestDto.Update dto) {
 
         // DB 접근 검증
         Store store = storeRepository.findByIdOrElseThrow(storeId);
@@ -118,8 +117,6 @@ public class StoreServiceImpl implements StoreService {
             throw new ApiException(ErrorStatus.STORE_SHUT_DOWN);}
 
         store.update(dto);
-
-        return new StoreResponseDto.Complete("정보가 수정되었습니다.");
     }
 
     /**
@@ -127,10 +124,10 @@ public class StoreServiceImpl implements StoreService {
      */
     @Override
     @Transactional
-    public StoreResponseDto.Complete deleteStore(AuthUser authUser, Long storeId, StoreRequestDto.Delete dto) {
-        Optional<User> user = userRepository.findById(authUser.getId());
+    public void deleteStore(AuthUser authUser, Long storeId, StoreRequestDto.Delete dto) {
+        User user = userRepository.findByIdOrElseThrow(authUser.getId());
 
-        if(!passwordEncoder.matches(dto.getPassword(), user.get().getPassword())) {
+        if(!passwordEncoder.matches(dto.getPassword(), user.getPassword())) {
             throw new ApiException(ErrorStatus.INVALID_PASSWORD);};
 
         Store store = storeRepository.findByIdOrElseThrow(storeId);
@@ -142,7 +139,6 @@ public class StoreServiceImpl implements StoreService {
             throw new ApiException(ErrorStatus.STORE_ALREADY_DELETED);}
 
         store.softDelete();
-        return new StoreResponseDto.Complete("가게가 폐업 처리되었습니다.");
     }
 
 

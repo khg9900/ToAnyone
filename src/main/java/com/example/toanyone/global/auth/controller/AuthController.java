@@ -23,23 +23,25 @@ public class AuthController {
     private final AuthService authService;
 
     @PostMapping("/auth/signup")
-    public ResponseEntity<ApiResponse<String>>  signup(@RequestBody @Valid AuthRequestDto.Signup signupRequest) {
-        return ApiResponse.onSuccess(SuccessStatus.CREATED, authService.signup(signupRequest));
+    public ResponseEntity<ApiResponse<Void>>  signup(@RequestBody @Valid AuthRequestDto.Signup signupRequest) {
+        authService.signup(signupRequest);
+        return ApiResponse.onSuccess(SuccessStatus.SIGNUP_SUCCESS);
     }
 
     @PostMapping("/auth/login")
     public ResponseEntity<ApiResponse<AuthResponseDto.CreateToken>> login(@Valid @RequestBody AuthRequestDto.Login login) {
-        return ApiResponse.onSuccess(SuccessStatus.OK, authService.login(login));
+        return ApiResponse.onSuccess(SuccessStatus.LOGIN_SUCCESS, authService.login(login));
     }
 
     @PostMapping("/auth/reissue")
     public ResponseEntity<ApiResponse<AuthResponseDto.CreateToken>> reissue(@Auth AuthUser authUser, HttpServletRequest request) {
-        return ApiResponse.onSuccess(SuccessStatus.OK, authService.reissue(authUser.getId(), request));
+        return ApiResponse.onSuccess(SuccessStatus.REISSUE_SUCCESS, authService.reissue(authUser.getId(), request));
     }
 
     @PostMapping("/auth/logout")
     public ResponseEntity<ApiResponse<String>> logout(@Auth AuthUser authUser) {
-        return ApiResponse.onSuccess(SuccessStatus.OK, authService.logout(authUser.getId()));
+        authService.logout(authUser.getId());
+        return ApiResponse.onSuccess(SuccessStatus.LOGOUT_SUCCESS);
     }
 
 }

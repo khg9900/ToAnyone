@@ -27,39 +27,33 @@ public class MenuController {
      */
 
     @PostMapping("/{storeId}/menus")
-    public ResponseEntity<ApiResponse<MenuDto.Response>> createMenu(
+    public ResponseEntity<ApiResponse<Void>> createMenu(
             @Auth AuthUser authUser,
             @PathVariable Long storeId,
-            @Valid @RequestBody MenuDto.Request requestDto) {
-
-        MenuDto.Response response = menuService.createMenu(
-                authUser,storeId, requestDto);
-
-        return ApiResponse.onSuccess(SuccessStatus.CREATED, response);
+            @Valid @RequestBody MenuDto.Request requestDto
+    ) {
+        menuService.createMenu(authUser,storeId, requestDto);
+        return ApiResponse.onSuccess(SuccessStatus.MENU_CREATED);
     }
 
     @PatchMapping("/{storeId}/menus/{menuId}")
-    public ResponseEntity<ApiResponse<MenuDto.Response>> updateMenu(
+    public ResponseEntity<ApiResponse<Void>> updateMenu(
             @Auth AuthUser authUser,
             @PathVariable Long storeId,
             @PathVariable Long menuId,
-            @RequestBody MenuDto.Request requestDto) {
-
-        MenuDto.Response response = menuService.updateMenu(
-                authUser, storeId, menuId, requestDto);
-
-        return ApiResponse.onSuccess(SuccessStatus.OK, response);
+            @RequestBody MenuDto.Request requestDto
+    ) {
+        menuService.updateMenu(authUser, storeId, menuId, requestDto);
+        return ApiResponse.onSuccess(SuccessStatus.MENU_UPDATED);
     }
 
     @DeleteMapping("/{storeId}/menus/{menuId}")
-    public ResponseEntity<ApiResponse<MenuDto.Response>> deleteMenu(
+    public ResponseEntity<ApiResponse<Void>> deleteMenu(
             @Auth AuthUser authUser,
             @PathVariable Long storeId,
-            @PathVariable Long menuId){
-
-        MenuDto.Response response = menuService.deleteMenu(authUser, storeId, menuId);
-
-        return ApiResponse.onSuccess(SuccessStatus.OK, response);
+            @PathVariable Long menuId
+    ){
+        menuService.deleteMenu(authUser, storeId, menuId);
+        return ApiResponse.onSuccess(SuccessStatus.MENU_DELETED);
     }
-
 }

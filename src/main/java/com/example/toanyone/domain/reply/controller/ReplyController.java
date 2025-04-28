@@ -1,8 +1,6 @@
 package com.example.toanyone.domain.reply.controller;
 
-import com.example.toanyone.domain.reply.dto.ReplyDto;
 import com.example.toanyone.domain.reply.dto.ReplyRequestDto;
-import com.example.toanyone.domain.reply.dto.ReplyResponseDto;
 import com.example.toanyone.domain.reply.service.ReplyService;
 import com.example.toanyone.global.auth.annotation.Auth;
 import com.example.toanyone.global.auth.dto.AuthUser;
@@ -24,24 +22,28 @@ public class ReplyController {
      * 댓글 작성
      * */
     @PostMapping("/{storeId}/reviews/{reviewId}/reply")
-    public ResponseEntity<ApiResponse<ReplyResponseDto>> replyCreate(@PathVariable Long storeId,
-                                                                     @PathVariable Long reviewId,
-                                                                     @Auth AuthUser authUser,
-                                                                     @Valid @RequestBody ReplyRequestDto requestDto) {
-        ReplyResponseDto responseDto = replyService.createReply(storeId, reviewId, authUser, requestDto);
-        return ApiResponse.onSuccess(SuccessStatus.OK, responseDto);
+    public ResponseEntity<ApiResponse<Void>> replyCreate(
+        @PathVariable Long storeId,
+        @PathVariable Long reviewId,
+        @Auth AuthUser authUser,
+        @Valid @RequestBody ReplyRequestDto requestDto
+    ) {
+        replyService.createReply(storeId, reviewId, authUser, requestDto);
+        return ApiResponse.onSuccess(SuccessStatus.COMMENT_CREATED);
     }
 
     /**
      * 댓글 수정
      * */
     @PatchMapping("/{storeId}/reviews/{reviewId}/reply")
-    public ResponseEntity<ApiResponse<ReplyResponseDto>> replyUpdate(@PathVariable Long storeId,
-                                                                     @PathVariable Long reviewId,
-                                                                     @Auth AuthUser authUser,
-                                                                     @Valid @RequestBody ReplyRequestDto requestDto) {
-        ReplyResponseDto responseDto = replyService.updateReply(storeId, reviewId, authUser, requestDto);
-        return ApiResponse.onSuccess(SuccessStatus.OK, responseDto);
+    public ResponseEntity<ApiResponse<Void>> replyUpdate(
+        @PathVariable Long storeId,
+        @PathVariable Long reviewId,
+        @Auth AuthUser authUser,
+        @Valid @RequestBody ReplyRequestDto requestDto
+    ) {
+        replyService.updateReply(storeId, reviewId, authUser, requestDto);
+        return ApiResponse.onSuccess(SuccessStatus.COMMENT_UPDATED);
     }
 
     /**
@@ -49,11 +51,12 @@ public class ReplyController {
      * 댓글 삭제
      */
     @DeleteMapping("/{storeId}/reviews/{reviewId}/reply")
-    public ResponseEntity<ApiResponse<ReplyResponseDto>> replyDelete(@PathVariable Long storeId,
-                                                                     @PathVariable Long reviewId,
-                                                                     @Auth AuthUser authUser) {
-        ReplyResponseDto responseDto =  replyService.deleteReply(storeId,reviewId,authUser);
-        return ApiResponse.onSuccess(SuccessStatus.OK, responseDto);
+    public ResponseEntity<ApiResponse<Void>> replyDelete(
+        @PathVariable Long storeId,
+        @PathVariable Long reviewId,
+        @Auth AuthUser authUser
+    ) {
+        replyService.deleteReply(storeId,reviewId,authUser);
+        return ApiResponse.onSuccess(SuccessStatus.COMMENT_DELETED);
     }
-
 }

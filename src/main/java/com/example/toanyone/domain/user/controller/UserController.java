@@ -26,25 +26,25 @@ public class UserController {
 
     @GetMapping
     public ResponseEntity<ApiResponse<UserResponseDto.Get>> getUserInfo(@Auth AuthUser authUser) {
-        return ApiResponse.onSuccess(SuccessStatus.OK, userService.getUserInfo(authUser.getId()));
+        return ApiResponse.onSuccess(SuccessStatus.USER_FETCHED, userService.getUserInfo(authUser.getId()));
     }
 
     @PatchMapping("/profile")
-    public ResponseEntity<ApiResponse<String>> updateUserInfo(@Auth AuthUser authUser, @RequestBody UserRequestDto.Update updateInfo) {
+    public ResponseEntity<ApiResponse<Void>> updateUserInfo(@Auth AuthUser authUser, @RequestBody UserRequestDto.Update updateInfo) {
         userService.updateUserInfo(authUser.getId(), updateInfo);
-        return ApiResponse.onSuccess(SuccessStatus.OK, "유저 정보를 수정했습니다.");
+        return ApiResponse.onSuccess(SuccessStatus.USER_UPDATED);
     }
 
     @PatchMapping("/password")
-    public ResponseEntity<ApiResponse<String>> changePassword(@Auth AuthUser authUser, @Valid @RequestBody UserRequestDto.ChangePassword changePassword) {
+    public ResponseEntity<ApiResponse<Void>> changePassword(@Auth AuthUser authUser, @Valid @RequestBody UserRequestDto.ChangePassword changePassword) {
         userService.changePassword(authUser.getId(), changePassword);
-        return ApiResponse.onSuccess(SuccessStatus.OK, "비밀번호를 변경했습니다.");
+        return ApiResponse.onSuccess(SuccessStatus.PASSWORD_UPDATE);
     }
 
     @DeleteMapping
-    public ResponseEntity<ApiResponse<String>> deleteUserInfo(@Auth AuthUser authUser, @RequestBody UserRequestDto.Delete password) {
+    public ResponseEntity<ApiResponse<Void>> deleteUserInfo(@Auth AuthUser authUser, @RequestBody UserRequestDto.Delete password) {
         userService.deleteUserInfo(authUser, password);
-        return ApiResponse.onSuccess(SuccessStatus.OK, "회원 탈퇴 처리되었습니다.");
+        return ApiResponse.onSuccess(SuccessStatus.USER_DELETED);
     }
 
 }

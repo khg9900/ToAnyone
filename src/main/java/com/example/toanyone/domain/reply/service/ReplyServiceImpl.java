@@ -1,7 +1,6 @@
 package com.example.toanyone.domain.reply.service;
 
 import com.example.toanyone.domain.reply.dto.ReplyRequestDto;
-import com.example.toanyone.domain.reply.dto.ReplyResponseDto;
 import com.example.toanyone.domain.reply.entity.Reply;
 import com.example.toanyone.domain.reply.repository.ReplyRepository;
 import com.example.toanyone.domain.review.entity.Review;
@@ -28,7 +27,7 @@ public class ReplyServiceImpl implements ReplyService {
      */
     @Override
     @Transactional
-    public ReplyResponseDto createReply(Long storeId, Long reviewId, AuthUser authUser, ReplyRequestDto requestDto) {
+    public void createReply(Long storeId, Long reviewId, AuthUser authUser, ReplyRequestDto requestDto) {
 
         // 리뷰 및 사장님 유저 검증
         validateReviewAndUser(storeId, reviewId, authUser, false);
@@ -47,8 +46,6 @@ public class ReplyServiceImpl implements ReplyService {
         // 댓글 작성자는 사장님(owner)
         Reply reply = new Reply(review, owner, requestDto.getContent());
         replyRepository.save(reply);
-
-        return new ReplyResponseDto("댓글이 등록되었습니다.");
     }
 
     /**
@@ -56,17 +53,14 @@ public class ReplyServiceImpl implements ReplyService {
      */
     @Override
     @Transactional
-    public ReplyResponseDto updateReply(Long storeId, Long reviewId, AuthUser authUser, ReplyRequestDto requestDto) {
+    public void updateReply(Long storeId, Long reviewId, AuthUser authUser, ReplyRequestDto requestDto) {
 
         // 리뷰 및 사장님 유저 검증
         validateReviewAndUser(storeId, reviewId, authUser, true);
 
-
         Review review = reviewRepository.findById(reviewId).orElseThrow(() -> new ApiException(ErrorStatus.REVIEW_NOT_FOUND));
         Reply reply = review.getReply();
         reply.updateContent(requestDto.getContent());
-
-        return new ReplyResponseDto("댓글이 수정되었습니다.");
     }
 
     /**
@@ -74,17 +68,14 @@ public class ReplyServiceImpl implements ReplyService {
      */
     @Transactional
     @Override
-    public ReplyResponseDto deleteReply(Long storeId, Long reviewId, AuthUser authUser) {
+    public void deleteReply(Long storeId, Long reviewId, AuthUser authUser) {
 
         // 리뷰 및 사장님 유저 검증
         validateReviewAndUser(storeId, reviewId, authUser, true);
 
-
         Review review = reviewRepository.findById(reviewId).orElseThrow(() -> new ApiException(ErrorStatus.REVIEW_NOT_FOUND));
         Reply reply = review.getReply();
         reply.softDelete();
-
-        return new ReplyResponseDto("댓글이 정상적으로 삭제되었습니다.");
     }
 
     /**
