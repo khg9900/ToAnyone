@@ -123,10 +123,11 @@ public class CartServiceImpl implements CartService {
         if (changedQuantity == 0) {
             cartItemRepository.delete(cartItem);
             cart.changeTotalPrice();
-            return;
+            cartRepository.save(cart);
         }
         cartItem.setCartItemQuantity(changedQuantity);
         cart.changeTotalPrice();
+        cartRepository.save(cart);
     }
 
 

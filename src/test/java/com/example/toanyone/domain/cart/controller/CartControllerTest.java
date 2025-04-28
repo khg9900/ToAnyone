@@ -1,5 +1,4 @@
-package com.example.toanyone.domain.cart;
-import com.example.toanyone.domain.cart.controller.CartController;
+package com.example.toanyone.domain.cart.controller;
 import com.example.toanyone.domain.cart.dto.CartItemDto;
 import com.example.toanyone.domain.cart.dto.CartRequestDto;
 import com.example.toanyone.domain.cart.service.CartService;
@@ -10,7 +9,6 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
 
