@@ -17,6 +17,7 @@ import java.time.LocalDateTime;
 @Getter
 @Table(name = "review_reply")
 @NoArgsConstructor
+@Where(clause = "deleted = false")
 public class Reply extends BaseEntity {
 
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)

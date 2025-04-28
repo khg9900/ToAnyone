@@ -24,6 +24,7 @@ import org.hibernate.annotations.Where;
 @Entity
 @Table(name="users")
 @NoArgsConstructor
+@Where(clause = "deleted = false")
 public class User extends BaseEntity {
 
     @Id
