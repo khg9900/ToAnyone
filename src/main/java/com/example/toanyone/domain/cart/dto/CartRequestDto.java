@@ -8,6 +8,7 @@ import lombok.NoArgsConstructor;
 
 @Getter
 @NoArgsConstructor
+@AllArgsConstructor
 public class CartRequestDto {
 
     @NotNull(message = "가게 ID 입력은 필수입니다")

@@ -53,4 +53,5 @@ public class CartController {
         cartService.updateCartItems(authUser, storeId, cartItemDto.getMenuId(), cartItemDto.getQuantity());
         return ApiResponse.onSuccess(SuccessStatus.CART_CLEARED);
     }
+
 }
