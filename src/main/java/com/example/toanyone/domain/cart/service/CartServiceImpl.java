@@ -1,6 +1,7 @@
 package com.example.toanyone.domain.cart.service;
 
 import com.example.toanyone.domain.cart.dto.CartItemDto;
+import com.example.toanyone.domain.cart.dto.CartRequestDto;
 import com.example.toanyone.domain.cart.dto.CartResponseDto;
 import com.example.toanyone.domain.cart.entity.Cart;
 import com.example.toanyone.domain.cart.entity.CartItem;
@@ -35,7 +36,10 @@ public class CartServiceImpl implements CartService {
 
     @Override
     @Transactional
-    public CartResponseDto addCart(AuthUser authUser, Long storeId , Long menuId, Integer quantity) {
+    public CartResponseDto addCart(AuthUser authUser, Long storeId , CartRequestDto requestDto) {
+        Long menuId = requestDto.getMenuId();
+        int quantity = requestDto.getQuantity();
+
 
         // 가게 폐업 여부 판별
         if (storeRepository.getDeletedById(storeId)) {

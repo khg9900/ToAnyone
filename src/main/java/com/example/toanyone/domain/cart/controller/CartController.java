@@ -30,8 +30,7 @@ public class CartController {
 
 
         CartResponseDto cartResponseDto = cartService.addCart(
-                authUser,cartRequestDto.getStoreId(), cartRequestDto.getMenuId(), cartRequestDto.getQuantity()
-        );
+                authUser,cartRequestDto.getStoreId(), cartRequestDto);
 
         return ApiResponse.onSuccess(SuccessStatus.CREATED, cartResponseDto);
     }

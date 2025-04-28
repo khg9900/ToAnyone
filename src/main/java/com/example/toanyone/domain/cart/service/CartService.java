@@ -1,6 +1,7 @@
 package com.example.toanyone.domain.cart.service;
 
 import com.example.toanyone.domain.cart.dto.CartItemDto;
+import com.example.toanyone.domain.cart.dto.CartRequestDto;
 import com.example.toanyone.domain.cart.dto.CartResponseDto;
 
 import com.example.toanyone.domain.cart.entity.CartItem;
@@ -11,8 +12,7 @@ import org.springframework.stereotype.Service;
 @Service
 public interface CartService {
 
-    CartResponseDto addCart(AuthUser authUser, Long storeId, Long menuId, Integer quantity
-    );
+    CartResponseDto addCart(AuthUser authUser, Long storeId, CartRequestDto requestDto);
 
     CartItemDto.Response getCartItems(AuthUser authUser);
 
