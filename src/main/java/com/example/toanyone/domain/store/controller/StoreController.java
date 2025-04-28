@@ -33,7 +33,7 @@ public class StoreController {
         @Valid @RequestBody StoreRequestDto.Create dto
     ) {
         storeService.createStore(authUser.getId(), dto);
-        return ApiResponse.onSuccess(SuccessStatus.SIGNUP_SUCCESS);
+        return ApiResponse.onSuccess(SuccessStatus.STORE_CREATED);
     }
 
     /**
