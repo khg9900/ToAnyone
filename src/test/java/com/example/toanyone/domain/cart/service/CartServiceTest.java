@@ -295,7 +295,7 @@ public class CartServiceTest {
         given(cartItemRepository.findByMenuIdAndCartOrElseThrow(1L, cart)).willReturn(cartItem);
 
         ApiException exception = assertThrows(ApiException.class, () ->
-                cartService.updateCartItems(authUser, 1L, 1L, -1) // 수량 -1 => 음수
+                cartService.updateCartItems(authUser, 1L, 1L, -1) // 수량 음수
         );
 
         assertEquals(ErrorStatus.CART_ITEM_QUANTITY_UNDERFLOW, exception.getErrorCode());
@@ -315,7 +315,7 @@ public class CartServiceTest {
         given(cartRepository.findByUserIdOrElseThrow(authUser.getId())).willReturn(cart);
         given(cartItemRepository.findByMenuIdAndCartOrElseThrow(1L, cart)).willReturn(cartItem);
 
-        cartService.updateCartItems(authUser, 1L, 1L, -1); // 수량 -1 => 0
+        cartService.updateCartItems(authUser, 1L, 1L, -1); // 수량 = 0
 
         verify(cartItemRepository).delete(cartItem);
         verify(cartRepository, times(2)).save(cart); // cartItem 삭제 후 cart 총액 갱신 저장
