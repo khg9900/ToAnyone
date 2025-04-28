@@ -54,7 +54,7 @@ public class MenuServiceTest {
         given(storeRepository.findOwnerIdByStoreIdOrElseThrow(storeId)).willReturn(ownerId);
 
         // when
-        MenuDto.Response response = menuService.createMenu(authUser, storeId,requestDto);
+        MenuDto.Response response = menuService.createMenu(authUser, storeId, requestDto);
 
         // then
         assertEquals("메뉴 생성되었습니다", response.getMessage());
