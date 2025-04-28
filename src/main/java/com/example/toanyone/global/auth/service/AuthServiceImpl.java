@@ -1,13 +1,7 @@
 package com.example.toanyone.global.auth.service;
 
 
-import static com.example.toanyone.global.common.code.ErrorStatus.EMAIL_ALREADY_EXISTS;
-import static com.example.toanyone.global.common.code.ErrorStatus.INVALID_JWT_TOKEN;
-import static com.example.toanyone.global.common.code.ErrorStatus.NICKNAME_ALREADY_EXISTS;
-import static com.example.toanyone.global.common.code.ErrorStatus.PHONE_ALREADY_EXISTS;
-import static com.example.toanyone.global.common.code.ErrorStatus.USER_ALREADY_DELETED;
-import static com.example.toanyone.global.common.code.ErrorStatus.USER_NOT_FOUND;
-
+import static com.example.toanyone.global.common.code.ErrorStatus.*;
 import com.example.toanyone.domain.user.entity.User;
 import com.example.toanyone.domain.user.enums.UserRole;
 import com.example.toanyone.domain.user.repository.UserRepository;
@@ -84,7 +78,7 @@ public class AuthServiceImpl implements AuthService {
 
         // 비밀번호 검증
         if (!passwordEncoder.matches(signinRequest.getPassword(), user.getPassword())) {
-            throw new RuntimeException("잘못된 비밀번호입니다.");
+            throw new ApiException(INVALID_PASSWORD);
         }
 
         // 로그인 성공 시 토큰 발급
