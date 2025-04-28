@@ -15,10 +15,13 @@ import com.example.toanyone.domain.user.repository.UserRepository;
 import com.example.toanyone.global.auth.dto.AuthUser;
 import com.example.toanyone.global.common.code.ErrorStatus;
 import com.example.toanyone.global.common.error.ApiException;
+import com.example.toanyone.global.common.response.ApiResponse;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.util.ReflectionTestUtils;
 
@@ -29,7 +32,10 @@ import java.util.Optional;
 import static org.assertj.core.api.SoftAssertions.assertSoftly;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
 
 @ExtendWith(SpringExtension.class)
 public class StoreServiceTest {
@@ -71,11 +77,10 @@ public class StoreServiceTest {
         given(storeRepository.existsByName(request.getName())).willReturn(false);
 
         //WHEN
-        StoreResponseDto.Complete responseDto = storeService.createStore(ownerId, request);
+        storeService.createStore(ownerId, request);
 
         //THEN
-        assertEquals("가게가 생성되었습니다.", responseDto.getMessage());
-
+        verify(storeRepository, times(1)).save(any(Store.class));
     }
 
     @Test

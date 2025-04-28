@@ -36,7 +36,7 @@ public class MenuServiceImpl implements MenuService {
 
     @Override
     @Transactional
-    public MenuDto.Response createMenu(
+    public void createMenu(
             AuthUser authUser, Long storeId, MenuDto.Request dto) {
 
         Store store = storeRepository.findByIdOrElseThrow(storeId);
@@ -51,13 +51,11 @@ public class MenuServiceImpl implements MenuService {
 
         Menu createdMenu = new Menu(store, dto);
         menuRepository.save(createdMenu);
-
-        return new MenuDto.Response("메뉴 생성되었습니다");
     }
 
     @Override
     @Transactional
-    public MenuDto.Response updateMenu(AuthUser authUser, Long storeId, Long menuId, MenuDto.Request dto) {
+    public void updateMenu(AuthUser authUser, Long storeId, Long menuId, MenuDto.Request dto) {
 
         storeValidation(storeId, authUser.getId());
 
@@ -73,13 +71,11 @@ public class MenuServiceImpl implements MenuService {
         }
 
         menu.setMenu(dto);
-
-        return new MenuDto.Response("메뉴 수정되었습니다");
     }
 
     @Override
     @Transactional
-    public MenuDto.Response deleteMenu(AuthUser authUser, Long storeId, Long menuId) {
+    public void deleteMenu(AuthUser authUser, Long storeId, Long menuId) {
 
         storeValidation(storeId, authUser.getId());
 
@@ -95,6 +91,5 @@ public class MenuServiceImpl implements MenuService {
         }
 
         menu.softDelete();
-        return new MenuDto.Response("메뉴 삭제되었습니다");
     }
 }

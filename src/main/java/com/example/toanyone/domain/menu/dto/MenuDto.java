@@ -31,14 +31,6 @@ public class MenuDto {
         private String subCategory;
     }
 
-
-    @Getter
-    @NoArgsConstructor
-    @AllArgsConstructor
-    public static class Response {
-        private String message;
-    }
-
     @Getter
     @AllArgsConstructor
     public static class ResponseDetail {
@@ -49,7 +41,4 @@ public class MenuDto {
         private MainCategory mainCategory;
         private SubCategory subCategory;
     }
-
-
-
 }

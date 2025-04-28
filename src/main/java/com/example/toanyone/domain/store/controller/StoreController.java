@@ -28,10 +28,12 @@ public class StoreController {
      * @return 생성 완료 메세지
      */
     @PostMapping("/owner/stores")
-    public ResponseEntity<ApiResponse<StoreResponseDto.Complete>> createStore(@Auth AuthUser authUser,
-                                                                             @Valid @RequestBody StoreRequestDto.Create dto) {
-
-        return ApiResponse.onSuccess(SuccessStatus.CREATED, storeService.createStore(authUser.getId(), dto));
+    public ResponseEntity<ApiResponse<Void>> createStore(
+        @Auth AuthUser authUser,
+        @Valid @RequestBody StoreRequestDto.Create dto
+    ) {
+        storeService.createStore(authUser.getId(), dto);
+        return ApiResponse.onSuccess(SuccessStatus.SIGNUP_SUCCESS);
     }
 
     /**
@@ -41,8 +43,7 @@ public class StoreController {
      */
     @GetMapping("/owner/stores")
     public ResponseEntity<ApiResponse<List<StoreResponseDto.GetAll>>> getStoresByOwner(@Auth AuthUser authUser) {
-
-        return ApiResponse.onSuccess(SuccessStatus.OK,storeService.getStoresByOwner(authUser.getId()));
+        return ApiResponse.onSuccess(SuccessStatus.STORE_OWNER_FETCHED, storeService.getStoresByOwner(authUser.getId()));
     }
 
     /**
@@ -52,8 +53,7 @@ public class StoreController {
      */
     @GetMapping("/stores")
     public ResponseEntity<ApiResponse<List<StoreResponseDto.GetAll>>> getStoresByKeyword(@RequestParam("keyword") String keyword) {
-
-        return ApiResponse.onSuccess(SuccessStatus.OK, storeService.getStoresByName(keyword));
+        return ApiResponse.onSuccess(SuccessStatus.STORE_SEARCH_FETCHED, storeService.getStoresByName(keyword));
     }
 
     /**
@@ -63,8 +63,7 @@ public class StoreController {
      */
     @GetMapping("/stores/{storeId}")
     public ResponseEntity<ApiResponse<StoreResponseDto.GetById>> getStoreById(@PathVariable Long storeId) {
-
-        return ApiResponse.onSuccess(SuccessStatus.OK, storeService.getStoreById(storeId));
+        return ApiResponse.onSuccess(SuccessStatus.STORE_DETAIL_FETCHED, storeService.getStoreById(storeId));
     }
 
     /**
@@ -75,11 +74,13 @@ public class StoreController {
      * @return
      */
     @PatchMapping("/owner/stores/{storeId}")
-    public ResponseEntity<ApiResponse<StoreResponseDto.Complete>> updateStore(@Auth AuthUser authUser,
-                                                                              @PathVariable Long storeId,
-                                                                              @Valid @RequestBody StoreRequestDto.Update dto) {
-
-        return ApiResponse.onSuccess(SuccessStatus.OK, storeService.updateStore(authUser, storeId, dto));
+    public ResponseEntity<ApiResponse<Void>> updateStore(
+        @Auth AuthUser authUser,
+        @PathVariable Long storeId,
+        @Valid @RequestBody StoreRequestDto.Update dto
+    ) {
+        storeService.updateStore(authUser, storeId, dto);
+        return ApiResponse.onSuccess(SuccessStatus.STORE_UPDATED);
     }
 
     /**
@@ -90,11 +91,13 @@ public class StoreController {
      * @return
      */
     @DeleteMapping("/owner/stores/{storeId}")
-    public ResponseEntity<ApiResponse<StoreResponseDto.Complete>> deleteStore(@Auth AuthUser authUser,
-                                                                              @PathVariable Long storeId,
-                                                                            @Valid @RequestBody StoreRequestDto.Delete dto) {
-
-        return ApiResponse.onSuccess(SuccessStatus.OK, storeService.deleteStore(authUser, storeId, dto));
+    public ResponseEntity<ApiResponse<Void>> deleteStore(
+        @Auth AuthUser authUser,
+        @PathVariable Long storeId,
+        @Valid @RequestBody StoreRequestDto.Delete dto
+    ) {
+        storeService.deleteStore(authUser, storeId, dto);
+        return ApiResponse.onSuccess(SuccessStatus.STORE_DELETED);
     }
 }
 

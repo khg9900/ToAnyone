@@ -1,14 +1,11 @@
 package com.example.toanyone.domain.review.service;
 
 import com.example.toanyone.domain.order.entity.Order;
-import com.example.toanyone.domain.order.enums.OrderStatus;
 import com.example.toanyone.domain.order.repository.OrderRepository;
 import com.example.toanyone.domain.reply.dto.ReplyDto;
 import com.example.toanyone.domain.reply.entity.Reply;
-import com.example.toanyone.domain.reply.repository.ReplyRepository;
 import com.example.toanyone.domain.review.dto.ReviewCheckResponseDto;
 import com.example.toanyone.domain.review.dto.ReviewCreateRequestDto;
-import com.example.toanyone.domain.review.dto.ReviewResponseDto;
 import com.example.toanyone.domain.review.entity.Review;
 import com.example.toanyone.domain.review.repository.ReviewRepository;
 import com.example.toanyone.domain.store.entity.Store;
@@ -25,11 +22,8 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
-import java.sql.Timestamp;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -44,17 +38,19 @@ public class ReviewServiceImpl implements ReviewService {
      * */
     @Override
     @Transactional
-    public ReviewResponseDto createReview(Long storeId, Long orderId, AuthUser authUser, ReviewCreateRequestDto request){
+    public void createReview(Long storeId, Long orderId, AuthUser authUser, ReviewCreateRequestDto request){
 
-        User user = userRepository.findById(authUser.getId())
-                .orElseThrow(()-> new ApiException(ErrorStatus.USER_NOT_FOUND));
-
-        Order order = orderRepository.findReviewableOrder(orderId, user.getId())
+        // 가게 일치 여부 검증
+        Order order = orderRepository.findReviewableOrder(orderId, authUser.getId())
                 .orElseThrow(() -> new ApiException(ErrorStatus.REVIEW_CREATE_FORBIDDEN));
 
         if (!storeId.equals(order.getStore().getId())) {
             throw new ApiException(ErrorStatus.ORDER_STORE_MISMATCH);
         }
+
+        // 사용자 존재 여부 검증
+        User user = userRepository.findById(authUser.getId())
+                .orElseThrow(()-> new ApiException(ErrorStatus.USER_NOT_FOUND));
 
         Store store = order.getStore();
 
@@ -68,8 +64,6 @@ public class ReviewServiceImpl implements ReviewService {
         );
 
         reviewRepository.save(review);
-
-        return new ReviewResponseDto("리뷰가 작성되었습니다.");
     }
 
     /**
@@ -84,28 +78,7 @@ public class ReviewServiceImpl implements ReviewService {
         // 별점이 null이거나 빈 리스트이면 전체 리뷰 조회
         if (rating == null || rating.isEmpty()) {
             reviewPage = reviewRepository.findAllByStoreId(storeId, pageable);
-
-            List<ReviewCheckResponseDto> response = new ArrayList<>();
-            for (Review review : reviewPage.getContent()) {
-                Reply reply = review.getReply();
-
-                ReplyDto replyDto;
-                if (reply != null) {
-                    replyDto = new ReplyDto(reply.getId(), reply.getContent(), reply.getUpdatedAt());
-                } else {
-                    replyDto = null;
-                }
-
-                response.add(new ReviewCheckResponseDto(
-                        review.getId(),
-                        review.getRating(),
-                        review.getContent(),
-                        review.getVisible(),
-                        review.getUpdatedAt(),
-                        replyDto
-                ));
-            }
-            return new PageImpl<>(response, pageable, reviewPage.getTotalElements());
+            return convertToResponseDtoPage(reviewPage, pageable);
         }
 
         // 별점 유효성 검사
@@ -117,6 +90,66 @@ public class ReviewServiceImpl implements ReviewService {
 
         // 별점 조건으로 리뷰 조회
         reviewPage = reviewRepository.findReviewByRating(storeId, rating, pageable);
+        return convertToResponseDtoPage(reviewPage, pageable);
+    }
+
+    /**
+     * 리뷰 수정
+     * */
+    @Override
+    @Transactional
+    public void updateReview(Long storeId, Long reviewId, AuthUser authUser, ReviewCreateRequestDto requestDto) {
+
+        Review review = reviewRepository.findById(reviewId)
+                .orElseThrow(() -> new ApiException(ErrorStatus.REVIEW_NOT_FOUND));
+        // 리뷰가 작성자가 맞는지 검증
+        if (!review.getUser().getId().equals(authUser.getId())) {
+            throw new ApiException(ErrorStatus.REVIEW_ACCESS_DENIED);
+        }
+        // 가게 일치하는지 검증
+        if (!review.getStore().getId().equals(storeId)) {
+            throw new ApiException(ErrorStatus.REVIEW_STORE_MISMATCH);
+        }
+
+        review.update(requestDto.getRating(),requestDto.getContent(),requestDto.getVisible());
+    }
+
+    /**
+     * 리뷰 삭제
+     * */
+    @Override
+    @Transactional
+    public void deleteReview(Long storeId, Long reviewId, AuthUser authUser) {
+
+        Review review = reviewRepository.findById(reviewId)
+                .orElseThrow(() -> new ApiException(ErrorStatus.REVIEW_NOT_FOUND));
+        // 리뷰 작성자가 로그인한 유저인지 확인
+        if (!review.getUser().getId().equals(authUser.getId())){
+            throw new ApiException(ErrorStatus.REVIEW_ACCESS_DENIED);
+        }
+
+        // 가게 일치 확인
+        if (!review.getStore().getId().equals(storeId)){
+            throw new ApiException(ErrorStatus.REVIEW_STORE_MISMATCH);
+        }
+
+        // 리뷰 댓글이 존재하는지 확인
+        if (review.getReply() != null) {
+            review.getReply().softDelete();
+        }
+
+        // 삭제된 리뷰 일 때
+        if(review.getDeleted()){
+            throw new ApiException(ErrorStatus.REVIEW_ALREADY_DELETED);
+        }
+
+        review.softDelete();
+    }
+
+
+    // 페이징 함수 처리
+    // 페이징 처리 로직을 분리하여 중복 제거
+    private Page<ReviewCheckResponseDto> convertToResponseDtoPage(Page<Review> reviewPage, Pageable pageable) {
         List<ReviewCheckResponseDto> response = new ArrayList<>();
         for (Review review : reviewPage.getContent()) {
             Reply reply = review.getReply();
@@ -139,67 +172,6 @@ public class ReviewServiceImpl implements ReviewService {
         }
         return new PageImpl<>(response, pageable, reviewPage.getTotalElements());
     }
-
-    /**
-     * 리뷰 수정
-     * */
-    @Override
-    @Transactional
-    public ReviewResponseDto updateReview(Long storeId, Long reviewId, AuthUser authUser, ReviewCreateRequestDto requestDto) {
-
-        Review review = reviewRepository.findById(reviewId)
-                .orElseThrow(() -> new ApiException(ErrorStatus.REVIEW_NOT_FOUND));
-        // 리뷰가 작성자가 맞는지 검증
-        if (!review.getUser().getId().equals(authUser.getId())) {
-            throw new ApiException(ErrorStatus.REVIEW_ACCESS_DENIED);
-        }
-        // 가게 일치하는지 검증
-        if (!review.getStore().getId().equals(storeId)) {
-            throw new ApiException(ErrorStatus.REVIEW_STORE_MISMATCH);
-        }
-
-        review.update(requestDto.getRating(),requestDto.getContent(),requestDto.getVisible());
-
-        return new ReviewResponseDto("리뷰가 성공적으로 수정되었습니다.");
-
-    }
-
-    /**
-     * 리뷰 삭제
-     * */
-    @Override
-    @Transactional
-    public ReviewResponseDto deleteReview(Long storeId, Long reviewId, AuthUser authUser) {
-
-        Review review = reviewRepository.findById(reviewId)
-                .orElseThrow(() -> new ApiException(ErrorStatus.REVIEW_NOT_FOUND));
-        // 리뷰 작성자가 로그인한 유저인지 확인
-        if (!review.getUser().getId().equals(authUser.getId())){
-            throw new ApiException(ErrorStatus.REVIEW_ACCESS_DENIED);
-        }
-
-        // 가게 일치 확인
-        if (!review.getStore().getId().equals(storeId)){
-            throw new ApiException(ErrorStatus.REVIEW_STORE_MISMATCH);
-        }
-
-        // 리뷰 댓글 존재하는지 확인
-        if(!(review.getReply().getId() ==null)){
-            review.getReply().softDelete();
-        }
-
-        // 삭제된 리뷰 일 때
-        if(review.getDeleted()){
-            throw new ApiException(ErrorStatus.REVIEW_ALREADY_DELETED);
-        }
-
-        review.softDelete();
-
-        return new ReviewResponseDto("리뷰가 성공적으로 삭제되었습니다.");
-    }
-
-
-//    public 페이징 함수 처리
 
 //        hardDelete
 //    delete : 한행=로우 하나만 지우는거
