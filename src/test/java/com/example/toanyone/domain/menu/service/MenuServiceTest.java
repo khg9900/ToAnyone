@@ -25,7 +25,7 @@ import java.time.LocalDate;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.BDDMockito.given;
-import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 public class MenuServiceTest {
@@ -68,10 +68,13 @@ public class MenuServiceTest {
         given(menuRepository.existsByStoreAndName(store, requestDto.getName())).willReturn(false);
 
         // when
-        MenuDto.Response response = menuService.createMenu(authUser, storeId, requestDto);
+        menuService.createMenu(authUser, storeId, requestDto);
 
         // then
-        assertEquals("메뉴 생성되었습니다", response.getMessage());
+        verify(storeRepository).findByIdOrElseThrow(storeId);
+        verify(menuRepository).existsByStoreAndName(store, requestDto.getName());
+        verify(menuRepository).save(any(Menu.class));
+        verifyNoMoreInteractions(storeRepository, menuRepository);
     }
 
 
@@ -100,6 +103,7 @@ public class MenuServiceTest {
 
         assertEquals("가게의 주인이 아니면 접근할 수 없습니다.", apiException.getMessage());
     }
+
     @Test
     void 폐업한_가게에는_접근을_못한다(){
         Long storeId = 1L;
@@ -196,10 +200,17 @@ public class MenuServiceTest {
         given(menuRepository.findByIdOrElseThrow(menuId)).willReturn(menu);
 
         //when
-        MenuDto.Response response = menuService.updateMenu(authUser, storeId ,menu.getId(), menuUpdateDto);
+        menuService.updateMenu(authUser, storeId ,menu.getId(), menuUpdateDto);
+
         //then
-        assertEquals("메뉴 수정되었습니다", response.getMessage());
+        verify(storeRepository).findByIdOrElseThrow(storeId);
+        verify(menuRepository).findByIdOrElseThrow(menuId);
+        verify(menuRepository).save(any(Menu.class));
+        verifyNoMoreInteractions(storeRepository, menuRepository);
+
     }
+
+
 
     @Test
     void 가게의_메뉴가_아니면_수정을_못한다(){
@@ -285,6 +296,7 @@ public class MenuServiceTest {
        (4) 이미 삭제된 메뉴일 때
      */
 
+
     @Test
     void 가게_주인이_메뉴를_정상적으로_삭제한다(){
         Long storeId = 1L;
@@ -315,10 +327,13 @@ public class MenuServiceTest {
         given(menuRepository.findByIdOrElseThrow(menuId)).willReturn(menu);
 
         //when
-        MenuDto.Response response = menuService.deleteMenu(authUser,storeId,menuId);
+        menuService.deleteMenu(authUser,storeId,menuId);
 
         //then
-        assertEquals("메뉴 삭제되었습니다", response.getMessage());
+        verify(storeRepository).findByIdOrElseThrow(storeId);
+        verify(menuRepository).findByIdOrElseThrow(menuId);
+        verifyNoMoreInteractions(storeRepository, menuRepository);
+        assertTrue(menu.isDeleted());
     }
 
 
@@ -357,6 +372,7 @@ public class MenuServiceTest {
         ApiException apiException = assertThrows(ApiException.class,
                 () -> menuService.deleteMenu(authUser, storeId,menuId));
         //then
+        assertTrue(!menu.getDeleted());
         assertEquals("해당 가게에 존재하지 않는 메뉴입니다", apiException.getMessage());
     }
 
@@ -393,6 +409,9 @@ public class MenuServiceTest {
         ApiException apiException = assertThrows(ApiException.class,
                 ()-> menuService.deleteMenu(authUser, storeId,menuId));
         //then
+        assertTrue(menu.getStore().getId().equals(storeId));
+        assertTrue(menu.getDeleted());
+
         assertEquals("이미 삭제된 메뉴입니다.", apiException.getMessage());
     }
 

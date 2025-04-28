@@ -25,11 +25,11 @@ public class MenuServiceImpl implements MenuService {
     private final StoreRepository storeRepository;
 
 
-    public void storeValidation(Long storeId, Long userId){
-        if (storeRepository.findByIdOrElseThrow(storeId).isDeleted()){
+    public void storeValidation(Store store, Long userId) {
+        if (store.isDeleted()) {
             throw new ApiException(ErrorStatus.STORE_SHUT_DOWN);
         }
-        if (!storeRepository.findByIdOrElseThrow(storeId).getUser().getId().equals(userId)){
+        if (!store.getUser().getId().equals(userId)) {
             throw new ApiException(ErrorStatus.NOT_STORE_OWNER);
         }
     }
@@ -42,7 +42,7 @@ public class MenuServiceImpl implements MenuService {
         Store store = storeRepository.findByIdOrElseThrow(storeId);
 
         //가게가 이미 삭제된 상태이거나 주인이 아닐 때
-        storeValidation(storeId, authUser.getId());
+        storeValidation(store, authUser.getId());
 
         //메뉴가 이미 존재할 때
         if (menuRepository.existsByStoreAndName(store, dto.getName())) {
@@ -56,40 +56,40 @@ public class MenuServiceImpl implements MenuService {
     @Override
     @Transactional
     public void updateMenu(AuthUser authUser, Long storeId, Long menuId, MenuDto.Request dto) {
+        Store store = storeRepository.findByIdOrElseThrow(storeId);
 
-        storeValidation(storeId, authUser.getId());
+        storeValidation(store, authUser.getId());
 
         Menu menu = menuRepository.findByIdOrElseThrow(menuId);
 
         //해당 가게의 메뉴가 아닐 때
-        if (!menu.getStore().getId().equals(storeId)){
+        if (!menu.getStore().getId().equals(storeId)) {
             throw new ApiException(ErrorStatus.MENU_IS_NOT_IN_STORE);
         }
         //삭제된 메뉴일 때
-        if (menu.isDeleted()){
+        if (menu.isDeleted()) {
             throw new ApiException(ErrorStatus.MENU_ALREADY_DELETED);
         }
 
         menu.setMenu(dto);
+        menuRepository.save(menu);
     }
 
     @Override
     @Transactional
     public void deleteMenu(AuthUser authUser, Long storeId, Long menuId) {
+        Store store = storeRepository.findByIdOrElseThrow(storeId);
 
-        storeValidation(storeId, authUser.getId());
-
+        storeValidation(store, authUser.getId());
         Menu menu = menuRepository.findByIdOrElseThrow(menuId);
-
         //해당 가게의 메뉴가 아닐 때
-        if (!menu.getStore().getId().equals(storeId)){
+        if (!menu.getStore().getId().equals(storeId)) {
             throw new ApiException(ErrorStatus.MENU_IS_NOT_IN_STORE);
         }
         //메뉴가 이미 삭제 상태일 때
-        if (menu.getDeleted()){
+        if (menu.getDeleted()) {
             throw new ApiException(ErrorStatus.MENU_ALREADY_DELETED);
         }
-
         menu.softDelete();
     }
 }
