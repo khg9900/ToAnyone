@@ -37,24 +37,43 @@ public class CartServiceImpl implements CartService {
     @Transactional
     public CartResponseDto addCart(AuthUser authUser, Long storeId , Long menuId, Integer quantity) {
 
-        User user = userRepository.findById(authUser.getId())
-                .orElseThrow(() -> new ApiException(ErrorStatus.USER_NOT_FOUND));
-        Store store = storeRepository.findByIdOrElseThrow(storeId);
-        Menu menu = menuRepository.findByIdOrElseThrow(menuId);
+        // 가게 폐업 여부 판별
+        if (storeRepository.getDeletedById(storeId)) {
+            throw new ApiException(ErrorStatus.STORE_SHUT_DOWN);
+        }
 
-        if (store.getId().equals(menu.getStore().getId())) {
+        // 메뉴 삭제 여부 판별
+        if (menuRepository.getDeletedById(menuId)) {
+            throw new ApiException(ErrorStatus.MENU_ALREADY_DELETED);
+        }
+
+        // 선택한 가게에 해당하는 메뉴가 있는지 확인
+        if (!menuRepository.existsByIdAndStoreId(menuId, storeId)) {
             throw new ApiException(ErrorStatus.MENU_IS_NOT_IN_STORE);
         }
 
-        Cart cart = cartRepository.findByUserId(user.getId())
-                .orElseGet(() -> cartRepository.save(new Cart(user, store, 0)));
+        Cart cart;
 
-        int price = menu.getPrice();
+        // 첫 번째 생성일 경우
+        if (!cartRepository.existsByUserId(authUser.getId())) {
 
-        cart.setTotalPrice(price, quantity);
+            User user = userRepository.findById(authUser.getId())
+                .orElseThrow(() -> new ApiException(ErrorStatus.USER_NOT_FOUND));
+            Store store = storeRepository.findByIdOrElseThrow(storeId);
 
-        CartItem cartItem = new CartItem(cart, menu, quantity, price);
+            cart = new Cart(user, store, 0);
+        } else {
+            // 두 번째 이후
+            cart = cartRepository.findByUserIdOrElseThrow(authUser.getId());
+        }
 
+        Menu menu = menuRepository.findByIdOrElseThrow(menuId);
+
+        cart.setTotalPrice(menu.getPrice(), quantity);
+
+        CartItem cartItem = new CartItem(cart, menu, quantity, menu.getPrice());
+
+        cartRepository.save(cart);
         cartItemRepository.save(cartItem);
 
         return new CartResponseDto("장바구니에 추가되었습니다");
@@ -86,20 +105,11 @@ public class CartServiceImpl implements CartService {
         );
     }
 
-
-    // 고승표 수정/추가
-    @Override
-    @Transactional
-    public CartResponseDto clearCartItems(AuthUser authUser) {
-        User user = userRepository.findById(authUser.getId())
-                .orElseThrow(() -> new ApiException(ErrorStatus.USER_NOT_FOUND));
-        return clearCartItems(user);
-    }
     // orderservice에서 user로 받을 수 있게
     @Override
     @Transactional
-    public CartResponseDto clearCartItems(User user) {
-        Cart cart = cartRepository.findByUserIdOrElseThrow(user.getId());
+    public CartResponseDto clearCartItems(Long userId) {
+        Cart cart = cartRepository.findByUserIdOrElseThrow(userId);
         cartRepository.delete(cart);
         return new CartResponseDto("장바구니가 비워졌습니다");
     }

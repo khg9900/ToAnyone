@@ -48,8 +48,7 @@ public class CartController {
 
     @DeleteMapping
     public ResponseEntity<ApiResponse<CartResponseDto>> clearCart(@Auth AuthUser authUser){
-        CartResponseDto response = cartService.clearCartItems(authUser);
-
+        CartResponseDto response = cartService.clearCartItems(authUser.getId());
         return ApiResponse.onSuccess(SuccessStatus.OK, response);
     }
 

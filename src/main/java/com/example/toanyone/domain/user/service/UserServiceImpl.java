@@ -13,6 +13,7 @@ import com.example.toanyone.domain.user.entity.User;
 import com.example.toanyone.domain.user.enums.UserRole;
 import com.example.toanyone.domain.user.repository.UserRepository;
 import com.example.toanyone.global.auth.dto.AuthUser;
+import com.example.toanyone.global.auth.service.AuthService;
 import com.example.toanyone.global.common.error.ApiException;
 import com.example.toanyone.global.config.PasswordEncoder;
 import lombok.RequiredArgsConstructor;
@@ -27,6 +28,8 @@ public class UserServiceImpl implements UserService {
     private final UserRepository userRepository;
     private final StoreRepository storeRepository;
     private final CartRepository cartRepository;
+
+    private final AuthService authService;
 
     @Override
     public Get getUserInfo(Long authUserId) {
@@ -90,8 +93,12 @@ public class UserServiceImpl implements UserService {
         }
 
         // 회원과 연결된 장바구니도 함께 삭제됩니다.
-            // 장바구니 비우기 API 완성 후 작성 예정.
+        if (cartRepository.existsByUserId(authUser.getId())) {
+            Cart cart = cartRepository.findByUserIdOrElseThrow(authUser.getId());
+            cartRepository.delete(cart);
+        }
 
+        authService.logout(authUser.getId());
         user.softDelete();
     }
 }

@@ -36,6 +36,9 @@ public interface StoreRepository extends JpaRepository<Store, Long> {
                 ()-> new ApiException(ErrorStatus.STORE_NOT_FOUND));
     }
 
+    @Query("SELECT s.deleted FROM Store s WHERE s.id = :id")
+    Boolean getDeletedById(@Param("id") Long id);
+
     boolean existsByUserIdAndDeletedFalse(Long ownerId);
 
 
