@@ -14,6 +14,7 @@ import org.hibernate.annotations.Where;
 @Entity
 @NoArgsConstructor
 @Table(name = "menu")
+@Where(clause = "deleted = false")
 public class Menu extends BaseEntity {
 
     @Id

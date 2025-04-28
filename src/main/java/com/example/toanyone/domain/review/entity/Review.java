@@ -21,6 +21,7 @@ import java.time.LocalDateTime;
 @Entity
 @Table(name = "reviews")
 @NoArgsConstructor
+@Where(clause = "deleted = false")
 public class Review extends BaseEntity {
 
     @Id

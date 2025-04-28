@@ -19,6 +19,7 @@ import java.util.List;
 @Entity
 @NoArgsConstructor
 @Table(name= "stores")
+@Where(clause = "deleted = false")
 public class Store extends BaseEntity {
 
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
