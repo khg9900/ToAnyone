@@ -1,68 +1,47 @@
 package com.example.toanyone.domain.order.aop;
 
 import com.example.toanyone.domain.order.dto.OrderDto;
-import com.example.toanyone.domain.order.service.OrderLogService;
-import jakarta.servlet.http.HttpServletRequest;
+import com.example.toanyone.domain.order.entity.OrderLog;
+import com.example.toanyone.domain.order.repository.OrderLogRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.aspectj.lang.ProceedingJoinPoint;
-import org.aspectj.lang.annotation.Around;
+import org.aspectj.lang.annotation.After;
 import org.aspectj.lang.annotation.Aspect;
 import org.springframework.stereotype.Component;
-import org.springframework.web.context.request.RequestContextHolder;
-import org.springframework.web.context.request.ServletRequestAttributes;
 
 import java.time.LocalDateTime;
 
 @Slf4j
-@Aspect
 @Component
 @RequiredArgsConstructor
+@Aspect
 public class OrderLogAspect {
 
-    private final OrderLogService orderLogService;
+    private final OrderLogRepository orderLogRepository;
 
-    @Around("execution(* com.example.toanyone.domain.order.service.OrderServiceImpl.createOrder(..)) || " +
+    @After("execution(* com.example.toanyone.domain.order.service.OrderServiceImpl.createOrder(..)) || " +
             "execution(* com.example.toanyone.domain.order.service.OrderServiceImpl.updateOrderStatus(..))")
     public Object logOrderAction(ProceedingJoinPoint joinPoint) throws Throwable {
-        // 요청 정보 가져오기
-        HttpServletRequest request = ((ServletRequestAttributes) RequestContextHolder.getRequestAttributes()).getRequest();
-        String requestURI = request.getRequestURI();
-        String methodName = joinPoint.getSignature().getName();
-        Object[] args = joinPoint.getArgs();
+
+        Object result = joinPoint.proceed();
+        OrderLog orderLog = new OrderLog();
+
+        // result 타입 캐스팅
+        if (result instanceof OrderDto.CreateResponse response) {
+            orderLog = new OrderLog(response.getStoreId(), response.getOrderId(), response.getStatus(), LocalDateTime.now());
+        }
+        if (result instanceof OrderDto.StatusUpdateResponse response) {
+            orderLog = new OrderLog(response.getStoreId(), response.getOrderId(), response.getUpdatedStatus(), LocalDateTime.now());
+        }
 
         // 요청 로그 출력
-        log.info("[요청] - 요청 시각: {}, 요청 URL: {}, 메서드: {}, 파라미터: {}",
-                LocalDateTime.now(), requestURI, methodName, argsToString(args));
+        log.info("[ORDER LOGGING] Store ID: {}, Order ID: {}, Order Status: {}, TimeStamp: {}",
+            orderLog.getStoreId(), orderLog.getOrderId(), orderLog.getStatus(), orderLog.getLogTime());
 
-        // 실제 서비스 메서드 실행
-        Object result = joinPoint.proceed();
-
-        // 응답 로그 출력
-        log.info("[응답] - 응답 시각: {}, 메서드: {}, 반환값: {}",
-                LocalDateTime.now(), methodName, result);
-
-        // DB 로그 저장
-        if (result instanceof OrderDto.CreateResponse response) {
-            orderLogService.saveLog(response.getStoreId(), response.getOrderId(), "CREATE_ORDER");
-        } else if (result instanceof OrderDto.StatusUpdateResponse response) {
-            String updatedStatus = response.getUpdatedStatus(); // 변경된 주문 상태 가져오기
-            orderLogService.saveLog(
-                    response.getStoreId(),
-                    response.getOrderId(),
-                    "UPDATE_ORDER_STATUS (" + updatedStatus + ")"
-            );
-        }
+        // DB 저장
+        orderLogRepository.save(orderLog);
 
         return result;
-    }
-
-    private String argsToString(Object[] args) {
-        if (args == null || args.length == 0) return "없음";
-        StringBuilder sb = new StringBuilder();
-        for (Object arg : args) {
-            sb.append(arg).append(" | ");
-        }
-        return sb.toString();
     }
 }
