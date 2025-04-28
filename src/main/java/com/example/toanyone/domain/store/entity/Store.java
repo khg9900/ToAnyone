@@ -9,6 +9,8 @@ import com.example.toanyone.global.common.entity.BaseEntity;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.Where;
+
 import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.List;

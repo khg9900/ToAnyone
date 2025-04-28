@@ -3,6 +3,7 @@ package com.example.toanyone.domain.order.entity;
 import com.example.toanyone.domain.menu.entity.Menu;
 import jakarta.persistence.*;
 import lombok.*;
+import org.hibernate.annotations.Where;
 
 @Entity
 @Getter
