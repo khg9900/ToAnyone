@@ -29,7 +29,7 @@ public class MenuServiceImpl implements MenuService {
         if (storeRepository.findByIdOrElseThrow(storeId).isDeleted()){
             throw new ApiException(ErrorStatus.STORE_SHUT_DOWN);
         }
-        if (!storeRepository.findByIdOrElseThrow(userId).getUser().getId().equals(userId)){
+        if (!storeRepository.findByIdOrElseThrow(storeId).getUser().getId().equals(userId)){
             throw new ApiException(ErrorStatus.NOT_STORE_OWNER);
         }
     }
