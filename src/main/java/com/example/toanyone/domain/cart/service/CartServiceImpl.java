@@ -64,6 +64,20 @@ public class CartServiceImpl implements CartService {
         } else {
             // 두 번째 이후
             cart = cartRepository.findByUserIdOrElseThrow(authUser.getId());
+
+            // 새로운 가게의 메뉴를 담는 경우
+            if (!cart.getStore().getId().equals(storeId)) {
+
+                // 현재 카트 삭제
+                clearCartItems(authUser.getId());
+
+                // 새로운 카트 생성
+                User user = userRepository.findById(authUser.getId())
+                    .orElseThrow(() -> new ApiException(ErrorStatus.USER_NOT_FOUND));
+                Store store = storeRepository.findByIdOrElseThrow(storeId);
+
+                cart = new Cart(user, store, 0);
+            }
         }
 
         Menu menu = menuRepository.findByIdOrElseThrow(menuId);
