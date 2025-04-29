@@ -18,11 +18,11 @@
 ## 🌟 팀원 소개
 | 이름 | gitHub | 역할 |
 |:---|:---|:---|
-|김하경 |　[❤️‍🔥](https://github.com/khg9900)|팀장, API 설계, 인증/인가, 유저CRUD|
-|고승표 |　[🐾](https://github.com/KSP0321)|DB설계, 주문 CRUD|
-|이윤승 |　[💫](https://github.com/younseung-Lee)|API 설계, 리뷰&리뷰 댓글 CRUD|
-|이은지 |　[🎀](https://github.com/222eunji)|DB설계, 가게 CRUD|
-|임민지 |　[🐤](https://github.com/minjee2758)|와이어프레임 설계, 메뉴 CRUD, 장바구니 CRUD|
+|김하경 |　[❤️‍🔥](https://github.com/khg9900)|팀장, API 설계, 인증/인가, 고객CRUD, Spring Security, 문서정리&PPT 초안|
+|고승표 |　[🐾](https://github.com/KSP0321)|DB설계, 주문 CRUD, 문서정리, AOP 로깅|
+|이윤승 |　[💫](https://github.com/younseung-Lee)|API 설계, 리뷰&리뷰 댓글 CRUD, 문서 정리, 시연 영상|
+|이은지 |　[🎀](https://github.com/222eunji)|DB설계, 가게 CRUD, 문서 정리, ReadMe 작성|
+|임민지 |　[🐣](https://github.com/minjee2758)|와이어프레임 설계, 메뉴 CRUD, 장바구니 CRUD, PPT&발표|
 
 <br>
 
